@@ -17,7 +17,7 @@ export const environment = {
 
   //baseUrl: 'https://rejkid.hopto.org:4000',
   baseUrl: 'https://oloaschedulemebackend.azurewebsites.net/'
-}; 
+};
 
 /*
  * For easier debugging in development mode, you can import the following file
