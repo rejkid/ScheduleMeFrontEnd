@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   dateTimeFormat: 'DD-MM-YYYY HH:mm',
   dateFormat: 'DD-MM-YYYY',
-  shortDateTimeFormat: 'DD-MM-YY HH:mm',
+  shortDateTimeFormat: 'DD.MM.YY HH:mm',
   
 
   //apiUrl: 'https://49.176.185.39:4000'
