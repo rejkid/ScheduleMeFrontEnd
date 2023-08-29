@@ -409,7 +409,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   }
 
   getDisplayDate(date: Date): string {
-    return TimeHandler.getDateDisplayStrFromFormat(moment(moment.utc(date)).local().toDate());
+    return TimeHandler.getDateDisplayStrFromShortFormat(moment(moment.utc(date)).local().toDate());
   }
 
   get isAdmin() {

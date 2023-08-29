@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { AbstractControl } from '@angular/forms';
 
 const dateFormat = `${environment.dateTimeFormat}`;
+const shortDateFormat = `${environment.shortDateTimeFormat}`;
 
 @Injectable()
 export class TimeHandler {
@@ -37,6 +38,9 @@ export class TimeHandler {
     }
     static getDateDisplayStrFromFormat(date: Date): string {
         return moment(date).format(dateFormat);
+    }
+    static getDateDisplayStrFromShortFormat(date: Date): string {
+        return moment(date).format(shortDateFormat);
     }
     static getDatetimeLocaleFromDisplayDate(date: Date): string {
         return TimeHandler.displayStr2LocalIsoString(TimeHandler.getDateDisplayStrFromFormat(date));
