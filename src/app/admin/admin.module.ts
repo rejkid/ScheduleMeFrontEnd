@@ -24,8 +24,6 @@ import { ScheduleAllocatorComponent } from './accounts/schedule.allocator.compon
         SubNavComponent,
         LayoutComponent,
         OverviewComponent,
-
-        //ImportComponent,
     ]
 })
 export class AdminModule { }
