@@ -5,7 +5,6 @@ import { ListComponent } from './list.component';
 import { AddEditComponent } from './add-edit.component';
 import { FunctionComponent } from './function.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
-//import { ScheduleComponent } from './schedule.component';
 
 const routes: Routes = [
     { path: '', component: ListComponent },
