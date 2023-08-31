@@ -1,11 +1,11 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
-import { Role } from 'src/app/_models';
+import { Account, Role } from 'src/app/_models';
 import { AccountService } from 'src/app/_services';
 
 @Component({ templateUrl: 'list.component.html' })
 export class ListComponent implements OnInit {
-    accounts: any[];
+    accounts: Account[];
 
     constructor(private accountService: AccountService) {}
 
@@ -13,7 +13,10 @@ export class ListComponent implements OnInit {
         this.accountService.getAll()
             .pipe(first())
             .subscribe(accounts => {
-                this.accounts = accounts
+                this.accounts = accounts;
+                this.accounts.sort(function (a, b) {
+                    return a.role.localeCompare(b.role);
+                });
             });
     }
 

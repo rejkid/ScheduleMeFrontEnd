@@ -18,4 +18,5 @@ export class Account {
     password: string;
     confirmPassword : string
     isVerified : boolean
+    isDeleting : boolean
 }
