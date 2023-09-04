@@ -17,3 +17,30 @@ legend {
 //     min-height: 38px !important;
 // }
 
+.hovered {
+    /* background: #eee; */
+    /* background: red; */
+    background: none;
+  }
+
+.highlighted {
+    background: #999;
+    /* background: green; */
+}
+
+.mat-mdc-table .mat-mdc-row:hover,
+.mat-mdc-table .mat-mdc-footer-row:hover .hovered {
+    /* background: #eee; */
+    //background-color: transparent;//rgba(#fff, #fff, #fff, 0.8);
+    //background-color: rgba(0,0,0,.5);
+    background-color: #000;
+    color: #fff;
+    opacity: .5;
+
+    //background: green;
+}
+
+mat-cell.mat-cell,
+mat-header-cell.mat-header-cell {
+    overflow: visible;
+}

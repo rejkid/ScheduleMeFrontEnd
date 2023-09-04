@@ -9,4 +9,6 @@ export class Schedule {
     scheduleGroup : string;
     newUserFunction : string;
     deleting : boolean;
+    hovered?: boolean;
+    highlighted?: boolean;
 }

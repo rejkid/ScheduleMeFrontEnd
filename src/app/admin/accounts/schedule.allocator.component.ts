@@ -85,6 +85,10 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   isLoggedAsAdmin: boolean = false;
 
+  currentSelectedSchedule : Schedule = null;
+  lastSelectedSchedule : Schedule = null;;
+  idx : number;
+
   poolElements: SchedulePoolElement[] = [];
   public color: ThemePalette = 'primary';
 
@@ -183,6 +187,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     }
     return null;
   }
+  
   onDutyChanged(event: any) {
     if(event.value == this.CLEANER_STR) {
       this.form.get('cleanerGroup').enable();
@@ -370,8 +375,26 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onRowSelected(schedule: Schedule, tr: any) {
-  }
+  onRowSelected(schedule: Schedule, tr: any, index : number) {
+    schedule.highlighted = !schedule.highlighted;
+    this.currentSelectedSchedule = schedule;
+
+    if (!schedule.deleting) {
+      this.form.get('scheduledDate').setValue(TimeHandler.convertServerDate2Local(schedule.date));
+      this.form.get('function').setValue(schedule.userFunction);
+      this.form.get('cleanerGroup').setValue(schedule.scheduleGroup);
+    }
+    if(this.lastSelectedSchedule != null) {
+      this.lastSelectedSchedule.highlighted = false;
+    }
+    this.lastSelectedSchedule = this.currentSelectedSchedule;
+
+    if(!schedule.highlighted) {
+      // If row is deselected mark both schedules as deselected(null);
+      this.lastSelectedSchedule = null;
+    this.currentSelectedSchedule = null;
+    }
+  } 
 
   initSchedules(account: Account) {
     this.schedules = account.schedules.slice();
