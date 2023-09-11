@@ -9,7 +9,7 @@ export function appInitializer(accountService: AccountService) {
     accountService.refreshToken()
       .subscribe({
         next: (value: any) => {
-          console.log("appInitializer success: " + value.firstName, value.lastName, value.email);
+          console.log("appInitializer successful: " + value.firstName, value.lastName, value.email);
         },
         error: (error: string) => {
           
