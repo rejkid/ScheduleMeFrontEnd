@@ -5,9 +5,6 @@
     "ng": "ng",
     "start": "ng serve",
 
-    "prebuild": "rm ./dist/web.config",
-    "build": "ng build --configuration development  --aot --base-href='/scheduler/'",
-    "postbuild": "copyfiles -V -f ./src/web.config ./dist",
 
     "build:azure": "ng build --configuration production  --aot --base-href='/'",
     "watch": "ng build --watch --configuration development",
