@@ -5,14 +5,11 @@ import { catchError } from 'rxjs/operators';
 
 import { AccountService } from '../_services';
 
-export const IGNORED_STATUSES = new HttpContextToken<number[]>(() => []);
-
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
     constructor(private accountService: AccountService) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const ignoredStatuses = request.context.get(IGNORED_STATUSES);
         return next.handle(request).pipe(catchError(err => {
             if ([401, 403].includes(err.status) && this.accountService.accountValue) {
                 // auto logout if 401 or 403 response returned from api
