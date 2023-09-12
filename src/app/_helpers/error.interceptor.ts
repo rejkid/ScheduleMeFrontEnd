@@ -1,22 +1,42 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpContextToken } from '@angular/common/http';
+import { EMPTY, Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { AccountService } from '../_services';
+
+export const IGNORED_STATUSES = new HttpContextToken<number[]>(() => []);
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
     constructor(private accountService: AccountService) { }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        const ignoredStatuses = request.context.get(IGNORED_STATUSES);
         return next.handle(request).pipe(catchError(err => {
             if ([401, 403].includes(err.status) && this.accountService.accountValue) {
                 // auto logout if 401 or 403 response returned from api
                 this.accountService.logout();
             }
 
-            const erro = (err && err.error && err.error.message) || err.statusText;
+            // var erro = (err && err.error) || err.statusText;
+            var erro = "OK";
+            if (err) {
+                if (err.error) {
+                    if (err.error.error) {
+                        erro = err.error.error;
+                        /* It's not an error but some JSON parsing problem
+                        //return EMPTY;
+                        */
+                    } else {
+                        erro = err.error;
+                    } 
+                } else {
+                    erro = err.statusText;
+                }
+            } else {
+                erro = "OK"
+            }
             console.error("ErrorInterceptor: " + erro);
             return throwError(() => erro);
         }))

@@ -23,6 +23,8 @@ import { NgxMatMomentAdapter, NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OP
 import { environment } from 'src/environments/environment';
 import { MatSelectModule } from '@angular/material/select';
 import { DOBModule } from 'src/app/dob/dob.module';
+import { MatProgressBarModule  } from '@angular/material/progress-bar'; 
+import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 
 
 // If using Moment
@@ -79,13 +81,16 @@ export class AppDateAdapter extends NativeDateAdapter {
     NgxMatDatetimePickerModule,
     NgxMatMomentModule,
     MatSelectModule,
-    DOBModule
+    DOBModule,
+    MatProgressBarModule
+    
   ],
   declarations: [
     ListComponent,
     AddEditComponent,
     FunctionComponent,
     ScheduleAllocatorComponent,
+    UploadAccountsComponent,
     
 
   ],

@@ -123,7 +123,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.accountService.getById(this.id)
       .pipe(first())
-      .subscribe(account => {
+        .subscribe(account => {
 
         this.accountService.getRoles()
           .pipe(first())

@@ -4,8 +4,6 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-
-
     "build:azure": "ng build --configuration production  --aot --base-href='/'",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"

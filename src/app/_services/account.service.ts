@@ -51,15 +51,15 @@ export class AccountService {
     }
 
     /* An alternate way*/
-/*     login(email: string, password: string, dob: string) {
-        return this.http.post<Account>(`${baseUrl}/authenticate`, { email, password, dob }, { withCredentials: true })
-            .pipe(tap(account => {
-                this.accountSubject.next(account);
-                this.startRefreshTokenTimer();
-                return account;
-            }))
-    }
- */
+    /*     login(email: string, password: string, dob: string) {
+            return this.http.post<Account>(`${baseUrl}/authenticate`, { email, password, dob }, { withCredentials: true })
+                .pipe(tap(account => {
+                    this.accountSubject.next(account);
+                    this.startRefreshTokenTimer();
+                    return account;
+                }))
+        }
+     */
     logout() {
         this.http.post<any>(`${baseUrl}/revoke-token`, {}, { withCredentials: true }).subscribe();
         this.stopRefreshTokenTimer();
@@ -81,15 +81,15 @@ export class AccountService {
         return this.http.post(`${baseUrl}/register`, account);
     }
 
-    verifyEmail(token: string, dob : string ) {
+    verifyEmail(token: string, dob: string) {
         return this.http.post(`${baseUrl}/verify-email`, { token, dob });
     }
 
-    forgotPassword(email: string, dob : Date) {
+    forgotPassword(email: string, dob: Date) {
         return this.http.post(`${baseUrl}/forgot-password`, { email, dob });
     }
 
-    validateResetToken(token: string, dob : string) {
+    validateResetToken(token: string, dob: string) {
         return this.http.post(`${baseUrl}/validate-reset-token`, { token, dob });
     }
 
@@ -185,6 +185,12 @@ export class AccountService {
 
     isAdmin() {
         return this.accountValue && this.accountValue.role === Role.Admin;
+    }
+    UploadAccountsFile(formData: FormData) {
+        return this.http.post<Account>(`${baseUrl}/upload-accounts`, formData, {
+            reportProgress: true,
+            observe: 'events'
+        });
     }
     // helper methods
 
