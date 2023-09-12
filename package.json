@@ -7,7 +7,7 @@
 
     "prebuild": "rm -f ./dist/web.config > nul",
     "build": "ng build --configuration development  --aot --base-href='/scheduler/'",
-    "postbuild": "cp ./src/web.config ./dist" ,
+    "postbuild": "cp -Rfpv ./src/web.config ./dist" ,
 
     "build:azure": "ng build --configuration production  --aot --base-href='/'",
     "watch": "ng build --watch --configuration development",
