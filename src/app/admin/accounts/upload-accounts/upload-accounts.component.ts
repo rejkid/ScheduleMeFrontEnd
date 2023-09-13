@@ -38,7 +38,7 @@ export class UploadAccountsComponent implements OnInit {
         return;
       }
 
-      const upload$ = this.accountService.UploadAccountsFile(formData)// this.http.post("/api/thumbnail-upload", formData, {reportProgress: true, observe: 'events}
+      const upload$ = this.accountService.uploadAccountsFile(formData)// this.http.post("/api/thumbnail-upload", formData, {reportProgress: true, observe: 'events}
         .pipe(
           finalize(() => this.reset())
         );

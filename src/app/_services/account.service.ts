@@ -183,14 +183,22 @@ export class AccountService {
             }));
     }
 
-    isAdmin() {
-        return this.accountValue && this.accountValue.role === Role.Admin;
-    }
-    UploadAccountsFile(formData: FormData) {
+    uploadAccountsFile(formData: FormData) {
         return this.http.post<Account>(`${baseUrl}/upload-accounts`, formData, {
             reportProgress: true,
             observe: 'events'
         });
+    }
+    getAutoEmail() {
+        return this.http.get(`${baseUrl}/auto-email`);
+    }
+    setAutoEmail(autoEmail: Boolean) {
+        return this.http.put(`${baseUrl}/auto-email`, autoEmail);
+    }
+
+
+    isAdmin() {
+        return this.accountValue && this.accountValue.role === Role.Admin;
     }
     // helper methods
 

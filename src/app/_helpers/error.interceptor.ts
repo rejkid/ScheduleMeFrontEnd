@@ -15,27 +15,24 @@ export class ErrorInterceptor implements HttpInterceptor {
                 // auto logout if 401 or 403 response returned from api
                 this.accountService.logout();
             }
-
-            // var erro = (err && err.error) || err.statusText;
-            var erro = "OK";
-            if (err) {
-                if (err.error) {
-                    if (err.error.error) {
-                        erro = err.error.error;
-                        /* It's not an error but some JSON parsing problem
-                        //return EMPTY;
-                        */
-                    } else {
-                        erro = err.error;
-                    } 
-                } else {
-                    erro = err.message;
-                }
-            } else {
-                erro = "OK"
-            }
+            var erro = this.error(err);
             console.error("ErrorInterceptor: " + erro);
             return throwError(() => erro);
         }))
+    }
+    error(e: any): any {
+        if (this.isPrimitive(e)) {
+            return e;
+        } else if (e.error) {
+            // If e.error is an object error
+            return this.error(e.error);
+        } else if (e.message) {
+            return e.message
+        } else {
+            return "Unknown Error";
+        }
+    }
+    isPrimitive(test : any) {
+        return test !== Object(test);
     }
 }
