@@ -43,27 +43,20 @@ export class UploadAccountsComponent implements OnInit {
           finalize(() => this.reset())
         );
 
-      this.uploadSub = upload$.subscribe(event => {
-        if (event.type == HttpEventType.UploadProgress) {
-          this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-          console.log("Progress:" + this.uploadProgress);
+      this.uploadSub = upload$.subscribe({
+        next: (value) => {
+          if (value.type == HttpEventType.UploadProgress) {
+            this.uploadProgress = Math.round(100 * (value.loaded / value.total));
+            console.log("Progress:" + this.uploadProgress);
+          }
+        },
+        complete: () => {
+          this.alertService.info("Done");
+        },
+        error: error => {
+          this.alertService.error(error);
         }
-      })
-
-      // this.uploadSub = upload$.subscribe({
-      //   next: (value) => {
-      //     if (event.type == HttpEventType.UploadProgress) {
-      //       this.uploadProgress = Math.round(100 * (event.loaded / event.total));
-      //       console.log("Progress:" + this.uploadProgress);
-      //     }
-      //   },
-      //   complete() {
-      //     console.log('done');
-      //   },
-      //   error: error => {
-      //     this.alertService.error(error);
-      //   }
-      // });
+      });
     }
   }
   cancelUpload() {

@@ -1,9 +1,9 @@
 ﻿<div *ngIf="alerts.length" class="container">
     <div class="m-3">
         <div *ngFor="let alert of alerts" class="{{cssClasses(alert)}}">
-            <a class="close" (click)="removeAlert(alert)"> 
+            <a class="close" (click)="removeAlert(alert)">
                 <img src="./assets/images/x.png" alt=""/>
-            </a>
+            </a>&nbsp;
             <span [innerHTML]="alert.message"></span>
         </div>
     </div>

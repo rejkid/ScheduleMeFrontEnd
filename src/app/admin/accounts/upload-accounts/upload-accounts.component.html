@@ -17,12 +17,13 @@
 
                     <mat-progress-bar class="progress-bar" mode="determinate" [value]="uploadProgress"
                         *ngIf="uploadProgress">
-
                     </mat-progress-bar>
 
                     <mat-icon class="cancel-upload" (click)="cancelUpload()"
                         *ngIf="uploadProgress">delete_forever</mat-icon>
-
+                </div>
+                <div class="mb-3">
+                    <a routerLink="/admin/accounts" class="btn btn-link">Back</a>
                 </div>
             </div>
         </div>

@@ -29,7 +29,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                         erro = err.error;
                     } 
                 } else {
-                    erro = err.statusText;
+                    erro = err.message;
                 }
             } else {
                 erro = "OK"
