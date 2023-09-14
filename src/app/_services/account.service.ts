@@ -189,11 +189,11 @@ export class AccountService {
             observe: 'events'
         });
     }
-    getAutoEmail() {
+    getAutoEmail() : any {
         return this.http.get(`${baseUrl}/auto-email`);
     }
     setAutoEmail(autoEmail: Boolean) {
-        return this.http.put(`${baseUrl}/auto-email`, autoEmail);
+        return this.http.put<Boolean>(`${baseUrl}/auto-email`, autoEmail);
     }
 
 
