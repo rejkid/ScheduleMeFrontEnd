@@ -92,6 +92,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   poolElements: SchedulePoolElement[] = [];
   public color: ThemePalette = 'primary';
 
+  connection: signalR.HubConnection;
+
   constructor(accountService: AccountService,
     private route: ActivatedRoute,
     private router: Router,
@@ -105,18 +107,18 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
     this.isLoggedAsAdmin = this.accountService.isAdmin();
 
-    const connection = new signalR.HubConnectionBuilder()
+    this.connection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
       .withUrl(environment.baseUrl + '/update')
       .build();
 
-    connection.start().then(function () {
+    this.connection.start().then(function () {
       console.log('SignalR Connected!');
     }).catch(function (err) {
       return console.error(err.toString());
     });
 
-    connection.on("SendUpdate", (id: number) => {
+    this.connection.on("SendUpdate", (id: number) => {
       this.updateSchedulesFromServer();
     });
   }
@@ -172,6 +174,13 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     });
   }
 
+  ngOnDestroy() {
+    console.log("Called");
+    this.connection.stop().
+    catch((err) => 
+      console.error(err.toString())
+    );
+  }
   /* I am not sure if we need 'input' parameter - keep it for now*/
   applyFilter(t: any, input: any) {
     const target = t as HTMLTextAreaElement;

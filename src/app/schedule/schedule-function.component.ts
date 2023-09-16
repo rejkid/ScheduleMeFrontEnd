@@ -24,6 +24,9 @@ export class ScheduleFunctionComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router) {
+
+    this.id = this.accountService.accountValue.id;
+
     this.isLoggedAsAdmin = this.accountService.isAdmin();
   }
 
@@ -32,7 +35,6 @@ export class ScheduleFunctionComponent implements OnInit {
       function: ['', [Validators.required, this.functionValidator]],
     });
 
-    this.id = this.route.snapshot.params['id'];
     this.accountService.getById(this.id)
       .pipe(first())
       .subscribe({

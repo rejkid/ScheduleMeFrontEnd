@@ -18,23 +18,25 @@ export class FloatingSchedulesComponent implements OnInit {
   isLoaded: boolean = false;
   poolElements: SchedulePoolElement[] = [];
   isLoggedAsAdmin: boolean = false;
+  connection: signalR.HubConnection;
+
 
   constructor(private accountService: AccountService,
     private alertService: AlertService) {
     this.isLoggedAsAdmin = this.accountService.isAdmin();
 
-    const connection = new signalR.HubConnectionBuilder()
+    this.connection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
       .withUrl(environment.baseUrl + '/update')
       .build();
 
-    connection.start().then(function () {
+      this.connection.start().then(function () {
       console.log('SignalR Connected!');
     }).catch(function (err) {
       return console.error(err.toString());
     });
 
-    connection.on("SendUpdate", (id: number) => {
+    this.connection.on("SendUpdate", (id: number) => {
       this.updateSchedulesFromServer();
     });
 
@@ -58,7 +60,10 @@ export class FloatingSchedulesComponent implements OnInit {
         }
       });
   }
-
+  ngOnDestroy() {
+    console.log("Called");
+    this.connection.stop();
+  }
   onDeletePoolElement(event: any, scheduleId: string, email: string, userFunction: string) { 
     let poolElement: SchedulePoolElement = this.getPoolElementById(scheduleId);
     if (poolElement == null)

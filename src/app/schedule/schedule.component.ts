@@ -89,12 +89,13 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef) {
 
     this.accountService = accountService;
+    this.id = this.accountService.accountValue.id;
 
     this.isLoggedAsAdmin = this.accountService.isAdmin();
 
 
     var tempStr = environment.baseUrl;
-    /* const connection */this.connection = new signalR.HubConnectionBuilder()
+    this.connection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
       .withUrl(environment.baseUrl + '/update')
       .build();
@@ -172,11 +173,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.accountService.account.subscribe(x => {
-      if (x != null) {
-        this.id = x.id;
-      }
-    });
 
     this.isAddScheduleMode = this.isLoggedAsAdmin; // If not admin then we are adding available dates
 
@@ -197,6 +193,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   ngOnDestroy() {
     console.log("Called");
+    this.connection.stop();
   }
   /* I am not sure if we need 'input' parameter - keep it for now*/
   applyFilter(t: any, input: any) {
