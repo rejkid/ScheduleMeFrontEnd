@@ -7,6 +7,7 @@ import { map, finalize, tap } from 'rxjs/operators';
 //import { environment } from '@environments/environment';
 import { Account, Role } from '../_models';
 //import { JwtHelperService } from '@auth0/angular-jwt';
+import { CookieService } from 'ngx-cookie-service';
 
 import { ScheduleDateTime } from '../_models/scheduledatetime';
 import { ScheduleDateTimes } from '../_models/scheduledatetimes';
@@ -30,7 +31,8 @@ export class AccountService {
 
     constructor(
         private router: Router,
-        private http: HttpClient
+        private http: HttpClient,
+        private cookieService: CookieService
     ) {
         this.accountSubject = new BehaviorSubject<Account>(null);
         this.account = this.accountSubject.asObservable();
@@ -44,6 +46,7 @@ export class AccountService {
         return this.http.post<Account>(`${baseUrl}/authenticate`, { email, password, dob }, { withCredentials: true })
             .pipe(map(account => {
                 //const body = account.body;
+                var cookieValue = this.cookieService.getAll(); // Just for experiment JD
                 this.accountSubject.next(account);
                 this.startRefreshTokenTimer();
                 return account;
@@ -208,11 +211,15 @@ export class AccountService {
         // HEADER:ALGORITHM & TOKEN TYPE
 
         // parse json object from base64 encoded jwt token
+        // var buf = Buffer.from(this.accountValue.jwtToken.split('.')[0], 'base64');
+        // var header = JSON.parse(buf.toString('base64'));
         var header = JSON.parse(atob(this.accountValue.jwtToken.split('.')[0]));
 
 
         // PAYLOAD:DATA
         // parse json object from base64 encoded jwt token
+        // var buf = Buffer.from(this.accountValue.jwtToken.split('.')[1], 'base64');
+        // const payload = JSON.parse(buf.toString('base64'));
         const payload = JSON.parse(atob(this.accountValue.jwtToken.split('.')[1]));
 
         // VERIFY SIGNATURE
