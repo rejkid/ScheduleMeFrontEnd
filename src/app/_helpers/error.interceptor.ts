@@ -28,11 +28,13 @@ export class ErrorInterceptor implements HttpInterceptor {
             return this.error(e.error);
         } else if (e.message) {
             return e.message
+        } else if (e.errorMessage) {
+            return e.errorMessage
         } else {
             return "Unknown Error";
         }
     }
-    isPrimitive(test : any) {
+    isPrimitive(test: any) {
         return test !== Object(test);
     }
 }

@@ -39,11 +39,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
 
     }
     ngAfterViewInit(): void {
-        
-    }
 
-    userFunctionAdded(functions: UserFunction[]) {
-        this.userFunctions = functions;
     }
 
     getDateDisplayStr(date: Date): string {
@@ -74,7 +70,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                         // Edit mode
                         this.account = x; // initial account
                         this.form.patchValue(x);
-                        this.dob.setDOB(TimeHandler.convertServerDate2Local(this.account.dob));
+                        //this.form.get('dob').setValue(TimeHandler.convertServerDate2Local(this.account.dob));
                     },
                     error: error => {
                         console.error(error);
@@ -82,10 +78,32 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                 });
         } else {
             // Add mode
-            this.form.get('role').setValue(this.roles[0]);
+            //this.form.get('role').setValue(this.roles[0]);
+            console.log(" ");
         }
     }
+    
+    OnClicked(event: any) {
+        var form = this.form.valid
 
+        var title = this.form.get('title').valid;
+        var firstName = this.form.get('firstName').valid;
+        var lastName = this.form.get('lastName').valid;
+        var email = this.form.get('email').valid;
+        var dob = this.form.get('dob').valid/* this.dob.valid */;
+        var password = this.form.get('password').valid;
+        var confirmPassword = this.form.get('confirmPassword').valid;
+
+        console.log("\n\n\n");
+        console.log("form=" + form);
+        console.log("title=" + title);
+        console.log("firstName=" + firstName);
+        console.log("lastName=" + lastName);
+        console.log("email=" + email);
+        console.log("dob=" + dob);
+        console.log("password=" + password);
+        console.log("confirmPassword=" + confirmPassword);
+    }
     // convenience getter for easy access to form fields
     get f() { return this.form.controls; }
 
