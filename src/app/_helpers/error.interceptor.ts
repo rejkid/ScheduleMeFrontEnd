@@ -30,6 +30,8 @@ export class ErrorInterceptor implements HttpInterceptor {
             return e.message
         } else if (e.errorMessage) {
             return e.errorMessage
+        } else if (e.title) {
+            return e.title
         } else {
             return "Unknown Error";
         }

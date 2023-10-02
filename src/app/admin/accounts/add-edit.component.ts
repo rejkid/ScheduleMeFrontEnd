@@ -14,7 +14,6 @@ import { DOBComponent } from 'src/app/dob/dob.component';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class AddEditComponent implements OnInit, AfterViewInit {
-    @ViewChild(DOBComponent) dob : DOBComponent;
 
     DATE_FORMAT = `${environment.dateFormat}`;
 
@@ -54,7 +53,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
-            role: ['', Validators.required],
+            role: [this.roles[0], Validators.required],
             dob: ['', [Validators.required, TimeHandler.dateValidator]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
             confirmPassword: ['']
@@ -77,33 +76,9 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                     }
                 });
         } else {
-            // Add mode
-            //this.form.get('role').setValue(this.roles[0]);
-            console.log(" ");
         }
     }
-    
-    OnClicked(event: any) {
-        var form = this.form.valid
 
-        var title = this.form.get('title').valid;
-        var firstName = this.form.get('firstName').valid;
-        var lastName = this.form.get('lastName').valid;
-        var email = this.form.get('email').valid;
-        var dob = this.form.get('dob').valid/* this.dob.valid */;
-        var password = this.form.get('password').valid;
-        var confirmPassword = this.form.get('confirmPassword').valid;
-
-        console.log("\n\n\n");
-        console.log("form=" + form);
-        console.log("title=" + title);
-        console.log("firstName=" + firstName);
-        console.log("lastName=" + lastName);
-        console.log("email=" + email);
-        console.log("dob=" + dob);
-        console.log("password=" + password);
-        console.log("confirmPassword=" + confirmPassword);
-    }
     // convenience getter for easy access to form fields
     get f() { return this.form.controls; }
 
@@ -112,8 +87,6 @@ export class AddEditComponent implements OnInit, AfterViewInit {
 
         // reset alerts on submit
         this.alertService.clear();
-
-        this.form.get('dob').setValue(this.dob.getDOB());
 
         // stop here if form is invalid
         if (this.form.invalid) {
