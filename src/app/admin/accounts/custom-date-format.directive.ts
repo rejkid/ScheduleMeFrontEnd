@@ -1,6 +1,7 @@
-import { Directive } from '@angular/core';
+import { Directive, ElementRef } from '@angular/core';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import { environment } from 'src/environments/environment';
+import { Renderer2 } from '@angular/core';
 
 export const FORMAT = {
   parse: {
@@ -22,6 +23,7 @@ export const FORMAT = {
 })
 export class CustomDateFormatDirective {
 
-  constructor() { }
+  constructor(private el: ElementRef,
+    private renderer: Renderer2) { }
 
 }

@@ -26,6 +26,7 @@ import { DOBModule } from 'src/app/dob/dob.module';
 import { MatProgressBarModule  } from '@angular/material/progress-bar'; 
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { CustomDateFormatDirective } from './custom-date-format.directive';
+import { DateInputDirective } from './dateinput.directive';
 
 
 // If using Moment
@@ -93,6 +94,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     ScheduleAllocatorComponent,
     UploadAccountsComponent,
     CustomDateFormatDirective,
+    DateInputDirective,
     
 
   ],

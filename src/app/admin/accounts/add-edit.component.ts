@@ -11,10 +11,14 @@ import { UserFunction } from 'src/app/_models/userfunction';
 import { Account, Role } from 'src/app/_models';
 import { environment } from 'src/environments/environment';
 import { DOBComponent } from 'src/app/dob/dob.component';
+import { DateInputDirective, Segment } from './dateinput.directive';
 
-@Component({ templateUrl: 'add-edit.component.html' })
+@Component({
+    templateUrl: 'add-edit.component.html',
+    styleUrls: ['add-edit.component.less'],
+})
 export class AddEditComponent implements OnInit, AfterViewInit {
-
+    @ViewChild(DateInputDirective) directive : DateInputDirective;
     DATE_FORMAT = `${environment.dateFormat}`;
 
     form: FormGroup;
@@ -26,6 +30,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     account: Account;
     userFunctions: UserFunction[] = [];
     isLoaded: boolean = false;
+    
 
     constructor(
         private formBuilder: FormBuilder,
@@ -35,7 +40,6 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         private alertService: AlertService
     ) {
         this.roles = Object.values(Role).filter(value => typeof value === 'string') as string[]
-
     }
     ngAfterViewInit(): void {
 
@@ -48,13 +52,16 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         this.id = this.route.snapshot.params['id'];
         this.isAddMode = !this.id;
 
+        // reset alerts on submit
+        this.alertService.clear();
+
         this.form = this.formBuilder.group({
             title: ['', Validators.required],
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             role: [this.roles[0], Validators.required],
-            dob: ['', [Validators.required, TimeHandler.dateValidator]],
+            dob: ['', [Validators.required/* , TimeHandler.dateValidator */]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
             confirmPassword: ['']
         }, {
@@ -72,7 +79,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                         //this.form.get('dob').setValue(TimeHandler.convertServerDate2Local(this.account.dob));
                     },
                     error: error => {
-                        console.error(error);
+                        this.alertService.error(error);
                     }
                 });
         } else {

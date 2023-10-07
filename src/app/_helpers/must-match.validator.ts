@@ -1,4 +1,4 @@
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ValidationErrors } from '@angular/forms';
 
 // custom validator to check that two fields match
 export function MustMatch(controlName: string, matchingControlName: string) {
@@ -6,62 +6,29 @@ export function MustMatch(controlName: string, matchingControlName: string) {
         const control = formGroup.controls[controlName];
         const matchingControl = formGroup.controls[matchingControlName];
 
-        /* JD Start */
-        /*
-        var title = formGroup.controls['title'];
-        var firstName = formGroup.controls['firstName'];
-        var lastName = formGroup.controls['lastName'];
-        var email = formGroup.controls['email'];
-        var role = formGroup.controls["role"];
-        var dob = formGroup.controls['dob'];
-        var password = formGroup.controls['password'];
-        var confirmPassword = formGroup.controls['confirmPassword'];
+        formGroup.setErrors(null);
+        var success = true;
+        const result = [];
+        // Object.keys(formGroup.controls).forEach((key, ctrl) => {
 
-        console.log("\n\n");
-
-        if (title != null)
-            console.log("title:" + title!.valid + "\ttouched:" + title!.touched + "\tdirty:" + title!.dirty);
-
-        if (firstName != null)
-            console.log("firstName:" + firstName!.valid + "\ttouched:" + firstName!.touched + "\tdirty:" + firstName!.dirty);
-
-        if (lastName != null)
-            console.log("lastName:" + lastName!.valid + "\ttouched:" + lastName!.touched + "\tdirty:" + lastName!.dirty);
-
-        if (email != null)
-            console.log("email:" + email!.valid + "\ttouched:" + email!.touched + "\tdirty:" + email!.dirty);
-
-        if (role != null)
-            console.log("role:" + role!.valid + "\ttouched:" + role!.touched + "\tdirty:" + role!.dirty);
-
-        if (dob != null)
-            console.log("dob:" + dob!.valid + "\ttouched:" + dob!.touched + "\tdirty:" + dob!.dirty);
-
-        if (password != null)
-            console.log("password:" + password!.valid + "\ttouched:" + password!.touched + "\tdirty:" + password!.dirty);
-
-        if (confirmPassword != null)
-            console.log("confirmPassword:" + confirmPassword!.valid + "\ttouched:" + confirmPassword!.touched + "\tdirty:" + confirmPassword!.dirty);
-
-        if (password != null && confirmPassword != null) {
-            console.log("Passwords identical:" + (password!.value === confirmPassword!.value));
-        }
-
-        var success =
-            title && title.valid
-            && firstName && firstName!.valid
-            && lastName && lastName!.valid
-            && email && email.valid
-            && role && role.valid
-            // && dob        && dob.valid
-            && password && password.valid
-            && confirmPassword && confirmPassword.valid
-            && password.value === confirmPassword.value;
-
-        console.log("FormGroup VALID STATE:" + success);
-        */
-        /* JD End */
-
+        //     const controlErrors: ValidationErrors = formGroup.get(key).errors;
+        //     console.log("\tcontrol:" + key + "\t\tvalid:" + formGroup.controls[key].valid 
+        //         + "\ttouched:" + formGroup.controls[key].touched + "\tdirty:" + formGroup.controls[key].dirty 
+        //         + "\tvalue:" + "'" + formGroup.controls[key].value + "'");
+        //     if (controlErrors) {
+        //         success = false;
+        //         Object.keys(controlErrors).forEach(keyError => {
+        //             result.push({
+        //                 'control': key,
+        //                 'error': keyError,
+        //                 'value': controlErrors[keyError]
+        //             });
+        //             console.log("\tcontrol:" + key + " error:" + keyError + " value:" + controlErrors[keyError]);
+        //         });
+        //     }
+        // });
+        // console.log("FormGroup VALID STATE:" + formGroup.valid + " Success:" + success);
+        
         if (matchingControl.errors && !matchingControl.errors['mustMatch']) {
             // return if another validator has already found an error on the matchingControl
             return;
