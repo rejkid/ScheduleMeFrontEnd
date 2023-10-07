@@ -69,7 +69,8 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                         // Edit mode
                         this.account = x; // initial account
                         this.form.patchValue(x);
-                        //this.form.get('dob').setValue(TimeHandler.convertServerDate2Local(this.account.dob));
+                        // Convert server datetime to local datetime
+                        this.form.get('dob').setValue(TimeHandler.convertServerDate2Local(this.account.dob));
                     },
                     error: error => {
                         console.error(error);
