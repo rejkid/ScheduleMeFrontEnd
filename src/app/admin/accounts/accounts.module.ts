@@ -26,6 +26,7 @@ import { DOBModule } from 'src/app/dob/dob.module';
 import { MatProgressBarModule  } from '@angular/material/progress-bar'; 
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { CustomDateFormatDirective } from './custom-date-format.directive';
+import { PhonePipe } from 'src/app/_helpers/phone-pipe';
 
 
 // If using Moment
@@ -83,7 +84,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     NgxMatMomentModule,
     MatSelectModule,
     DOBModule,
-    MatProgressBarModule
+    MatProgressBarModule,
     
   ],
   declarations: [
@@ -93,7 +94,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     ScheduleAllocatorComponent,
     UploadAccountsComponent,
     CustomDateFormatDirective,
-    
+    PhonePipe
 
   ],
   providers: [

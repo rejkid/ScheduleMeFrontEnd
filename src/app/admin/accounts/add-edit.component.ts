@@ -11,6 +11,7 @@ import { UserFunction } from 'src/app/_models/userfunction';
 import { Account, Role } from 'src/app/_models';
 import { environment } from 'src/environments/environment';
 import { DOBComponent } from 'src/app/dob/dob.component';
+import { PhoneNumberUtil } from 'google-libphonenumber';
 
 @Component({ templateUrl: 'add-edit.component.html' })
 export class AddEditComponent implements OnInit, AfterViewInit {
@@ -26,6 +27,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     account: Account;
     userFunctions: UserFunction[] = [];
     isLoaded: boolean = false;
+    countryCodes: number[] = [];
 
     constructor(
         private formBuilder: FormBuilder,
@@ -56,6 +58,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             role: [this.roles[0], Validators.required],
             dob: ['', [Validators.required, TimeHandler.dateValidator]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
+            //PhoneNumber: ["", Validators.required],
             confirmPassword: ['']
         }, {
             validator: MustMatch('password', 'confirmPassword')
@@ -78,8 +81,25 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                 });
         } else {
         }
+        this.initCountryCodes();
     }
-
+    initCountryCodes(): void {
+        const phoneNumberUtil = PhoneNumberUtil.getInstance();
+        const countries: string[] = phoneNumberUtil.getSupportedRegions();
+        // add TR as initial value
+        this.countryCodes.push(41);
+        countries.forEach(country => {
+          const countryCode = phoneNumberUtil.getCountryCodeForRegion(country);
+          if (this.countryCodes.indexOf(countryCode) === -1) {
+            this.countryCodes.push(countryCode);
+          }
+        });
+        this.countryCodes.sort((a, b) => a > b ? 1 : -1);
+        //this.selectedCountryCode = this.getCountryCode();
+      }
+      setCountryCode(event : EventTarget) {
+        console.log(event);
+      }
     // convenience getter for easy access to form fields
     get f() { return this.form.controls; }
 

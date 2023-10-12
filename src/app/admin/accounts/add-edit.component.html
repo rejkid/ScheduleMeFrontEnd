@@ -44,6 +44,36 @@
             </div>
         </div>
     </div>
+
+
+    <div class="row">
+        <div class="col-3 col-3-5 pr-3">
+            <select class="form-control form-control-borderless form-control-select px-0" formControlName="countryCode"
+                (change)="setCountryCode($event.target)"
+                [ngClass]="{ 'error': form.value.countryCode === '' && form.controls['phoneNumber'].touched }"
+                [required]="form.value.phoneNumber !== ''">
+                <option style="display:none;"></option>
+                <option value="90" [selected]="form.value.countryCode === '90'">+90</option>
+                <option *ngFor="let countryCode of countryCodes" [value]="countryCode"
+                    [selected]="form.value.countryCode === countryCode">
+                    +{{countryCode}}
+                </option>
+            </select>
+        </div>
+        <div class="col-8 col-8-5 pl-0">
+            <input type="text" formControlName="phoneNumber"
+                class="form-control form-control-borderless px-0 robot_register_phoneNumber" autocomplete="off"
+                autofocus="true" placeholder="{{ 'PHONE_NUMBER' | phone }}" [maxlength]="10" [minlength]="10"
+                [ngClass]="{ 'error': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }" />
+        </div>
+    </div>
+    <ng-container *ngIf="form.controls['phoneNumber'].hasError('phoneNumberInvalid')">
+        <div class="input-warning text-danger mt-1 error robot_register_invalidPhoneNumberError">
+            {{ 'PHONE_NUMBER_MUST_BE_VALID' | phone }}
+        </div>
+    </ng-container>
+    
+
     <div class="row">
         <div class="mb-3 col-12">
             <label>Role</label>
