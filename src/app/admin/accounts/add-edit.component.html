@@ -1,9 +1,9 @@
 ﻿<h1 *ngIf="isAddMode">Create Account</h1>
 <h1 *ngIf="!isAddMode">Edit Account</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row">
+    <div class="mb-3 row">
         <div class="col-4">
-            <label>Title</label>
+            <label>Title*</label>
             <select formControlName="title" class="form-select"
                 [ngClass]="{ 'is-invalid': submitted && f['title'].errors }">
                 <option value=""></option>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="col-4">
-            <label>First Name</label>
+            <label>First Name*</label>
             <input type="text" formControlName="firstName" class="form-control"
                 [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }" />
             <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="col-4">
-            <label>Last Name</label>
+            <label>Last Name*</label>
             <input type="text" formControlName="lastName" class="form-control"
                 [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }" />
             <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
@@ -35,7 +35,7 @@
     </div>
     <div class="row">
         <div class="mb-3 col-12">
-            <label>Email</label>
+            <label>Email*</label>
             <input type="text" formControlName="email" class="form-control"
                 [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
             <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
@@ -45,38 +45,32 @@
         </div>
     </div>
 
+    <div class="mb-2 row col-10">
+        <div>
+            <label>Phone</label>
+            <table class="mb-3 col-10">
+                <tr>
+                    <td>
+                        <div>
+                            <input type="text" formControlName="phoneNumber" class="form-control" autocomplete="off"
+                                autofocus="true" placeholder="Phone number" [maxlength]="10" [minlength]="10"
+                                [ngClass]="{ 'is-invalid': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }">
+                        </div>
+                    </td>
+                </tr>
 
-    <div class="row">
-        <div class="col-3 col-3-5 pr-3">
-            <select class="form-control form-control-borderless form-control-select px-0" formControlName="countryCode"
-                (change)="setCountryCode($event.target)"
-                [ngClass]="{ 'error': form.value.countryCode === '' && form.controls['phoneNumber'].touched }"
-                [required]="form.value.phoneNumber !== ''">
-                <option style="display:none;"></option>
-                <option value="90" [selected]="form.value.countryCode === '90'">+90</option>
-                <option *ngFor="let countryCode of countryCodes" [value]="countryCode"
-                    [selected]="form.value.countryCode === countryCode">
-                    +{{countryCode}}
-                </option>
-            </select>
-        </div>
-        <div class="col-8 col-8-5 pl-0">
-            <input type="text" formControlName="phoneNumber"
-                class="form-control form-control-borderless px-0 robot_register_phoneNumber" autocomplete="off"
-                autofocus="true" placeholder="{{ 'PHONE_NUMBER' | phone }}" [maxlength]="10" [minlength]="10"
-                [ngClass]="{ 'error': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }" />
+            </table>
+            <ng-container class="" *ngIf="form.controls['phoneNumber'].hasError('phoneNumberInvalid')">
+                <div class="input-warning text-danger mt-1 error robot_register_invalidPhoneNumberError">
+                    Wrong phone number
+                </div>
+            </ng-container>
         </div>
     </div>
-    <ng-container *ngIf="form.controls['phoneNumber'].hasError('phoneNumberInvalid')">
-        <div class="input-warning text-danger mt-1 error robot_register_invalidPhoneNumberError">
-            {{ 'PHONE_NUMBER_MUST_BE_VALID' | phone }}
-        </div>
-    </ng-container>
-    
 
     <div class="row">
-        <div class="mb-3 col-12">
-            <label>Role</label>
+        <div class="mb-3 col-3">
+            <label>Role*</label>
             <select formControlName="role" class="form-select"
                 [ngClass]="{ 'is-invalid': submitted && f['role'].errors }">
                 <option *ngFor="let item of roles">
@@ -96,11 +90,16 @@
         <mat-card-content>
             <div class="row">
                 <div class="col-12">
-                    <mat-form-field appearance="outline" hideRequiredMarker >
+                    <mat-form-field appearance="outline" >
                         <mat-label>DOB</mat-label>
-                        <input formControlName="dob" #ref matInput [matDatepicker]="picker">
+                        <input formControlName="dob" #ref matInput [ngxMatDatetimePicker]="picker"
+                            placeholder="Choose a date" required>
                         <mat-hint>{{DATE_FORMAT}}</mat-hint>
-                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
+                            [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [color]="undefined"
+                            [enableMeridian]="false" [disableMinute]="false" [hideTime]="true" >
+                        </ngx-mat-datetime-picker>
+                        <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
                     </mat-form-field>
                 </div>
@@ -112,7 +111,7 @@
         <h3 class="pt-3">Change Password</h3>
         <p>Leave blank to keep the same password</p>
     </div>
-    <div class="row">
+    <div class="mb-3 row">
         <div class="col">
             <label>Password</label>
             <input type="password" formControlName="password" class="form-control"
@@ -133,7 +132,7 @@
         </div>
     </div>
 
-    <div class="mb-3">
+    <div>
         <button [disabled]="loading || !form.valid" class="btn btn-primary">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
             Save

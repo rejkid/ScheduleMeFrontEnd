@@ -12,8 +12,11 @@ import { Account, Role } from 'src/app/_models';
 import { environment } from 'src/environments/environment';
 import { DOBComponent } from 'src/app/dob/dob.component';
 import { PhoneNumberUtil } from 'google-libphonenumber';
+import { MatSelectChange } from '@angular/material/select';
+import { CustomValidators } from 'src/app/_helpers/custom-validators';
 
-@Component({ templateUrl: 'add-edit.component.html' })
+@Component({ templateUrl: 'add-edit.component.html',
+styleUrls: ['./add-edit.component.less'], })
 export class AddEditComponent implements OnInit, AfterViewInit {
 
     DATE_FORMAT = `${environment.dateFormat}`;
@@ -50,6 +53,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         this.id = this.route.snapshot.params['id'];
         this.isAddMode = !this.id;
 
+
         this.form = this.formBuilder.group({
             title: ['', Validators.required],
             firstName: ['', Validators.required],
@@ -58,10 +62,10 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             role: [this.roles[0], Validators.required],
             dob: ['', [Validators.required, TimeHandler.dateValidator]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
-            //PhoneNumber: ["", Validators.required],
-            confirmPassword: ['']
+            confirmPassword: [''],
+            phoneNumber: ["", [ ]],
         }, {
-            validator: MustMatch('password', 'confirmPassword')
+            validator: [MustMatch('password', 'confirmPassword')]
         });
 
         if (!this.isAddMode) {
@@ -81,25 +85,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                 });
         } else {
         }
-        this.initCountryCodes();
     }
-    initCountryCodes(): void {
-        const phoneNumberUtil = PhoneNumberUtil.getInstance();
-        const countries: string[] = phoneNumberUtil.getSupportedRegions();
-        // add TR as initial value
-        this.countryCodes.push(41);
-        countries.forEach(country => {
-          const countryCode = phoneNumberUtil.getCountryCodeForRegion(country);
-          if (this.countryCodes.indexOf(countryCode) === -1) {
-            this.countryCodes.push(countryCode);
-          }
-        });
-        this.countryCodes.sort((a, b) => a > b ? 1 : -1);
-        //this.selectedCountryCode = this.getCountryCode();
-      }
-      setCountryCode(event : EventTarget) {
-        console.log(event);
-      }
     // convenience getter for easy access to form fields
     get f() { return this.form.controls; }
 
@@ -140,7 +126,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     }
 
     private updateAccount() {
-        this.accountService.update(this.id, this.form.value/* this.account */)
+        this.accountService.update(this.id, this.form.value)
             .pipe(first())
             .subscribe({
                 next: (value) => {

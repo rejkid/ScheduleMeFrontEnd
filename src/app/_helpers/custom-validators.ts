@@ -3,23 +3,28 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
 
 export class CustomValidators {
 
-    static phoneNumberValidator(form: FormGroup) {
-        if (form.controls['phoneNumber'].value) {
-            const phoneNumberUtil = PhoneNumberUtil.getInstance();
-            const phoneNumberInput: string = form.controls['phoneNumber'].value;
-            if ((phoneNumberInput || '').trim().length !== 0) {
-                try {
-                    const phoneNumber = phoneNumberUtil.parse('+' + form.controls['countryCode'].value + phoneNumberInput);
-                    if (!phoneNumberUtil.isValidNumber(phoneNumber)) {
-                        form.controls['phoneNumber'].setErrors({ 'phoneNumberInvalid': true });
+    static phoneNumberValidator(countryCode: string, phoneNumber: string) {
+        return (formGroup: FormGroup) => {
+            const phoneNumberCtrl = formGroup.controls[phoneNumber];
+            const phoneNumberVal = phoneNumberCtrl.value;
+
+            if (phoneNumberVal) {
+                const phoneNumberUtil = PhoneNumberUtil.getInstance();
+                const phoneNumberInput: string = phoneNumberCtrl.value;
+                if ((phoneNumberInput || '').trim().length !== 0) {
+                    try {
+                        const fullPhoneNumber = phoneNumberUtil.parse(phoneNumberInput);
+                        if (!phoneNumberUtil.isValidNumberForRegion(fullPhoneNumber, "61")) {
+                            phoneNumberCtrl.setErrors({ 'phoneNumberInvalid': true });
+                            return;
+                        }
+                    } catch (error) {
+                        phoneNumberCtrl.setErrors({ 'phoneNumberInvalid': true });
                         return;
                     }
-                } catch (error) {
-                    form.controls['phoneNumber'].setErrors({ 'phoneNumberInvalid': true });
-                    return;
                 }
             }
+            phoneNumberCtrl.setErrors(null);
         }
-        form.controls['phoneNumber'].setErrors(null);
     }
 }

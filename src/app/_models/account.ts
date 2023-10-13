@@ -8,6 +8,7 @@ export class Account {
     firstName: string;
     lastName: string;
     email: string;
+    phoneNumber:string;
     role: Role;
     schedules: Schedule[] = [];
     userFunctions: UserFunction[] = [];

@@ -9,7 +9,10 @@ import { Schedule } from '../_models/schedule';
 import { TimeHandler } from '../_helpers/time.handler';
 import { environment } from 'src/environments/environment';
 import * as moment from 'moment';
-@Component({ templateUrl: 'update.component.html' })
+import { CustomValidators } from '../_helpers/custom-validators';
+import { PhoneNumberUtil } from 'google-libphonenumber';
+@Component({ templateUrl: 'update.component.html',
+styleUrls: ['./update.component.less'], })
 export class UpdateComponent implements OnInit {
     DATE_FORMAT = `${environment.dateFormat}`;
     
@@ -20,6 +23,7 @@ export class UpdateComponent implements OnInit {
     deleting = false;
     schedules: Schedule[] = [];
     id: string = this.account.id;
+    countryCodes: number[] = [];
 
     constructor(
         private formBuilder: FormBuilder,
@@ -37,9 +41,11 @@ export class UpdateComponent implements OnInit {
             email: [this.account.email, [Validators.required, Validators.email]],
             dob: [TimeHandler.convertServerDate2Local(this.account.dob), Validators.required],
             password: ['', [Validators.minLength(6)]],
-            confirmPassword: ['', [Validators.minLength(6)]]
+            confirmPassword: ['', [Validators.minLength(6)]],
+            phoneNumber: [this.account.phoneNumber, Validators.required, ],
+
         }, {
-            validator: MustMatch('password', 'confirmPassword')
+            validator: [MustMatch('password', 'confirmPassword')]
         });
     }
 
@@ -66,13 +72,15 @@ export class UpdateComponent implements OnInit {
         this.account.lastName = this.form.controls['lastName'].value;
         this.account.email = this.form.controls['email'].value;
 
+        this.account.phoneNumber = this.f['phoneNumber'].value;
+
         this.account.password = this.form.controls['password'].value;
         this.account.confirmPassword = this.form.controls['confirmPassword'].value;
         this.account.dob = this.f['dob'].value; 
         this.account.schedules = this.schedules;
 
 
-        this.accountService.update(this.account.id, /*this.form.value*/this.account)
+        this.accountService.update(this.account.id, this.account)
             .pipe(first())
             .subscribe({
                 next: () => {

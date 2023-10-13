@@ -1,8 +1,8 @@
 ﻿<h1>Update Profile</h1>
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="row">
+    <div class="mb-3 row">
         <div class="col-4">
-            <label>Title</label>
+            <label>Title*</label>
             <select formControlName="title" class="form-select"
                 [ngClass]="{ 'is-invalid': submitted && f['title'].errors }">
                 <option value=""></option>
@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="col-4">
-            <label>First Name</label>
+            <label>First Name*</label>
             <input type="text" formControlName="firstName" class="form-control"
                 [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }" />
             <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="col-4">
-            <label>Last Name</label>
+            <label>Last Name*</label>
             <input type="text" formControlName="lastName" class="form-control"
                 [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }" />
             <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
@@ -34,7 +34,7 @@
     </div>
     <div class="mb-3 row">
         <div class="col">
-            <label>Email</label>
+            <label>Email*</label>
             <input type="text" formControlName="email" class="form-control"
                 [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
             <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
@@ -43,12 +43,36 @@
             </div>
         </div>
     </div>
+
+
+
+    <div class="mb-2 row col-10">
+        <div>
+            <label>Phone</label>
+            <table class="mb-3 col-10">
+                <tr>
+                    <td>
+                        <div>
+                            <input type="text" formControlName="phoneNumber" class="form-control" autocomplete="off"
+                                autofocus="true" placeholder="Phone number" [maxlength]="10" [minlength]="10"
+                                [ngClass]="{ 'is-invalid': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <ng-container class="mb-3" *ngIf="form.controls['phoneNumber'].hasError('phoneNumberInvalid')">
+                <div class="input-warning text-danger mt-1 error robot_register_invalidPhoneNumberError">
+                    Wrong phone number
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
     <div class="mb-3 row">
         <div class="col">
-            <mat-form-field appearance="outline" hideRequiredMarker>
+            <mat-form-field appearance="outline">
                 <mat-label>DOB</mat-label>
-                <input formControlName="dob" #ref matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a date"
-                    required />
+                <input formControlName="dob" #ref matInput [ngxMatDatetimePicker]="picker" placeholder="Choose a date" required />
                 <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                 <mat-hint>{{DATE_FORMAT}}</mat-hint>
                 <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
@@ -61,7 +85,7 @@
     </div>
     <h3 class="pt-3">Change Password</h3>
     <p>Leave blank to keep the same password</p>
-    <div class="row">
+    <div class="mb-3  row">
         <div class="col">
             <label>Password</label>
             <input type="password" formControlName="password" class="form-control"
@@ -83,7 +107,8 @@
     </div>
 
     <div class="mb-3">
-        <button type="submit" [disabled]="loading" class="btn btn-primary mr-2" [ngClass]="{ 'disabled': !form.controls['dob'].valid}">
+        <button type="submit" [disabled]="loading" class="btn btn-primary mr-2"
+            [ngClass]="{ 'disabled': !form.controls['dob'].valid}">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
             Update
         </button>
