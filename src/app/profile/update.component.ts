@@ -84,7 +84,7 @@ export class UpdateComponent implements OnInit {
             .pipe(first())
             .subscribe({
                 next: () => {
-                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
+                    //this.alertService.success('Update successful', { keepAfterRouteChange: true });
                     this.loading = false;
                     //this.router.navigate(['../'], { relativeTo: this.route });
                 },
