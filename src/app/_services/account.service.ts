@@ -88,7 +88,7 @@ export class AccountService {
         return this.http.post(`${baseUrl}/verify-email`, { token, dob });
     }
 
-    forgotPassword(email: string, dob: Date) {
+    forgotPassword(email: string, dob: string) {
         return this.http.post(`${baseUrl}/forgot-password`, { email, dob });
     }
 

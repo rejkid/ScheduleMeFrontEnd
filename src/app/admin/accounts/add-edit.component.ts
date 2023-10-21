@@ -1,25 +1,21 @@
-﻿import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { MustMatch } from 'src/app/_helpers';
 import { TimeHandler } from 'src/app/_helpers/time.handler';
-import * as moment from 'moment';
 
-import { AccountService, AlertService } from 'src/app/_services';
-import { UserFunction } from 'src/app/_models/userfunction';
+import { DatePipe } from '@angular/common';
 import { Account, Role } from 'src/app/_models';
-import { environment } from 'src/environments/environment';
-import { DOBComponent } from 'src/app/dob/dob.component';
-import { PhoneNumberUtil } from 'google-libphonenumber';
-import { MatSelectChange } from '@angular/material/select';
-import { CustomValidators } from 'src/app/_helpers/custom-validators';
+import { UserFunction } from 'src/app/_models/userfunction';
+import { AccountService, AlertService } from 'src/app/_services';
+import { Constants } from 'src/app/constants';
 
 @Component({ templateUrl: 'add-edit.component.html',
 styleUrls: ['./add-edit.component.less'], })
 export class AddEditComponent implements OnInit, AfterViewInit {
 
-    DATE_FORMAT = `${environment.dateFormat}`;
+    DATE_FORMAT = Constants.dateFormat;
 
     form: FormGroup;
     id: string;// =  this.route.snapshot.params['id'];;
@@ -37,7 +33,8 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private datePipe: DatePipe
     ) {
         this.roles = Object.values(Role).filter(value => typeof value === 'string') as string[]
 
@@ -46,9 +43,6 @@ export class AddEditComponent implements OnInit, AfterViewInit {
 
     }
 
-    getDateDisplayStr(date: Date): string {
-        return TimeHandler.getDateDisplayStrFromFormat(date)
-    }
     ngOnInit() {
         this.id = this.route.snapshot.params['id'];
         this.isAddMode = !this.id;
@@ -60,7 +54,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             role: [this.roles[0], Validators.required],
-            dob: ['', [Validators.required, TimeHandler.dateValidator]],
+            dob: ['', [Validators.required, TimeHandler.dateTimeValidator]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
             confirmPassword: [''],
             phoneNumber: ["", [ ]],
@@ -77,7 +71,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                         this.account = x; // initial account
                         this.form.patchValue(x);
                         // Convert server datetime to local datetime
-                        this.form.get('dob').setValue(TimeHandler.convertServerDate2Local(this.account.dob));
+                        this.form.get('dob').setValue(this.account.dob);
                     },
                     error: error => {
                         console.error(error);
@@ -111,7 +105,18 @@ export class AddEditComponent implements OnInit, AfterViewInit {
 
     private createAccount() {
 
-        this.accountService.create(this.form.value)
+        var account : Account = new Account();
+        account.title = this.f['title'].value; 
+        account.firstName = this.f['firstName'].value;
+        account.lastName = this.f['lastName'].value;
+        account.email = this.f['email'].value;
+        account.role = this.f['role'].value;
+        account.dob = this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat);
+        account.password = this.f['password'].value; 
+        account.confirmPassword = this.f['confirmPassword'].value; 
+        account.phoneNumber = this.f['phoneNumber'].value;
+
+        this.accountService.create(account)
             .pipe(first())
             .subscribe({
                 next: () => {
@@ -126,11 +131,24 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     }
 
     private updateAccount() {
-        this.accountService.update(this.id, this.form.value)
+
+        var account : Account = new Account();
+        
+        account.title = this.f['title'].value; 
+        account.firstName = this.f['firstName'].value;
+        account.lastName = this.f['lastName'].value;
+        account.email = this.f['email'].value;
+        account.role = this.f['role'].value;
+        account.dob = this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat);
+        account.password = this.f['password'].value; 
+        account.confirmPassword = this.f['confirmPassword'].value; 
+        account.phoneNumber = this.f['phoneNumber'].value;
+
+        this.accountService.update(this.id, account)
             .pipe(first())
             .subscribe({
                 next: (value) => {
-                    //this.alertService.success('Update successful', { keepAfterRouteChange: true });
+                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
                     //this.router.navigate(['../../'], { relativeTo: this.route });
                     this.loading = false;
                 },

@@ -1,20 +1,19 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
-import { AccountService, AlertService } from '../_services';
+import { DatePipe } from '@angular/common';
+import * as moment from 'moment';
 import { MustMatch } from '../_helpers';
 import { Schedule } from '../_models/schedule';
-import { TimeHandler } from '../_helpers/time.handler';
-import { environment } from 'src/environments/environment';
-import * as moment from 'moment';
-import { CustomValidators } from '../_helpers/custom-validators';
-import { PhoneNumberUtil } from 'google-libphonenumber';
+import { AccountService, AlertService } from '../_services';
+import { Constants } from '../constants';
+
 @Component({ templateUrl: 'update.component.html',
 styleUrls: ['./update.component.less'], })
 export class UpdateComponent implements OnInit {
-    DATE_FORMAT = `${environment.dateFormat}`;
+    DATE_FORMAT = Constants.dateFormat;
     
     account = this.accountService.accountValue;
     form: FormGroup;
@@ -30,19 +29,21 @@ export class UpdateComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
+        var test = moment(this.account.dob, Constants.dateFormat).toDate();
         this.form = this.formBuilder.group({
             title: [this.account.title, Validators.required],
             firstName: [this.account.firstName, Validators.required],
             lastName: [this.account.lastName, Validators.required],
             email: [this.account.email, [Validators.required, Validators.email]],
-            dob: [TimeHandler.convertServerDate2Local(this.account.dob), Validators.required],
-            password: ['', [Validators.minLength(6)]],
-            confirmPassword: ['', [Validators.minLength(6)]],
-            phoneNumber: [this.account.phoneNumber, Validators.required, ],
+            dob: [moment(this.account.dob, Constants.dateFormat).toDate(), Validators.required],
+            password: ['',  [Validators.minLength(6)]],
+            confirmPassword: ['',  [Validators.minLength(6)]],
+            phoneNumber: [this.account.phoneNumber ], // Phone number is optional
 
         }, {
             validator: [MustMatch('password', 'confirmPassword')]
@@ -76,7 +77,7 @@ export class UpdateComponent implements OnInit {
 
         this.account.password = this.form.controls['password'].value;
         this.account.confirmPassword = this.form.controls['confirmPassword'].value;
-        this.account.dob = this.f['dob'].value; 
+        this.account.dob = this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat); 
         this.account.schedules = this.schedules;
 
 
@@ -84,7 +85,7 @@ export class UpdateComponent implements OnInit {
             .pipe(first())
             .subscribe({
                 next: () => {
-                    //this.alertService.success('Update successful', { keepAfterRouteChange: true });
+                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
                     this.loading = false;
                     //this.router.navigate(['../'], { relativeTo: this.route });
                 },

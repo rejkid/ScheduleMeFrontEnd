@@ -15,7 +15,7 @@
                 <tbody *ngIf="poolElements">
                     <tr *ngFor="let s of poolElements">
                         <td>{{s.email}} </td>
-                        <td>{{getDisplayDate(s.date)}} </td>
+                        <td>{{s.date}} </td>
                         <td>{{s.userFunction}}</td>
                         <td>{{s.scheduleGroup}}</td>
                         <td style="white-space: nowrap" *ngIf="isLoggedAsAdmin">

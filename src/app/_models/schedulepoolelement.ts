@@ -5,7 +5,7 @@ import { UserFunction } from './userfunction';
 export class SchedulePoolElement {
     id: string;
     email: string;
-    date: Date;
+    date: string;
     required: Boolean;
     userAvailability: Boolean;
     userFunction: string;

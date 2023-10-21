@@ -13,7 +13,7 @@ import { AppComponent } from './app.component';
 import { AlertComponent } from './_components';
 import { HomeComponent } from './home';;
 import { RaportForDateComponent } from './raport-for-date/raport-for-date.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FloatingSchedulesComponent } from './floating-schedules/floating-schedules.component';
 
@@ -70,6 +70,7 @@ import { OrderByDatePipe } from './order-by-date.pipe';
         OrderByDatePipe,
     ],
     providers: [
+        DatePipe,
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

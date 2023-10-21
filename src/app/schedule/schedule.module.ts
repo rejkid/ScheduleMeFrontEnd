@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ScheduleComponent } from './schedule.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ScheduleRoutingModule } from './schedule-routing.module';
@@ -54,6 +54,9 @@ import { MatSelectModule } from '@angular/material/select';
     MatSelectModule,
 
   ],
-  exports: [ScheduleComponent]
+  exports: [ScheduleComponent],
+  providers: [
+
+  ],
 })
 export class ScheduleModule { }

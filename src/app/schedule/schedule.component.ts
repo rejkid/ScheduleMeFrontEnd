@@ -16,6 +16,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import * as signalR from '@microsoft/signalr';
 import { Constants } from '../constants';
+import { DatePipe } from '@angular/common';
 
 const COLUMNS_SCHEMA = [
   {
@@ -52,12 +53,14 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
 
   readonly CLEANER_STR = Constants.CLEANER_STR;
+  // dateFormat = `${environment.dateTimeFormat}`;
+  // dateTimeFormat = `${environment.dateTimeFormat}`;
+
 
   form: FormGroup;
   id: string;
 
   schedules: Schedule[] = [];
-  scheduleIndexer: number = 0;
   userFunctionIndexer: number = 0;
   functions: string[] = [];
   submitted = false;
@@ -86,7 +89,8 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private alertService: AlertService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef,
+    private datePipe: DatePipe) {
 
     this.accountService = accountService;
     this.id = this.accountService.accountValue.id;
@@ -139,7 +143,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
                 this.userFunctions = account.userFunctions.slice();
 
                 this.account = account;
-                this.scheduleIndexer = account.schedules.length > 0 ? parseInt(account.schedules[account.schedules.length - 1].id) : 0;
 
                 this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
 
@@ -149,6 +152,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
                   .subscribe({
                     next: (pollElements) => {
                       this.poolElements = pollElements.schedulePoolElements;
+                      this.fixUpPoolDateStrings();
                       if (this.poolElements.length != 0) {
                         this.form.get('availableSchedule4Function').setValue(this.getConcatPoolElement(this.poolElements[0]));
                       }
@@ -184,9 +188,9 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   private getConcatPoolElement(poolElement: SchedulePoolElement): string {
     if (this.poolElements[0].userFunction == this.CLEANER_STR) {
-      return this.getDisplayDate(poolElement.date) + "/" + poolElement.userFunction + "/" + poolElement.scheduleGroup;
+      return poolElement.date + "/" + poolElement.userFunction + "/" + poolElement.scheduleGroup;
     } else {
-      return this.getDisplayDate(poolElement.date) + "/" + poolElement.userFunction;
+      return poolElement.date + "/" + poolElement.userFunction;
     }
   }
 
@@ -235,7 +239,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    var schedule = this.createSchedule4DateAndFunction('availableSchedule4Function');
+    var schedule = this.createScheduleFromAvailableDateString('availableSchedule4Function');
     if (schedule == null) {
       return;
     }
@@ -267,93 +271,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
         }
       });
   }
-
-  updateSchedulesAndPoolFromServer() {
-    this.accountService.getById(this.id)
-      .pipe(first())
-      .subscribe({
-        next: (account) => {
-          this.initSchedules(account);
-
-          this.accountService.getAvailableSchedules(account.id)
-            .pipe(first())
-            .subscribe({
-              next: (pollElements) => {
-                console.log("Pool Elements:" + pollElements);
-                this.poolElements = pollElements.schedulePoolElements;
-
-                if (this.poolElements.length != 0) {
-                  this.form.get('availableSchedule4Function').setValue(this.getConcatPoolElement(this.poolElements[0]));
-                }
-              },
-              error: error => {
-                this.alertService.error(error);
-              }
-            });
-        },
-        error: error => {
-          this.alertService.error(error);
-        }
-      });
-  }
-  createSchedule4DateAndFunction(dateFormControlName: string): Schedule {
-    var dateAndFuncStr = this.form.controls[dateFormControlName].value;
-    const array = dateAndFuncStr.split("/");
-
-    var dateTimeStr = TimeHandler.displayStr2LocalIsoString(array[0]);
-    var formDate = Date.parse(dateTimeStr);
-    var formDateStr = array[0];
-    var formFunction = array[1];
-    var cleanerGroup = array[2];
-
-    var sDate = this.reverseScheduleLookup(formDateStr);
-
-    for (let index = 0; index < this.schedules.length; index++) {
-      var scheduleDate = new Date(this.schedules[index].date);
-      var scheduleTime = scheduleDate.getTime();
-      var scheduleFunction = this.schedules[index].userFunction;
-      if (scheduleTime == formDate && scheduleFunction == formFunction) {
-        this.alertService.warn("You are already " + scheduleFunction + " for that date/time");
-        return null;
-      }
-    }
-
-    var localISOTime = TimeHandler.displayStr2LocalIsoString(formDateStr);
-
-    var schedule: Schedule = {
-      id: (++this.scheduleIndexer).toString(),
-      date: sDate/* localISOTime as any */,
-      newDate: sDate/* localISOTime as any */,
-      required: true,
-      deleting: false,
-      userAvailability: true,
-      scheduleGroup: cleanerGroup,
-      userFunction: formFunction,
-      newUserFunction: formFunction
-    }
-    return schedule;
-  }
-
-  reverseScheduleLookup(dateStr: string): Date {
-    for (let index = 0; index < this.poolElements.length; index++) {
-      const schedule = this.poolElements[index];
-      var dStr = this.getDisplayDate(schedule.date);
-      if (dStr == dateStr)
-        return schedule.date;
-    }
-    return null;
-  }
-  isScheduleFromPast(schedule: Schedule) {
-    var scheduleLocalDate = moment(moment.utc(schedule.date)).local().toDate(); // NEW CODE
-    var scheduleLocalDateMs = scheduleLocalDate.getTime(); // NEW CODE 
-
-    var localNowMs = Date.now();
-    if ((scheduleLocalDateMs - localNowMs) < VALID_TO_SERVICE_TIMEOUT) {
-      return true;
-    }
-    return false;
-  }
-
   onDeleteSchedule(event: any, scheduleId: string, indx: string, schedule2Delete: Schedule) { // i is schedule index
     schedule2Delete.deleting = true;
     this.accountService.MoveSchedule2Pool(this.account.id, schedule2Delete)
@@ -374,9 +291,37 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   }
 
-  onRowSelected(schedule: Schedule, tr: any) {
-  }
 
+  updateSchedulesAndPoolFromServer() {
+    this.accountService.getById(this.id)
+      .pipe(first())
+      .subscribe({
+        next: (account) => {
+          this.initSchedules(account);
+
+          this.accountService.getAvailableSchedules(account.id)
+            .pipe(first())
+            .subscribe({
+              next: (pollElements) => {
+                console.log("Pool Elements:" + pollElements);
+                this.poolElements = pollElements.schedulePoolElements;
+                
+                this.fixUpPoolDateStrings();
+
+                if (this.poolElements.length != 0) {
+                  this.form.get('availableSchedule4Function').setValue(this.getConcatPoolElement(this.poolElements[0]));
+                }
+              },
+              error: error => {
+                this.alertService.error(error);
+              }
+            });
+        },
+        error: error => {
+          this.alertService.error(error);
+        }
+      });
+  }
   initSchedules(account: Account) {
 
     var schedules: Schedule[] = [];
@@ -399,14 +344,78 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     }
     this.schedules = schedules.slice();
 
+
+    // Fix up the date string for the schedules
+    this.fixUpScheduleDateStrings();
+
+
     this.dataSource = new MatTableDataSource(this.schedules);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
   }
 
-  getDisplayDate(date: Date): string {
-    return TimeHandler.getDateDisplayStrFromShortFormat(moment(moment.utc(date)).local().toDate());
+  // Fix up the date string for the pools
+  private fixUpPoolDateStrings() {
+    this.poolElements.forEach(element => {
+      var date = new Date(element.date);
+      var dateTimeStr = this.datePipe.transform(date, Constants.pipeDateTimeFormat);
+      element.date = dateTimeStr;
+    });
+  }
+
+  // Fix up the date string for the schedules
+  private fixUpScheduleDateStrings() {
+    this.schedules.forEach(element => {
+      var date = new Date(element.date);
+      var dateTimeStr = this.datePipe.transform(date, Constants.pipeDateTimeFormat);
+      element.date = dateTimeStr;
+    });
+  }
+
+
+  createScheduleFromAvailableDateString(dateFormControlName: string): Schedule {
+    var dateAndFuncStr = this.form.controls[dateFormControlName].value;
+    const array = dateAndFuncStr.split("/");
+
+    var formDateStr = array[0];
+    var formFunction = array[1];
+    var cleanerGroup = array[2];
+
+    var formMs = Date.parse(array[0]);
+    for (let index = 0; index < this.schedules.length; index++) {
+      var scheduleMs = new Date(this.schedules[index].date).getTime();
+      var scheduleFunction = this.schedules[index].userFunction;
+      if (scheduleMs == formMs && scheduleFunction == formFunction) {
+        this.alertService.warn("You are already " + scheduleFunction + " for that date/time");
+        return null;
+      }
+    }
+
+    var schedule: Schedule = {
+      date: formDateStr,
+      newDate: formDateStr,
+      required: true,
+      deleting: false,
+      userAvailability: true,
+      scheduleGroup: cleanerGroup,
+      userFunction: formFunction,
+      newUserFunction: formFunction
+    }
+    return schedule;
+  }
+
+  isScheduleFromPast(schedule: Schedule) {
+    var scheduleLocalDate = moment(moment.utc(schedule.date)).local().toDate(); // NEW CODE
+    var scheduleLocalDateMs = scheduleLocalDate.getTime(); // NEW CODE 
+
+    var localNowMs = Date.now();
+    if ((scheduleLocalDateMs - localNowMs) < VALID_TO_SERVICE_TIMEOUT) {
+      return true;
+    }
+    return false;
+  }
+
+  onRowSelected(schedule: Schedule, tr: any) {
   }
 
   get isAdmin() {

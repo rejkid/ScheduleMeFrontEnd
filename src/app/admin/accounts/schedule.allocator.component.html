@@ -86,10 +86,11 @@
             <mat-cell *matCellDef="let schedule">
                 <!--mat-form-field appearance="outline"-->
                 <input type="text" matInput (dateChange)="onDateChanged($event, schedule)"
-                    [value]="convertServerDate2LocalStr(schedule.date)" readonly>
+                    [value]="schedule.date" readonly>
 
+                <!-- The code below adds date/time picker - which right now I don't want -->
                 <!-- <input matInput [ngxMatDatetimePicker]="picker" (dateChange)="onDateChanged($event, schedule)"
-                        [value]="convertServerDate2Local(schedule.date)" [readonly]="true">
+                        [value]="schedule.date" [readonly]="true">
                     <mat-datepicker-toggle matIconSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                     <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
                         [stepMinute]="1" [stepSecond]="1" [touchUi]="true" [color]="color" [enableMeridian]="false"
@@ -133,16 +134,12 @@
 
         <ng-container matColumnDef="action">
             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-            <mat-cell *matCellDef="let i = index; let schedule; let row">
-                <button mat-raised-button color="warn" (click)="onDeleteSchedule(i, schedule, row)">
+            <mat-cell *matCellDef="let rowIndex = index; let schedule;">
+                <button mat-raised-button color="warn" (click)="onDeleteSchedule(rowIndex, schedule)">
                     <span *ngIf="schedule.deleting" class="spinner-border spinner-border-sm mr-1"></span>Delete
                 </button>
             </mat-cell>
         </ng-container>
-        <!--mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row class="table-row" *matRowDef="let row; columns: displayedColumns; let i = index;" 
-            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false" #tr (click)="onRowSelected(row, tr, i)" [ngClass]="{'highlight': selectedRowIndex == i}">
-        </mat-row-->
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
             [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr (click)="onRowSelected(row, tr, i)"

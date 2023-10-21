@@ -1,7 +1,7 @@
 export class Schedule {
-    id: string;
-    date: Date;
-    newDate: Date;
+    //id: string;
+    date: string;
+    newDate: string;
     required: boolean;
     userAvailability: boolean;
 

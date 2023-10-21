@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -12,14 +12,12 @@ import { AccountService, AlertService } from 'src/app/_services';
 import { environment } from 'src/environments/environment';
 
 import { MatTableDataSource } from '@angular/material/table';
-import { SelectionModel } from '@angular/cdk/collections';
 
-import { MAT_DATE_FORMATS, ThemePalette } from '@angular/material/core';
-import { interval, timer } from 'rxjs';
+import { DatePipe, UpperCasePipe } from '@angular/common';
+import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
 import * as signalR from '@microsoft/signalr';
-import { UpperCasePipe } from '@angular/common';
 import { Constants } from '../../constants';
 
 const COLUMNS_SCHEMA = [
@@ -51,15 +49,14 @@ const COLUMNS_SCHEMA = [
 })
 
 export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
-  convertServerDate2Local = TimeHandler.convertServerDate2Local; // getter for TimeHandler.convertServerDate2Local static method
 
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
   readonly CLEANER_STR = Constants.CLEANER_STR;
 
-  dateFormat = `${environment.dateTimeFormat}`;
-  dateTimeFormat = `${environment.dateTimeFormat}`;
+  dateFormat = Constants.dateTimeFormat;
+  dateTimeFormat = Constants.dateTimeFormat;
 
   form: FormGroup;
   @Output() onScheduledAdded: EventEmitter<any>;
@@ -67,7 +64,6 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   dataSource: MatTableDataSource<Schedule>;
 
-  scheduleIndexer: number = 0;
   schedules: Schedule[] = [];
   userFunctionIndexer: number = 0;
   functions: string[] = [];
@@ -100,7 +96,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
-    private uppercasePipe: UpperCasePipe) {
+    private uppercasePipe: UpperCasePipe,
+    private datePipe: DatePipe) {
 
     this.accountService = accountService;
     this.onScheduledAdded = new EventEmitter();
@@ -151,7 +148,6 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
               }
 
               this.account = account;
-              this.scheduleIndexer = account.schedules.length > 0 ? parseInt(account.schedules[account.schedules.length - 1].id) : 0;
               this.onScheduledAdded.emit(this.schedules);
               this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
 
@@ -253,31 +249,28 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   createSchedule(dateStr: string, functionStr: string): Schedule {
     var formDate = new Date(this.form.controls[dateStr].value);
     formDate.setSeconds(0); // Re-set seconds to zero
-    var formTime = formDate.getTime();
+    var formTimeStr = this.datePipe.transform(formDate, Constants.pipeDateTimeFormat);
 
     var formFunction = this.form.controls[functionStr].value;
 
     for (let index = 0; index < this.schedules.length; index++) {
-      var scheduleTime = TimeHandler.convertServerDate2Local(this.schedules[index].date).getTime();
+      var scheduleTime = new Date(this.schedules[index].date).getTime();
+      var scheduleTimeStr = this.schedules[index].date;
+
       var scheduleFunction = this.schedules[index].userFunction;
-      if (scheduleTime == formTime && scheduleFunction == formFunction) {
+      if (scheduleTimeStr == formTimeStr && scheduleFunction == formFunction) {
         this.alertService.warn("The user is already " + scheduleFunction + " for that date/time");
         return null;
       }
     }
-
-    var test = this.form.controls[dateStr].value;
-    var newDate: Date = new Date(this.form.controls[dateStr].value);
-    newDate.setSeconds(0);
 
     var scheduleGroupVal = "";
     if (this.form.controls['cleanerGroup'].enabled) {
       scheduleGroupVal = this.form.controls['cleanerGroup'].value;
     }
     var schedule: Schedule = {
-      id: (++this.scheduleIndexer).toString(),
-      date: newDate,
-      newDate: newDate,
+      date: formTimeStr,
+      newDate: formTimeStr,
       required: true,
       deleting: false,
       userAvailability: true,
@@ -287,19 +280,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     }
     return schedule;
   }
-  onDeleteSchedule(i: string, schedule2Delete: Schedule, row : any) { // i is table index
-    // var found: number = -1;
-    // var schedule2Delete: Schedule = null;
-
-    // for (let index = 0; index < this.schedules.length; index++) {
-    //   if (index === parseInt(i)) {
-    //     found = index; // array index not a table
-    //     schedule2Delete = this.schedules[index];
-    //     schedule2Delete.deleting = true;
-    //     break;
-    //   }
-    // }
-
+  onDeleteSchedule(rowIndex: string, schedule2Delete: Schedule) { // rowIndex is table index
     schedule2Delete.deleting = true;
     this.accountService.deleteSchedule(this.account.id, schedule2Delete)
       .pipe(first())
@@ -342,8 +323,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     var t = typeof (dateTime === 'Date');
 
     var newDate: Date = event.value.toDate(); // Convert moment to Date
-    schedule.newDate = newDate;
-    schedule.newDate.setSeconds(0); // Little trick which does what mat angular should have done - reset seconds
+    schedule.newDate = newDate.setSeconds(0).toString();
+    //schedule.newDate.setSeconds(0); // Little trick which does what mat angular should have done - reset seconds
     schedule.newUserFunction = schedule.userFunction;
 
     this.updateSchedules(schedule);
@@ -389,7 +370,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     this.currentSelectedSchedule = schedule;
 
     if (!schedule.deleting) {
-      this.form.get('scheduledDate').setValue(TimeHandler.convertServerDate2Local(schedule.date));
+      var date = moment(schedule.date, Constants.dateTimeFormat).toDate();
+      this.form.get('scheduledDate').setValue(date);
       this.form.get('function').setValue(schedule.userFunction);
       this.form.get('cleanerGroup').setValue(schedule.scheduleGroup);
     }
@@ -406,7 +388,14 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   } 
 
   initSchedules(account: Account) {
+    var date = 
     this.schedules = account.schedules.slice();
+    // Fix up the date string for the schedules
+    this.schedules.forEach(element => {
+      var date = new Date(element.date);
+      var dateTimeStr = this.datePipe.transform(date, Constants.pipeDateTimeFormat);
+      element.date = dateTimeStr;
+    }); 
 
     this.dataSource = new MatTableDataSource(this.schedules);
     this.dataSource.paginator = this.paginator;
@@ -420,9 +409,5 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     if(this.form == undefined)
      return false;
     return this.form.get('function').value === this.CLEANER_STR
-  }
-
-  convertServerDate2LocalStr(date: Date): string {
-    return TimeHandler.getDateDisplayStrFromFormat(moment(moment.utc(date)).local().toDate());
   }
 }

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { TimeHandler } from '../_helpers/time.handler';
 import { MatDatepicker } from '@angular/material/datepicker';
+import { Constants } from '../constants';
 
 @Component({
   selector: 'app-dob',
@@ -14,7 +15,7 @@ import { MatDatepicker } from '@angular/material/datepicker';
 export class DOBComponent implements OnInit {
   @ViewChild(MatDatepicker) datepicker: MatDatepicker<Date>;
 
-  DATE_FORMAT = `${environment.dateFormat}`;
+  DATE_FORMAT = Constants.dateFormat;
   form: FormGroup;
 
   constructor(

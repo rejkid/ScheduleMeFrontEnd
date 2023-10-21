@@ -1,13 +1,14 @@
 import { Directive } from '@angular/core';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
+import { Constants } from 'src/app/constants';
 import { environment } from 'src/environments/environment';
 
 export const FORMAT = {
   parse: {
-    dateInput: `${environment.dateFormat}`,
+    dateInput: Constants.dateFormat,
   },
   display: {
-    dateInput: `${environment.dateFormat}`,
+    dateInput: Constants.dateFormat,
     monthYearLabel: 'MMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY',

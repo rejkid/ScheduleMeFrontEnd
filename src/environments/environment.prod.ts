@@ -1,8 +1,5 @@
 export const environment = {
   production: true,
-  dateTimeFormat: 'DD-MM-YYYY HH:mm',
-  dateFormat: 'DD-MM-YYYY',
-  shortDateTimeFormat: 'DD.MM.YY HH:mm',
 
   //apiUrl: 'https://49.176.185.39:4000'
   apiUrl: 'https://oloaschedulemebackend.azurewebsites.net/',

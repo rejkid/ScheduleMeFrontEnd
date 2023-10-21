@@ -7,11 +7,12 @@ export function MustMatch(controlName: string, matchingControlName: string) {
         const matchingControl = formGroup.controls[matchingControlName];
 
         /* JD Start */
-        /*
+        
         var title = formGroup.controls['title'];
         var firstName = formGroup.controls['firstName'];
         var lastName = formGroup.controls['lastName'];
         var email = formGroup.controls['email'];
+        var phoneNumber = formGroup.controls['phoneNumber'];
         var role = formGroup.controls["role"];
         var dob = formGroup.controls['dob'];
         var password = formGroup.controls['password'];
@@ -30,6 +31,9 @@ export function MustMatch(controlName: string, matchingControlName: string) {
 
         if (email != null)
             console.log("email:" + email!.valid + "\ttouched:" + email!.touched + "\tdirty:" + email!.dirty);
+
+        if (phoneNumber != null)
+            console.log("phoneNumber:" + phoneNumber!.valid + "\ttouched:" + phoneNumber!.touched + "\tdirty:" + phoneNumber!.dirty);
 
         if (role != null)
             console.log("role:" + role!.valid + "\ttouched:" + role!.touched + "\tdirty:" + role!.dirty);
@@ -52,14 +56,15 @@ export function MustMatch(controlName: string, matchingControlName: string) {
             && firstName && firstName!.valid
             && lastName && lastName!.valid
             && email && email.valid
-            && role && role.valid
-            // && dob        && dob.valid
+            && role == undefined || ( role && role.valid)
+            && dob        && dob.valid
+            && phoneNumber && phoneNumber.valid
             && password && password.valid
             && confirmPassword && confirmPassword.valid
             && password.value === confirmPassword.value;
 
         console.log("FormGroup VALID STATE:" + success);
-        */
+        
         /* JD End */
 
         if (matchingControl.errors && !matchingControl.errors['mustMatch']) {

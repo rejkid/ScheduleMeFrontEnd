@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { AccountRoutingModule } from './account-routing.module';
 import { LayoutComponent } from './layout.component';
@@ -23,58 +23,63 @@ import { NgxMatDateAdapter, NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_M
 import { NgxMatMomentAdapter, NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
 import { environment } from 'src/environments/environment';
 import { MatSelectModule } from '@angular/material/select';
+import { Constants } from '../constants';
 
 // If using Moment
 const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
-    parse: {
-      dateInput: `${environment.dateFormat}`,
-    },
-    display: {
-      dateInput: `${environment.dateFormat}`,
-      monthYearLabel: 'MMM YYYY',
-      dateA11yLabel: 'LL',
-      monthYearA11yLabel: 'MMMM YYYY',
-    },
-  };
-  
-@NgModule({
-    imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        AccountRoutingModule,
+  parse: {
+    dateInput: Constants.dateFormat,
+  },
+  display: {
+    dateInput: Constants.dateFormat,
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
-        MaterialModule,
-        MatSortModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatButtonModule,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatInputModule,
-        MatFormFieldModule,
-        NgxMatDatetimePickerModule,
-        NgxMatMomentModule,
-        MatSelectModule,
-    
-    ],
-    declarations: [
-        LayoutComponent,
-        LoginComponent,
-        RegisterComponent,
-        VerifyEmailComponent,
-        ForgotPasswordComponent,
-        ResetPasswordComponent
-    ],
-    providers: [
-        {
-          provide: NgxMatDateAdapter,
-          useClass: NgxMatMomentAdapter, //Moment adapter
-          deps: [MAT_DATE_LOCALE, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS]
-        },
-        // values
-        { 
-          provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS  
-        },
-      ],
+@NgModule({
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    AccountRoutingModule,
+
+    MaterialModule,
+    MatSortModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatFormFieldModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule,
+    MatSelectModule,
+
+
+  ],
+  declarations: [
+    LayoutComponent,
+    LoginComponent,
+    RegisterComponent,
+    VerifyEmailComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
+
+
+  ],
+  providers: [
+    DatePipe,
+    {
+      provide: NgxMatDateAdapter,
+      useClass: NgxMatMomentAdapter, //Moment adapter
+      deps: [MAT_DATE_LOCALE, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS]
+    },
+    // values
+    {
+      provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS
+    },
+  ],
 })
 export class AccountModule { }

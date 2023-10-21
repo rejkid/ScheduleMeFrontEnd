@@ -14,10 +14,11 @@ export class Account {
     userFunctions: UserFunction[] = [];
     jwtToken?: string;
     date: Date;
-    dob: Date;
+    dob: string;
     availability: boolean;
     password: string;
     confirmPassword : string
     isVerified : boolean
     isDeleting : boolean
+    acceptTerms : boolean
 }

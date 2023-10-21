@@ -14,13 +14,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Constants } from '../constants';
 
 export const CUSTOM_MOMENT_FORMATS = {
   parse: {
-    dateInput: `${environment.dateFormat}`,
+    dateInput: Constants.dateFormat,
   },
   display: {
-    dateInput: `${environment.dateFormat}`,
+    dateInput: Constants.dateFormat,
     monthYearLabel: 'MMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY',

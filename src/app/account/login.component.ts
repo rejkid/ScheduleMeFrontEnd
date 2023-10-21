@@ -7,6 +7,8 @@ import { AccountService, AlertService } from '../_services';
 import * as moment from 'moment';
 import { TimeHandler } from '../_helpers/time.handler';
 import { environment } from 'src/environments/environment';
+import { DatePipe } from '@angular/common'
+import { Constants } from '../constants';
 
 
 @Component(
@@ -15,7 +17,7 @@ import { environment } from 'src/environments/environment';
         styleUrls: ['login.component.less'],
     })
 export class LoginComponent implements OnInit {
-    DATE_FORMAT = `${environment.dateFormat}`;
+    DATE_FORMAT = Constants.dateFormat;
 
     form: FormGroup;
     loading = false;
@@ -26,7 +28,8 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
@@ -35,7 +38,7 @@ export class LoginComponent implements OnInit {
             password: ['', Validators.required],
             dob: ['', [Validators.required , TimeHandler.dateValidator]],
         });
-        this.form.get('dob').setValue(new Date());
+        this.form.get('dob').setValue(this.datePipe.transform(new Date(), Constants.pipeDateFormat));
     }
 
     // convenience getter for easy access to form fields
@@ -53,7 +56,7 @@ export class LoginComponent implements OnInit {
         }
 
         this.loading = true;
-        this.accountService.login(this.f['email'].value, this.f['password'].value, this.f['dob'].value)
+        this.accountService.login(this.f['email'].value, this.f['password'].value, this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat))
             .pipe(first())
             .subscribe({
                 next: () => {

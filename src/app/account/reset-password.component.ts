@@ -91,8 +91,4 @@ export class ResetPasswordComponent implements OnInit {
                 }
             });
     }
-    getDisplayDate(date: Date): string {
-        var str = TimeHandler.getDateDisplayStrFromFormat(date);
-        return TimeHandler.getDateDisplayStrFromFormat(date);
-    }
 }

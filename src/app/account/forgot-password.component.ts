@@ -5,11 +5,13 @@ import { first, finalize } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { TimeHandler } from '../_helpers/time.handler';
 import { AccountService, AlertService } from '../_services';
+import { DatePipe } from '@angular/common';
+import { Constants } from '../constants';
 
 
 @Component({ templateUrl: 'forgot-password.component.html' })
 export class ForgotPasswordComponent implements OnInit {
-    DATE_FORMAT = `${environment.dateFormat}`;
+    DATE_FORMAT = Constants.dateFormat;
 
     form: FormGroup;
     loading = false;
@@ -18,7 +20,8 @@ export class ForgotPasswordComponent implements OnInit {
     constructor(
         private formBuilder: FormBuilder,
         private accountService: AccountService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private datePipe: DatePipe
     ) { }
 
     ngOnInit() {
@@ -44,7 +47,7 @@ export class ForgotPasswordComponent implements OnInit {
         }
         this.loading = true;
         this.alertService.clear();
-        this.accountService.forgotPassword(this.f['email'].value, this.f['dob'].value)
+        this.accountService.forgotPassword(this.f['email'].value, this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat))
             .pipe(first())
             .pipe(finalize(() => this.loading = false))
             .subscribe({

@@ -9,5 +9,5 @@ export class User {
     email: string;
     function: string;
     scheduleGroup : string;
-    date: Date;
+    date: string;
 }

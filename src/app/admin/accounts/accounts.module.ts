@@ -1,41 +1,41 @@
 import { NgModule } from '@angular/core';
 //import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule, UpperCasePipe } from '@angular/common';
+import { CommonModule, DatePipe, UpperCasePipe } from '@angular/common';
 
-import { AccountsRoutingModule } from './accounts-routing.module';
+import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDateFormats, NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
+import { NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS, NgxMatMomentAdapter, NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ScheduleModule } from 'src/app/schedule/schedule.module';
-import { ListComponent } from './list.component';
-import { AddEditComponent } from './add-edit.component';
-import { FunctionComponent } from './function.component';
-import { ScheduleAllocatorComponent } from './schedule.allocator.component';
-import { MatTableModule } from '@angular/material/table';
-import { MaterialModule } from 'src/app/material/material.module';
-import { MatSortModule } from '@angular/material/sort';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_DATE_LOCALE, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { DateAdapter, MatNativeDateModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE, NativeDateAdapter } from '@angular/material/core';
-import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { NgxMatDateAdapter, NgxMatDateFormats, NgxMatDatetimePickerModule, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
-import { NgxMatMomentAdapter, NgxMatMomentModule, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular-material-components/moment-adapter';
-import { environment } from 'src/environments/environment';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
-import { DOBModule } from 'src/app/dob/dob.module';
-import { MatProgressBarModule  } from '@angular/material/progress-bar'; 
-import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
-import { CustomDateFormatDirective } from './custom-date-format.directive';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { PhonePipe } from 'src/app/_helpers/phone-pipe';
+import { Constants } from 'src/app/constants';
+import { DOBModule } from 'src/app/dob/dob.module';
+import { MaterialModule } from 'src/app/material/material.module';
+import { ScheduleModule } from 'src/app/schedule/schedule.module';
+import { AccountsRoutingModule } from './accounts-routing.module';
+import { AddEditComponent } from './add-edit.component';
+import { CustomDateFormatDirective } from './custom-date-format.directive';
+import { FunctionComponent } from './function.component';
+import { ListComponent } from './list.component';
+import { ScheduleAllocatorComponent } from './schedule.allocator.component';
+import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 
 
 // If using Moment
 const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
   parse: {
-    dateInput: `${environment.dateTimeFormat}`,
+    dateInput: Constants.dateTimeFormat,
   },
   display: {
-    dateInput: `${environment.dateTimeFormat}`,
+    dateInput: Constants.dateTimeFormat,
     monthYearLabel: 'MMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY',
@@ -47,7 +47,7 @@ export class AppDateAdapter extends NativeDateAdapter {
 
   override format(date: Date, displayFormat: Object): string {
 
-      if (displayFormat === `${environment.dateFormat}`) {
+      if (displayFormat === Constants.dateFormat) {
 
           const day = date.getDate();
           var dayStr = day.toString().padStart(2, '0')
@@ -94,10 +94,12 @@ export class AppDateAdapter extends NativeDateAdapter {
     ScheduleAllocatorComponent,
     UploadAccountsComponent,
     CustomDateFormatDirective,
-    PhonePipe
+    PhonePipe,
+    
 
   ],
   providers: [
+    DatePipe,
     {
       provide: UpperCasePipe
     },
@@ -107,9 +109,9 @@ export class AppDateAdapter extends NativeDateAdapter {
       deps: [MAT_DATE_LOCALE, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS]
     },
     // values
-    { 
-      provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS  
-      
+    {
+      provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS
+
     },
     // {
     //   provide: DateAdapter, useClass: AppDateAdapter
