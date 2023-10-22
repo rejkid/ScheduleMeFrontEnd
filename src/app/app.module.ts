@@ -1,35 +1,37 @@
-﻿import { NgModule, APP_INITIALIZER } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { BrowserModule } from '@angular/platform-browser';
 
 // used to create fake backend
 //import { fakeBackendProvider } from './_helpers';
 
-import { AppRoutingModule } from './app-routing.module';
-import { JwtInterceptor, ErrorInterceptor, appInitializer } from './_helpers';
-import { AccountService } from './_services';
-import { AppComponent } from './app.component';
-import { AlertComponent } from './_components';
-import { HomeComponent } from './home';;
-import { RaportForDateComponent } from './raport-for-date/raport-for-date.component';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AlertComponent } from './_components';
+import { ErrorInterceptor, JwtInterceptor, appInitializer } from './_helpers';
+import { AccountService } from './_services';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 import { FloatingSchedulesComponent } from './floating-schedules/floating-schedules.component';
+import { HomeComponent } from './home';
+import { RaportForDateComponent } from './raport-for-date/raport-for-date.component';
+;
 
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { MaterialModule } from './material/material.module';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatInputModule } from '@angular/material/input';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaterialModule } from './material/material.module';
 
 import { OrderByDatePipe } from './order-by-date.pipe';
+import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
 
 @NgModule({
     imports: [
@@ -52,7 +54,8 @@ import { OrderByDatePipe } from './order-by-date.pipe';
         MatInputModule,
         MatFormFieldModule,
         NgxMatDatetimePickerModule,
-        NgxMatNativeDateModule 
+        NgxMatNativeDateModule,
+        
     ],
     exports: [
         MaterialModule,
@@ -70,7 +73,6 @@ import { OrderByDatePipe } from './order-by-date.pipe';
         OrderByDatePipe,
     ],
     providers: [
-        DatePipe,
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

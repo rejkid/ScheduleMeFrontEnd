@@ -1,22 +1,20 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { CheckboxControlValueAccessor, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ThemePalette } from '@angular/material/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import * as signalR from '@microsoft/signalr';
+import * as moment from 'moment';
+import { first } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { Account, Role } from '../_models';
 import { Schedule } from '../_models/schedule';
 import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { UserFunction } from '../_models/userfunction';
 import { AccountService, AlertService } from '../_services';
-import { first } from 'rxjs/operators';
-import * as moment from 'moment';
-import { environment } from 'src/environments/environment';
-import { TimeHandler } from '../_helpers/time.handler';
-import { MatTableDataSource } from '@angular/material/table';
-import { ThemePalette } from '@angular/material/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable } from '@angular/material/sort';
-import * as signalR from '@microsoft/signalr';
 import { Constants } from '../constants';
-import { DatePipe } from '@angular/common';
 
 const COLUMNS_SCHEMA = [
   {
@@ -89,8 +87,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private alertService: AlertService,
-    private cdr: ChangeDetectorRef,
-    private datePipe: DatePipe) {
+    private cdr: ChangeDetectorRef) {
 
     this.accountService = accountService;
     this.id = this.accountService.accountValue.id;
@@ -358,7 +355,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   private fixUpPoolDateStrings() {
     this.poolElements.forEach(element => {
       var date = new Date(element.date);
-      var dateTimeStr = this.datePipe.transform(date, Constants.pipeDateTimeFormat);
+      var dateTimeStr = moment(date).format(Constants.dateTimeFormat);
       element.date = dateTimeStr;
     });
   }
@@ -367,7 +364,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   private fixUpScheduleDateStrings() {
     this.schedules.forEach(element => {
       var date = new Date(element.date);
-      var dateTimeStr = this.datePipe.transform(date, Constants.pipeDateTimeFormat);
+      var dateTimeStr = moment(date).format(Constants.dateTimeFormat);
       element.date = dateTimeStr;
     });
   }

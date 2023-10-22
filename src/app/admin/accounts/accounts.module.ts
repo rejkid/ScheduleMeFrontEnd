@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 //import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule, DatePipe, UpperCasePipe } from '@angular/common';
+import { CommonModule, UpperCasePipe } from '@angular/common';
 
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDateFormats, NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
 import { NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS, NgxMatMomentAdapter, NgxMatMomentModule } from '@angular-material-components/moment-adapter';
@@ -15,13 +15,11 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { PhonePipe } from 'src/app/_helpers/phone-pipe';
 import { Constants } from 'src/app/constants';
 import { DOBModule } from 'src/app/dob/dob.module';
 import { MaterialModule } from 'src/app/material/material.module';
 import { ScheduleModule } from 'src/app/schedule/schedule.module';
 import { AccountsRoutingModule } from './accounts-routing.module';
-import { AddEditComponent } from './add-edit.component';
 import { CustomDateFormatDirective } from './custom-date-format.directive';
 import { FunctionComponent } from './function.component';
 import { ListComponent } from './list.component';
@@ -47,19 +45,19 @@ export class AppDateAdapter extends NativeDateAdapter {
 
   override format(date: Date, displayFormat: Object): string {
 
-      if (displayFormat === Constants.dateFormat) {
+    if (displayFormat === Constants.dateFormat) {
 
-          const day = date.getDate();
-          var dayStr = day.toString().padStart(2, '0')
-          var month = date.getMonth() + 1;
-          var monthStr = month.toString().padStart(2, '0')
-          const year = date.getFullYear();
-          var yearStr = year.toString().padStart(4, '0')
+      const day = date.getDate();
+      var dayStr = day.toString().padStart(2, '0')
+      var month = date.getMonth() + 1;
+      var monthStr = month.toString().padStart(2, '0')
+      const year = date.getFullYear();
+      var yearStr = year.toString().padStart(4, '0')
 
-          return `${yearStr}-${monthStr}-${dayStr}`;
-      }
+      return `${yearStr}-${monthStr}-${dayStr}`;
+    }
 
-      return date.toDateString();
+    return date.toDateString();
   }
 }
 
@@ -85,21 +83,18 @@ export class AppDateAdapter extends NativeDateAdapter {
     MatSelectModule,
     DOBModule,
     MatProgressBarModule,
-    
+
   ],
   declarations: [
     ListComponent,
-    AddEditComponent,
     FunctionComponent,
     ScheduleAllocatorComponent,
     UploadAccountsComponent,
     CustomDateFormatDirective,
-    PhonePipe,
-    
+
 
   ],
   providers: [
-    DatePipe,
     {
       provide: UpperCasePipe
     },

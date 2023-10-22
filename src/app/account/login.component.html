@@ -15,17 +15,13 @@
 
         <div class="row">
             <div class="mb-3">
-                <mat-form-field appearance="outline">
-                    <mat-label>DOB</mat-label>
-                    <input formControlName="dob" #ref matInput [ngxMatDatetimePicker]="picker"
-                        placeholder="Choose a date" required />
-                    <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+                <mat-form-field appearance="outline" >
+                    <mat-label>DOB+</mat-label>
+                    <input formControlName="dob" #ref matInput [matDatepicker]="picker" placeholder="Choose a date" required>
                     <mat-hint>{{DATE_FORMAT}}</mat-hint>
-                    <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
-                        [stepMinute]="1" [stepSecond]="1" [touchUi]="false" [color]="undefined" [enableMeridian]="false"
-                        [disableMinute]="false" [hideTime]="true">
-                    </ngx-mat-datetime-picker>
-                    <mat-error *ngIf="f['dob'].errors">Invalid DOB</mat-error>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="submitted && f['dob'].errors">Invalid DOB</mat-error>
                 </mat-form-field>
             </div>
         </div>

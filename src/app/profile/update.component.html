@@ -72,7 +72,7 @@
         <div class="col">
             <mat-form-field appearance="outline">
                 <mat-label>DOB</mat-label>
-                <input formControlName="dob" #ref matInput [matDatepicker]="picker" placeholder="Choose a date" required>
+                <input formControlName="dob" #ref matInput [min]="DATE_FORMAT.length" [max]="DATE_FORMAT.length" [matDatepicker]="picker" placeholder="Choose a date" required>
                 <mat-hint>{{DATE_FORMAT}}</mat-hint>
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
@@ -105,7 +105,7 @@
 
     <div class="mb-3">
         <button type="submit" [disabled]="loading" class="btn btn-primary mr-2"
-            [ngClass]="{ 'disabled': !form.controls['dob'].valid}">
+            [ngClass]="{ 'disabled': !form.valid}">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
             Update
         </button>

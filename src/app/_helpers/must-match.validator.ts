@@ -7,7 +7,7 @@ export function MustMatch(controlName: string, matchingControlName: string) {
         const matchingControl = formGroup.controls[matchingControlName];
 
         /* JD Start */
-        
+        /*
         var title = formGroup.controls['title'];
         var firstName = formGroup.controls['firstName'];
         var lastName = formGroup.controls['lastName'];
@@ -56,15 +56,15 @@ export function MustMatch(controlName: string, matchingControlName: string) {
             && firstName && firstName!.valid
             && lastName && lastName!.valid
             && email && email.valid
-            && role == undefined || ( role && role.valid)
+            && (role == undefined || ( role && role.valid))
             && dob        && dob.valid
             && phoneNumber && phoneNumber.valid
             && password && password.valid
             && confirmPassword && confirmPassword.valid
-            && password.value === confirmPassword.value;
+            && (password.value === confirmPassword.value);
 
         console.log("FormGroup VALID STATE:" + success);
-        
+        */
         /* JD End */
 
         if (matchingControl.errors && !matchingControl.errors['mustMatch']) {

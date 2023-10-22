@@ -3,7 +3,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { first } from 'rxjs/operators';
-import { TimeHandler } from 'src/app/_helpers/time.handler';
 import { Account, Role } from 'src/app/_models';
 import { Schedule } from 'src/app/_models/schedule';
 import { SchedulePoolElement } from 'src/app/_models/schedulepoolelement';
@@ -13,7 +12,7 @@ import { environment } from 'src/environments/environment';
 
 import { MatTableDataSource } from '@angular/material/table';
 
-import { DatePipe, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable } from '@angular/material/sort';
@@ -96,8 +95,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
-    private uppercasePipe: UpperCasePipe,
-    private datePipe: DatePipe) {
+    private uppercasePipe: UpperCasePipe) {
 
     this.accountService = accountService;
     this.onScheduledAdded = new EventEmitter();
@@ -242,14 +240,14 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   onInputFunc(date: HTMLInputElement, event : any ) {
     var k = event.key;
-    var val = this.uppercasePipe.transform(date.value)
+    
     var retVal = this.uppercasePipe.transform(event.key);
     return retVal;
   }
   createSchedule(dateStr: string, functionStr: string): Schedule {
     var formDate = new Date(this.form.controls[dateStr].value);
     formDate.setSeconds(0); // Re-set seconds to zero
-    var formTimeStr = this.datePipe.transform(formDate, Constants.pipeDateTimeFormat);
+    var formTimeStr = moment(formDate).format(Constants.dateTimeFormat);
 
     var formFunction = this.form.controls[functionStr].value;
 
@@ -393,7 +391,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     // Fix up the date string for the schedules
     this.schedules.forEach(element => {
       var date = new Date(element.date);
-      var dateTimeStr = this.datePipe.transform(date, Constants.pipeDateTimeFormat);
+      var dateTimeStr = moment(date).format(Constants.dateTimeFormat);
       element.date = dateTimeStr;
     }); 
 

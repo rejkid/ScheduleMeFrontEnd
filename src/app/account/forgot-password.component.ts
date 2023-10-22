@@ -1,11 +1,9 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
-import { first, finalize } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
+import { finalize, first } from 'rxjs/operators';
 import { TimeHandler } from '../_helpers/time.handler';
 import { AccountService, AlertService } from '../_services';
-import { DatePipe } from '@angular/common';
 import { Constants } from '../constants';
 
 
@@ -20,8 +18,7 @@ export class ForgotPasswordComponent implements OnInit {
     constructor(
         private formBuilder: FormBuilder,
         private accountService: AccountService,
-        private alertService: AlertService,
-        private datePipe: DatePipe
+        private alertService: AlertService
     ) { }
 
     ngOnInit() {
@@ -47,7 +44,7 @@ export class ForgotPasswordComponent implements OnInit {
         }
         this.loading = true;
         this.alertService.clear();
-        this.accountService.forgotPassword(this.f['email'].value, this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat))
+        this.accountService.forgotPassword(this.f['email'].value, moment(this.f['dob'].value).format(Constants.dateFormat))
             .pipe(first())
             .pipe(finalize(() => this.loading = false))
             .subscribe({

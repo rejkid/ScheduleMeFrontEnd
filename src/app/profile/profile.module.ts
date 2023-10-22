@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
@@ -12,7 +12,7 @@ import { NgxMatDatetimePickerModule } from '@angular-material-components/datetim
 import { NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { MatButtonModule } from '@angular/material/button';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -22,6 +22,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MaterialModule } from 'src/app/material/material.module';
 import { Constants } from '../constants';
+import * as moment from 'moment';
 
 const CUSTOM_MOMENT_FORMATS = {
   parse: {
@@ -34,7 +35,22 @@ const CUSTOM_MOMENT_FORMATS = {
     monthYearA11yLabel: 'MMMM YYYY',
   },
 };
-
+// export class UserDateAdapter extends NativeDateAdapter {
+//   override parse(value: any): Date | null {
+//    //Your custom parse method 
+//    if ((typeof value === 'string') && (value.indexOf('-') > -1) && 
+//         value.length == 10) {
+//           const str = value.split('-');
+//           const year = Number(str[2]);
+//           const month = Number(str[0]) - 1;
+//           const date = Number(str[1]);
+//           var dateStr = moment(new Date(year, month, date)).format(Constants.dateFormat);
+//           return moment(dateStr, Constants.dateFormat).toDate();
+//     } else {
+//            return new Date(undefined);
+//     }
+//   }
+// }
 @NgModule({
   imports: [
     CommonModule,
@@ -62,8 +78,7 @@ const CUSTOM_MOMENT_FORMATS = {
     UpdateComponent
   ],
   providers: [
-    DatePipe,
-    {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+    {provide: DateAdapter, useClass: /* UserDateAdapter */MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
     {provide: MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS},
 
   ],

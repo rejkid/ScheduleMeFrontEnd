@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
-import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
 import { MustMatch } from '../_helpers';
 import { Schedule } from '../_models/schedule';
 import { AccountService, AlertService } from '../_services';
 import { Constants } from '../constants';
+import { TimeHandler } from '../_helpers/time.handler';
 
 @Component({ templateUrl: 'update.component.html',
 styleUrls: ['./update.component.less'], })
@@ -29,18 +29,18 @@ export class UpdateComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService,
-        private datePipe: DatePipe
+        private alertService: AlertService
     ) { }
 
     ngOnInit() {
+        this.account.dob = moment(this.account.dob).format(Constants.dateFormat);
         var test = moment(this.account.dob, Constants.dateFormat).toDate();
         this.form = this.formBuilder.group({
             title: [this.account.title, Validators.required],
             firstName: [this.account.firstName, Validators.required],
             lastName: [this.account.lastName, Validators.required],
             email: [this.account.email, [Validators.required, Validators.email]],
-            dob: [moment(this.account.dob, Constants.dateFormat).toDate(), Validators.required],
+            dob: [moment(this.account.dob, Constants.dateFormat).toDate(), [Validators.required]],
             password: ['',  [Validators.minLength(6)]],
             confirmPassword: ['',  [Validators.minLength(6)]],
             phoneNumber: [this.account.phoneNumber ], // Phone number is optional
@@ -77,7 +77,7 @@ export class UpdateComponent implements OnInit {
 
         this.account.password = this.form.controls['password'].value;
         this.account.confirmPassword = this.form.controls['confirmPassword'].value;
-        this.account.dob = this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat); 
+        this.account.dob = moment(this.f['dob'].value).format(Constants.dateFormat); 
         this.account.schedules = this.schedules;
 
 

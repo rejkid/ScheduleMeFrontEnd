@@ -1,13 +1,11 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
-import { AccountService, AlertService } from '../_services';
 import * as moment from 'moment';
 import { TimeHandler } from '../_helpers/time.handler';
-import { environment } from 'src/environments/environment';
-import { DatePipe } from '@angular/common'
+import { AccountService, AlertService } from '../_services';
 import { Constants } from '../constants';
 
 
@@ -28,8 +26,7 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService,
-        private datePipe: DatePipe
+        private alertService: AlertService
     ) { }
 
     ngOnInit() {
@@ -38,7 +35,7 @@ export class LoginComponent implements OnInit {
             password: ['', Validators.required],
             dob: ['', [Validators.required , TimeHandler.dateValidator]],
         });
-        this.form.get('dob').setValue(this.datePipe.transform(new Date(), Constants.pipeDateFormat));
+        this.form.get('dob').setValue(moment(new Date()).format(Constants.dateFormat));
     }
 
     // convenience getter for easy access to form fields
@@ -56,7 +53,7 @@ export class LoginComponent implements OnInit {
         }
 
         this.loading = true;
-        this.accountService.login(this.f['email'].value, this.f['password'].value, this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat))
+        this.accountService.login(this.f['email'].value, this.f['password'].value, moment(this.f['dob'].value).format(Constants.dateFormat))
             .pipe(first())
             .subscribe({
                 next: () => {

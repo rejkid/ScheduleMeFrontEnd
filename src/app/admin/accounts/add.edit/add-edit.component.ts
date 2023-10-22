@@ -5,13 +5,13 @@ import { first } from 'rxjs/operators';
 import { MustMatch } from 'src/app/_helpers';
 import { TimeHandler } from 'src/app/_helpers/time.handler';
 
-import { DatePipe } from '@angular/common';
+import * as moment from 'moment';
 import { Account, Role } from 'src/app/_models';
 import { UserFunction } from 'src/app/_models/userfunction';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 
-@Component({ templateUrl: 'add-edit.component.html',
+@Component({ templateUrl: './add-edit.component.html',
 styleUrls: ['./add-edit.component.less'], })
 export class AddEditComponent implements OnInit, AfterViewInit {
 
@@ -27,14 +27,14 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     userFunctions: UserFunction[] = [];
     isLoaded: boolean = false;
     countryCodes: number[] = [];
+    fuck: string = "fuck"
 
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService,
-        private datePipe: DatePipe
+        private alertService: AlertService
     ) {
         this.roles = Object.values(Role).filter(value => typeof value === 'string') as string[]
 
@@ -54,7 +54,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             role: [this.roles[0], Validators.required],
-            dob: ['', [Validators.required, TimeHandler.dateTimeValidator]],
+            dob: ['', [Validators.required, TimeHandler.dateValidator]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
             confirmPassword: [''],
             phoneNumber: ["", [ ]],
@@ -70,8 +70,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                         // Edit mode
                         this.account = x; // initial account
                         this.form.patchValue(x);
-                        // Convert server datetime to local datetime
-                        this.form.get('dob').setValue(this.account.dob);
+                        this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
                     },
                     error: error => {
                         console.error(error);
@@ -111,7 +110,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         account.lastName = this.f['lastName'].value;
         account.email = this.f['email'].value;
         account.role = this.f['role'].value;
-        account.dob = this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat);
+        account.dob = moment(this.f['dob'].value).format(Constants.dateFormat);
         account.password = this.f['password'].value; 
         account.confirmPassword = this.f['confirmPassword'].value; 
         account.phoneNumber = this.f['phoneNumber'].value;
@@ -139,7 +138,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         account.lastName = this.f['lastName'].value;
         account.email = this.f['email'].value;
         account.role = this.f['role'].value;
-        account.dob = this.datePipe.transform(this.f['dob'].value, Constants.pipeDateFormat);
+        account.dob = moment(this.f['dob'].value).format(Constants.dateFormat);
         account.password = this.f['password'].value; 
         account.confirmPassword = this.f['confirmPassword'].value; 
         account.phoneNumber = this.f['phoneNumber'].value;
