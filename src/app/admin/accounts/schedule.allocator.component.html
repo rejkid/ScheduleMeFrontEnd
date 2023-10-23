@@ -15,7 +15,7 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Schedule</mat-label>
                         <input formControlName="scheduledDate" #ref matInput [ngxMatDatetimePicker]="picker"
-                            placeholder="Choose a date" [disabled]="false" required />
+                            placeholder="Choose a date" required />
                         <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                         <mat-hint>{{dateFormat}}</mat-hint>
                         <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"

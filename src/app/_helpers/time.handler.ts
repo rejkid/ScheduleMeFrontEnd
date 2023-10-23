@@ -9,6 +9,7 @@ import { Constants } from '../constants';
 export class TimeHandler {
     constructor() { }
     static dateValidator(AC: FormControl) {
+        /* For testing purpose */
         // if (AC.value instanceof Date) {
         //     var date = AC.value;
         //     console.log("AC.value:" + "Date")
@@ -18,7 +19,6 @@ export class TimeHandler {
         //     console.log("AC.value:" + "moment")
         // }
         
-        //console.log("DateValidator:"+(AC.value as string));
         if (AC && AC.value && !moment(AC.value, Constants.dateFormat, true).isValid()) {
             return { 'dateVaidator': true };
         }
