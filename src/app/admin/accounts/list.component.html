@@ -17,7 +17,14 @@
         <div class="col-2  gx-0">
             <a routerLink="upload" class="btn btn-sm btn-success mb-2">Upload Accounts</a>
         </div>
-        <div class="col-8">
+        <div class="col-3  gy-0">
+            <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn-success mb-2">
+                <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
+                Delete User's Accounts
+            </a>
+        </div>
+        <div class="col-2  gx-0">
+            <a routerLink="schedule-generate" class="btn btn-sm btn-success mb-2">Generate Schedules</a>
         </div>
     </div>
 </div>

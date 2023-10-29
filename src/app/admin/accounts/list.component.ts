@@ -7,12 +7,18 @@ import { AccountService, AlertService } from 'src/app/_services';
 export class ListComponent implements OnInit {
     accounts: Account[];
     autoEmail: Boolean;
+    isDeleting: boolean = false;
     //alertService: any;
 
     constructor(private accountService: AccountService,
         private alertService: AlertService) { }
 
     ngOnInit() {
+        this.refreshList();
+
+    }
+
+    private refreshList() {
         this.accountService.getAll()
             .pipe(first())
             .subscribe(accounts => {
@@ -26,7 +32,6 @@ export class ListComponent implements OnInit {
             .subscribe((autoEmail: any) => {
                 this.autoEmail = autoEmail;
             });
-
     }
 
     deleteAccount(id: string) {
@@ -40,6 +45,25 @@ export class ListComponent implements OnInit {
     }
     public get RoleAdminEnum() {
         return Role.Admin;
+    }
+    public onDeleteAllUserAccounts(event: Event) {
+        this.isDeleting = true;
+        this.accountService.deleteAllUserAccounts()
+            .pipe(first())
+            .subscribe({
+                next: (accounts: any) => {
+                    this.refreshList();
+                    console.log(accounts);
+                },
+                complete: () => {
+                    //this.alertService.info("Done");
+                    this.isDeleting = false;
+                },
+                error: error => {
+                    this.alertService.error(error);
+                    this.isDeleting = false;
+                }
+            });
     }
     public onChangeHandler(event: any, tr: any) {
         this.accountService.setAutoEmail(new Boolean(event.target.checked))

@@ -3,28 +3,39 @@
     <div class="container">
         <div class="row">
             <div class="mb-3 col-6">
-                <input type="file" class="file-input" (change)="onFileSelected($event)" #fileUpload accept=".xlsm" required>
-
                 <div class="file-upload">
 
                     {{fileName || "No file uploaded yet."}}
 
-                    <button mat-mini-fab color="primary" class="upload-btn" (click)="fileUpload.click()">
-                        <mat-icon>attach_file</mat-icon>
+                    <button type="button" color="primary" class="btn btn-primary upload-button"
+                        (click)="fileUpload.click()">
+                        <img src="/assets/images/Upload.png" />
                     </button>
-                </div>
-                <div class="progress">
 
-                    <mat-progress-bar class="progress-bar" mode="determinate" [value]="uploadProgress"
-                        *ngIf="uploadProgress">
-                    </mat-progress-bar>
+                </div>
+                <form method="post" enctype="multipart/form-data">
+                    <div>
+                        <!-- <label for="file">Choose file to upload</label> -->
+                        <input type="file" class="file-input" #fileUpload accept=".xlsm" required
+                            (change)="onFileSelected($event)" />
+                    </div>
+                </form>
+            </div>
+            <div class="container-fluid mb-1">
+                <div class="row">
+                    <div class="col-1">
+                        <button [disabled]="!fileHasBeenSelected || submitted" (click)="onSubmit($event, fileUpload)"
+                            class="btn btn-primary">Submit</button>
+                    </div>
+                    <div class="col-1">
+                        <a routerLink="../" class="btn btn-primary">Back</a>
+                    </div>
+                </div>
+            </div>
 
-                    <mat-icon class="cancel-upload" (click)="cancelUpload()"
-                        *ngIf="uploadProgress">delete_forever</mat-icon>
-                </div>
-                <div class="mb-3">
-                    <a routerLink="/admin/accounts" class="btn btn-link">Back</a>
-                </div>
+            <div *ngIf="submitted" col-12>
+                <label for="file">File progress:</label>
+                <progress #progressFile id="progress-bar" max="100" [value]=uploadProgress></progress>
             </div>
         </div>
     </div>

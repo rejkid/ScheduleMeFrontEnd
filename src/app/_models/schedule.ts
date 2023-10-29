@@ -1,5 +1,5 @@
 export class Schedule {
-    //id: string;
+    accountId: string;
     date: string;
     newDate: string;
     required: boolean;

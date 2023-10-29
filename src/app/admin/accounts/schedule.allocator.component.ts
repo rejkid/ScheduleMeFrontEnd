@@ -81,7 +81,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   isLoggedAsAdmin: boolean = false;
 
   currentSelectedSchedule : Schedule = null;
-  lastSelectedSchedule : Schedule = null;;
+  lastSelectedSchedule : Schedule = null;
   idx : number;
 
   poolElements: SchedulePoolElement[] = [];
@@ -143,6 +143,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
               } else {
                 this.form.get('cleanerGroup').addValidators(Validators.required);
                 this.form.get('cleanerGroup').addValidators(Validators.minLength(1));
+                this.form.get('cleanerGroup').setValue(account.scheduleGroup);
               }
 
               this.account = account;
@@ -267,6 +268,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       scheduleGroupVal = this.form.controls['cleanerGroup'].value;
     }
     var schedule: Schedule = {
+      accountId: this.account.id,
       date: formTimeStr,
       newDate: formTimeStr,
       required: true,

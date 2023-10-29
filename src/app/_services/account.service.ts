@@ -20,6 +20,7 @@ import { UserFunction } from '../_models/userfunction';
 import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { Schedule } from '../_models/schedule';
 import * as moment from 'moment';
+import { Schedules4Role } from '../_models/schedules4Role';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -187,10 +188,17 @@ export class AccountService {
     }
 
     uploadAccountsFile(formData: FormData) {
-        return this.http.post<Account>(`${baseUrl}/upload-accounts`, formData, {
+        return this.http.post<Account[]>(`${baseUrl}/upload-accounts`, formData, {
             reportProgress: true,
             observe: 'events'
         });
+    }
+    deleteAllUserAccounts() {
+        return this.http.delete(`${baseUrl}/delete-all-user-accounts`);
+    }
+    generateSchedules(schedule : Schedules4Role) {
+        var val = JSON.stringify(schedule);
+        return this.http.post(`${baseUrl}/generate-schedules`, schedule);
     }
     getAutoEmail() : any {
         return this.http.get(`${baseUrl}/auto-email`);

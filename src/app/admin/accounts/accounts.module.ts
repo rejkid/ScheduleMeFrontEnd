@@ -25,6 +25,8 @@ import { FunctionComponent } from './function.component';
 import { ListComponent } from './list.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
+import { GenerateSchedulesComponent } from './generate-schedules/generate-schedules.component';
+import { FunctionScheduleComponent } from './function-schedule/function-schedule.component';
 
 
 // If using Moment
@@ -91,7 +93,9 @@ export class AppDateAdapter extends NativeDateAdapter {
     ScheduleAllocatorComponent,
     UploadAccountsComponent,
     CustomDateFormatDirective,
-
+    GenerateSchedulesComponent,
+    FunctionScheduleComponent,
+    
 
   ],
   providers: [

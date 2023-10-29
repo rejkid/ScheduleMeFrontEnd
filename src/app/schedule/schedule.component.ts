@@ -389,6 +389,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     }
 
     var schedule: Schedule = {
+      accountId: this.account.id,
       date: formDateStr,
       newDate: formDateStr,
       required: true,

@@ -1,0 +1,48 @@
+<fieldset>
+    <legend>Generating Schedules:</legend>
+    <div class="mb-3">
+        <form [formGroup]="form">
+            <div class="row">
+                <div class="col-5">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Schedule</mat-label>
+                        <input formControlName="scheduledDateTime" #ref matInput [ngxMatDatetimePicker]="picker"
+                            placeholder="Choose a date" required />
+                        <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+                        <mat-hint>{{dateFormat}}</mat-hint>
+                        <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
+                            [stepMinute]="1" [stepSecond]="0" [touchUi]="false" [color]="undefined"
+                            [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
+                        </ngx-mat-datetime-picker>
+                        <mat-error *ngIf="f['scheduledDateTime'].errors">Invalid DOB</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+</fieldset>
+
+<div class=" mb-3 mx-0">
+    <div *ngFor="let item of functions">
+        <app-function-schedule #function [functionStr]=item [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
+    </div>
+</div>
+<fieldset>
+    <div class="col-5 mb-3">
+        <button type="button" (click)="onGenerateSchedules($event)" class="btn btn-primary"
+            [ngClass]="{ 'disabled': !form.controls['scheduledDateTime'].valid || isGenerating} ">
+            <!-- <span *ngIf="isGenerating" class="spinner-border spinner-border-sm mr-1"></span> --> Generate
+        </button>
+        <a routerLink="../" class="btn btn-link">Back</a>
+    </div>
+    <div *ngIf="isGenerating" class="container px-0">
+        <div class="row col-12 gx-0">
+            <div class="col-2">
+                <label for="file" class="mr-3">File progress:</label>
+            </div>
+            <div class="col">
+                <progress #generateSchedules id="progress-bar" max="100"></progress>
+            </div>
+        </div>
+    </div>
+</fieldset>

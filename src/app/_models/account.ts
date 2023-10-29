@@ -20,5 +20,7 @@ export class Account {
     confirmPassword : string
     isVerified : boolean
     isDeleting : boolean
+    highlighted: boolean
     acceptTerms : boolean
+    scheduleGroup : string
 }

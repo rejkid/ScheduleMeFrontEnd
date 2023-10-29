@@ -56,8 +56,9 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             role: [this.roles[0], Validators.required],
             dob: ['', [Validators.required, TimeHandler.dateValidator]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
+            scheduleGroup: ['',],
             confirmPassword: [''],
-            phoneNumber: ["", [ ]],
+            phoneNumber: ["", []],
         }, {
             validator: [MustMatch('password', 'confirmPassword')]
         });

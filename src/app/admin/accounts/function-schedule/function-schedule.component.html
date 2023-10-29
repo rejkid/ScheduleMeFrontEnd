@@ -1,0 +1,64 @@
+<fieldset>
+    <legend>{{functionStr}}</legend>
+        <form [formGroup]="form">
+        <div class="row mb-4">
+            <div class="col-4">
+                <label>{{ functionStr }}</label>
+                <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
+                    <option *ngFor="let account of accountsAvailable4Function" [value]="account.lastName + '/' 
+                            + account.firstName + '/' + account.email">
+                            {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </form>
+    <!-- <div class="container">
+        <mat-form-field appearance="outline">
+            <mat-label>Filter</mat-label>
+            <input matInput (keyup)="onApplyFilter($event.target, input)" placeholder="Search columns" #input>
+        </mat-form-field>
+    </div> -->
+    <mat-table #table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="firstName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
+            <mat-cell *matCellDef="let account">
+                <input type="text" matInput [value]="account.firstName" readonly>
+            </mat-cell>
+
+        </ng-container>
+        <ng-container matColumnDef="secondName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Second Name </mat-header-cell>
+            <mat-cell *matCellDef="let account">
+                <input type="text" matInput [value]="account.lastName" readonly>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="email">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> E-mail </mat-header-cell>
+            <mat-cell *matCellDef="let account">
+                <input type="text" matInput [value]="account.email" readonly>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="action">
+            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+            <mat-cell *matCellDef="let i = index; let account; let row">
+                <button class="btn btn-sm btn-danger btn-delete-account" type="button"
+                    (click)="onDeleteUser($event, row, account)" [ngClass]="{ 'disabled': row.deleting}">
+                    <span *ngIf="row.deleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
+                </button>
+            </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;" [ngClass]="{hovered: row.hovered}"
+            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false" #tr (click)="onRowSelected(row, tr, i)">
+        </mat-row>
+    </mat-table>
+
+    <mat-paginator #paginator [length]="accountsSelected4Function.length" [pageSizeOptions]="[5, 10, 30, 50]"
+        showFirstLastButtons>
+    </mat-paginator>
+
+    <button #button type="button" (click)="onAddAccount($event, button)" class="btn btn-primary">
+        Add {{ functionStr }}
+    </button>
+</fieldset>
