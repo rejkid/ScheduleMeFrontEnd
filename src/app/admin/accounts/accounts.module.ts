@@ -27,6 +27,8 @@ import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { GenerateSchedulesComponent } from './generate-schedules/generate-schedules.component';
 import { FunctionScheduleComponent } from './function-schedule/function-schedule.component';
+import { AppModule } from 'src/app/app.module';
+import { OrderByDatePipe } from 'src/app/order-by-date.pipe';
 
 
 // If using Moment
@@ -85,6 +87,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     MatSelectModule,
     DOBModule,
     MatProgressBarModule,
+    
 
   ],
   declarations: [
@@ -95,6 +98,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     CustomDateFormatDirective,
     GenerateSchedulesComponent,
     FunctionScheduleComponent,
+    OrderByDatePipe
     
 
   ],

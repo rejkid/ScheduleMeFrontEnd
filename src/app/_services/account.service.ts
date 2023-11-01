@@ -1,26 +1,20 @@
-﻿import { Injectable } from '@angular/core';
+﻿import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, finalize, tap } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 //import { environment } from '@environments/environment';
 import { Account, Role } from '../_models';
 //import { JwtHelperService } from '@auth0/angular-jwt';
 import { CookieService } from 'ngx-cookie-service';
 
-import { ScheduleDateTime } from '../_models/scheduledatetime';
-import { ScheduleDateTimes } from '../_models/scheduledatetimes';
-import { Users } from '../_models/users';
-import { Team } from '../_models/team';
-import { DateFunctionTeams } from '../_models/teams';
-import { SchedulePoolElements } from '../_models/schedulepoolelements';
 import { environment } from 'src/environments/environment';
-import { UserFunction } from '../_models/userfunction';
-import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { Schedule } from '../_models/schedule';
-import * as moment from 'moment';
-import { Schedules4Role } from '../_models/schedules4Role';
+import { ScheduleDateTimes } from '../_models/scheduledatetimes';
+import { SchedulePoolElement } from '../_models/schedulepoolelement';
+import { SchedulePoolElements } from '../_models/schedulepoolelements';
+import { DateFunctionTeams } from '../_models/teams';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -112,7 +106,7 @@ export class AccountService {
     getAllDates() {
         return this.http.get<ScheduleDateTimes>(`${baseUrl}/all-dates`);
     }
-    GetTeamsByFunctionForDate(dateStr: any) {
+    getTeamsByFunctionForDate(dateStr: any) {
         return this.http.get<DateFunctionTeams>(`${baseUrl}/teams-for-date/${dateStr}`);
     }
 
@@ -154,11 +148,11 @@ export class AccountService {
         return this.http.post<SchedulePoolElement>(`${baseUrl}/remove-pool-element/${id}/${email}/${userFunction}`, "");
     }
 
-    MoveSchedule2Pool(id: any, schedule: any) {
+    moveSchedule2Pool(id: any, schedule: any) {
         return this.http.post<Account>(`${baseUrl}/move-schedule-to-pool/${id}`, schedule);
     }
 
-    GetScheduleFromPool(id: any, schedule: any) {
+    getScheduleFromPool(id: any, schedule: any) {
         return this.http.post<Account>(`${baseUrl}/get-schedule-from-pool/${id}`, schedule);
     }
 
@@ -195,10 +189,6 @@ export class AccountService {
     }
     deleteAllUserAccounts() {
         return this.http.delete(`${baseUrl}/delete-all-user-accounts`);
-    }
-    generateSchedules(schedule : Schedules4Role) {
-        var val = JSON.stringify(schedule);
-        return this.http.post(`${baseUrl}/generate-schedules`, schedule);
     }
     getAutoEmail() : any {
         return this.http.get(`${baseUrl}/auto-email`);

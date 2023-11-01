@@ -4,7 +4,7 @@ export class Schedule {
     newDate: string;
     required: boolean;
     userAvailability: boolean;
-
+    dob: string;
     userFunction : string;
     scheduleGroup : string;
     newUserFunction : string;

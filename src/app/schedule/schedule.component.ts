@@ -242,7 +242,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
     }
 
     this.isAdding = true;
-    this.accountService.GetScheduleFromPool(this.account.id, schedule)
+    this.accountService.getScheduleFromPool(this.account.id, schedule)
       .pipe(first())
       .subscribe({
         next: (account) => {
@@ -270,7 +270,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   }
   onDeleteSchedule(event: any, scheduleId: string, indx: string, schedule2Delete: Schedule) { // i is schedule index
     schedule2Delete.deleting = true;
-    this.accountService.MoveSchedule2Pool(this.account.id, schedule2Delete)
+    this.accountService.moveSchedule2Pool(this.account.id, schedule2Delete)
       .pipe(first())
       .subscribe({
         next: (account) => {
@@ -392,6 +392,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
       accountId: this.account.id,
       date: formDateStr,
       newDate: formDateStr,
+      dob: this.account.dob,
       required: true,
       deleting: false,
       userAvailability: true,

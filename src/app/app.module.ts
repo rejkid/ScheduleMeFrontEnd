@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 //import { fakeBackendProvider } from './_helpers';
 
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AlertComponent } from './_components';
 import { ErrorInterceptor, JwtInterceptor, appInitializer } from './_helpers';
 import { AccountService } from './_services';
@@ -42,6 +42,7 @@ import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
         ReactiveFormsModule,
         HttpClientModule,
         AppRoutingModule,
+        
         RouterModule,
         BrowserAnimationsModule,
         MaterialModule,
@@ -63,6 +64,9 @@ import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
         MatTableModule,
         MatPaginatorModule,
         MatButtonModule,
+        OrderByDatePipe
+        
+        
     ],
     declarations: [
         AppComponent,

@@ -2,12 +2,12 @@
     <legend>{{functionStr}}</legend>
         <form [formGroup]="form">
         <div class="row mb-4">
-            <div class="col-4">
+            <div class="col-5">
                 <label>{{ functionStr }}</label>
                 <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
                     <option *ngFor="let account of accountsAvailable4Function" [value]="account.lastName + '/' 
-                            + account.firstName + '/' + account.email">
-                            {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}
+                            + account.firstName + '/' + account.email + '/' + account.dob + '/' + account.scheduleGroup">
+                            {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}/{{ account.scheduleGroup }}
                     </option>
                 </select>
             </div>
@@ -39,26 +39,33 @@
                 <input type="text" matInput [value]="account.email" readonly>
             </mat-cell>
         </ng-container>
+        <ng-container matColumnDef="group">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
+            <mat-cell *matCellDef="let account">
+                <input type="text" matInput [value]="account.scheduleGroup" readonly>
+            </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="action">
             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
             <mat-cell *matCellDef="let i = index; let account; let row">
                 <button class="btn btn-sm btn-danger btn-delete-account" type="button"
-                    (click)="onDeleteUser($event, row, account)" [ngClass]="{ 'disabled': row.deleting}">
+                    (click)="onDeleteSchedule($event, row, account)" [ngClass]="{ 'disabled': row.deleting}">
                     <span *ngIf="row.deleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
                 </button>
             </mat-cell>
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;" [ngClass]="{hovered: row.hovered}"
-            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false" #tr (click)="onRowSelected(row, tr, i)">
-        </mat-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
+            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr (click)="onRowSelected(row, tr, i)"
+            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
     </mat-table>
 
-    <mat-paginator #paginator [length]="accountsSelected4Function.length" [pageSizeOptions]="[5, 10, 30, 50]"
+    <mat-paginator #paginator [length]="accounts4DateAndFunction.length" [pageSizeOptions]="[5, 10, 30, 50]"
         showFirstLastButtons>
     </mat-paginator>
 
-    <button #button type="button" (click)="onAddAccount($event, button)" class="btn btn-primary">
+    <button #button type="button" (click)="onAddSchedule($event, button)" class="btn btn-primary">
+        <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span>
         Add {{ functionStr }}
     </button>
 </fieldset>

@@ -271,6 +271,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       accountId: this.account.id,
       date: formTimeStr,
       newDate: formTimeStr,
+      dob: this.account.dob,
       required: true,
       deleting: false,
       userAvailability: true,
