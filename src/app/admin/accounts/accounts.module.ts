@@ -88,6 +88,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     DOBModule,
     MatProgressBarModule,
     
+    
 
   ],
   declarations: [

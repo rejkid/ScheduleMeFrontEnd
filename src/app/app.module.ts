@@ -64,7 +64,7 @@ import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
         MatTableModule,
         MatPaginatorModule,
         MatButtonModule,
-        OrderByDatePipe
+        
         
         
     ],
@@ -74,7 +74,7 @@ import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
         HomeComponent,
         RaportForDateComponent,
         FloatingSchedulesComponent,
-        OrderByDatePipe,
+        OrderByDatePipe
     ],
     providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
