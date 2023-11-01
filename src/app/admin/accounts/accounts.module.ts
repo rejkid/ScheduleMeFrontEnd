@@ -28,7 +28,8 @@ import { UploadAccountsComponent } from './upload-accounts/upload-accounts.compo
 import { GenerateSchedulesComponent } from './generate-schedules/generate-schedules.component';
 import { FunctionScheduleComponent } from './function-schedule/function-schedule.component';
 import { AppModule } from 'src/app/app.module';
-import { OrderByDatePipe } from 'src/app/order-by-date.pipe';
+import { OrderByDatePipe } from 'src/app/application-pipes-module/order-by-date.pipe';
+import { ApplicationPipesModuleModule } from 'src/app/application-pipes-module/application-pipes-module.module';
 
 
 // If using Moment
@@ -87,7 +88,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     MatSelectModule,
     DOBModule,
     MatProgressBarModule,
-    
+    ApplicationPipesModuleModule
     
 
   ],

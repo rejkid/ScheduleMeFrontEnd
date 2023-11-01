@@ -30,8 +30,10 @@ import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 
-import { OrderByDatePipe } from './order-by-date.pipe';
+import { OrderByDatePipe } from './application-pipes-module/order-by-date.pipe';
 import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
+import { AccountsModule } from './admin/accounts/accounts.module';
+import { ApplicationPipesModuleModule } from './application-pipes-module/application-pipes-module.module';
 
 @NgModule({
     imports: [
@@ -56,6 +58,7 @@ import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
         MatFormFieldModule,
         NgxMatDatetimePickerModule,
         NgxMatNativeDateModule,
+        ApplicationPipesModuleModule
         
     ],
     exports: [
@@ -74,7 +77,7 @@ import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
         HomeComponent,
         RaportForDateComponent,
         FloatingSchedulesComponent,
-        OrderByDatePipe
+        
     ],
     providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
