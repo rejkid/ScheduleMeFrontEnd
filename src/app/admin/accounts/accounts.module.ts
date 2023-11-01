@@ -99,7 +99,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     CustomDateFormatDirective,
     GenerateSchedulesComponent,
     FunctionScheduleComponent,
-    OrderByDatePipe
+    
     
 
   ],
