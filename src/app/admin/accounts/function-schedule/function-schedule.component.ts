@@ -51,7 +51,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @Input() functionStr: string;
   @Input() dateTimeStr: string;
-  
+
   @Output() onSchedulesLoaded: EventEmitter<FunctionScheduleData>;
 
   dateFormat = Constants.dateFormat;
@@ -82,7 +82,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private alertService: AlertService) {
-      this.onSchedulesLoaded = new EventEmitter<FunctionScheduleData>();
+    this.onSchedulesLoaded = new EventEmitter<FunctionScheduleData>();
   }
 
   ngOnInit(): void {
@@ -117,18 +117,18 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
             });
           });
           /* Select first account as the default one*/
-          if(this.selectedAccount4Function !== undefined) {
+          if (this.selectedAccount4Function !== undefined) {
             var selected = this.selectedAccount4Function.lastName + "/"
               + this.selectedAccount4Function.firstName + "/"
-              + this.selectedAccount4Function.email+ "/"
-              + this.selectedAccount4Function.dob+ "/"
+              + this.selectedAccount4Function.email + "/"
+              + this.selectedAccount4Function.dob + "/"
               + this.selectedAccount4Function.scheduleGroup;
             this.f['selectedUser'].setValue(selected);
           } else if (this.accountsAvailable4Function.length > 0) {
             var selected = this.accountsAvailable4Function[0].lastName + "/"
               + this.accountsAvailable4Function[0].firstName + "/"
-              + this.accountsAvailable4Function[0].email+ "/"
-              + this.accountsAvailable4Function[0].dob+ "/"
+              + this.accountsAvailable4Function[0].email + "/"
+              + this.accountsAvailable4Function[0].dob + "/"
               + this.accountsAvailable4Function[0].scheduleGroup;
             this.f['selectedUser'].setValue(selected);
             this.selectedAccount4Function = this.accountsAvailable4Function[0];
@@ -137,12 +137,13 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
           this.loadAccounts4FunctionAndDate();
 
           /* Notify parent that we got data from server */
-          var funcSchedData : FunctionScheduleData = {
+          var funcSchedData: FunctionScheduleData = {
             userFunction: this.functionStr,
             accounts: this.accounts4DateAndFunction
           }
+          /* Notify parrent that the data is ready */
           this.onSchedulesLoaded.emit(funcSchedData);
-      
+
         },
         complete: () => {
           this.accountsLoaded = true;
@@ -158,8 +159,8 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.accounts4DateAndFunction = [];
     this.accounts.forEach(account => {
       account.schedules.forEach(schedule => {
-        if (schedule.userFunction == this.functionStr 
-            && schedule.date == this.dateTimeStr
+        if (schedule.userFunction == this.functionStr
+          && schedule.date == this.dateTimeStr
             /* && schedule.dob == account.dob */) {
           this.accounts4DateAndFunction.push(account);
         }
@@ -187,18 +188,10 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = filterValue;
   }
   onAddSchedule(event: MouseEvent, button: any) {
-      this.addSchedule(this.selectedAccount4Function);
+    this.addSchedule(this.selectedAccount4Function);
 
   }
-public test(account : Account) {
-  console.log("this.dateTimeStr="+this.dateTimeStr);
-  console.log("this.dateTimeStr="+this.functionStr);
-  
-  console.log("this.selectedAccount4Function="+this.selectedAccount4Function);
-  console.log("this.accounts="+this.accounts);
-  
-}
-  public addSchedule(account : Account) {
+  public addSchedule(account: Account) {
     var schedule2Add: Schedule = {
       accountId: account.id,
       date: this.dateTimeStr,

@@ -69,7 +69,7 @@
         
         <div class="col-2">
             <label for="scheduleGroup">Team Group</label>
-            <input type="text" class="form-control" formControlName="scheduleGroup" ng-value="account.scheduleGroup" placeholder="" required readonly />
+            <input type="text" class="form-control" formControlName="scheduleGroup" ng-value="account.scheduleGroup" placeholder="" readonly />
         </div>
     </div>
 
@@ -134,7 +134,11 @@
     </div>
 
     <div>
-        <button [disabled]="loading || !form.valid" class="btn btn-primary">
+        <!-- <button [disabled]="loading || !form.valid" class="btn btn-primary">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Update
+        </button> -->
+        <button class="btn btn-primary">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
             Update
         </button>

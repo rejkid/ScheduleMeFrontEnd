@@ -27,7 +27,6 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     userFunctions: UserFunction[] = [];
     isLoaded: boolean = false;
     countryCodes: number[] = [];
-    fuck: string = "fuck"
 
     constructor(
         private formBuilder: FormBuilder,
@@ -54,9 +53,9 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             role: [this.roles[0], Validators.required],
-            dob: ['', [Validators.required, TimeHandler.dateValidator]],
+            dob: ['', [Validators.required/* , TimeHandler.dateValidator */]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
-            scheduleGroup: ['',],
+            scheduleGroup: ['',[Validators.nullValidator]],
             confirmPassword: [''],
             phoneNumber: ["", []],
         }, {
@@ -90,6 +89,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         this.alertService.clear();
 
         // stop here if form is invalid
+        
         if (this.form.invalid) {
             return;
         }
@@ -149,7 +149,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             .subscribe({
                 next: (value) => {
                     this.alertService.success('Update successful', { keepAfterRouteChange: true });
-                    //this.router.navigate(['../../'], { relativeTo: this.route });
+                    this.router.navigate(['../../'], { relativeTo: this.route });
                     this.loading = false;
                 },
                 error: error => {

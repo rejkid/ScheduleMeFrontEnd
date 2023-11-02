@@ -49,10 +49,10 @@
             <td>{{account.role}}</td>
             <td><input type="checkbox" [checked]="account.isVerified" [disabled]="true"/></td>
             <td style="white-space: nowrap" >
-                <button routerLink="edit/{{account.id}}" [disabled]="!account.isVerified" class="btn btn-sm btn-primary mr-1" >Edit</button>
-                <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Duties</button>
-                <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Schedule</button>
-                <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting" >
+                <button class="ml-1" routerLink="edit/{{account.id}}" [disabled]="!account.isVerified" class="btn btn-sm btn-primary mr-1" >Edit</button>
+                <button class="ml-1" routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Duties</button>
+                <button class="ml-1" routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Schedule</button>
+                <button class="ml-1" (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting" >
                     <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
                     <span *ngIf="!account.isDeleting">Delete</span>
                 </button>

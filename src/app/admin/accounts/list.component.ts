@@ -3,7 +3,7 @@ import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
 
-@Component({ templateUrl: 'list.component.html' })
+@Component({ templateUrl: 'list.component.html'})
 export class ListComponent implements OnInit {
     accounts: Account[];
     autoEmail: Boolean;

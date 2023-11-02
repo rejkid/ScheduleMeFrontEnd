@@ -48,6 +48,16 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       comps.forEach(element => {
         this.fComponents.push(element);
       });
+      var newMap = new Map<FunctionScheduleComponent, Account[]>(GenerateSchedulesComponent.functions2SchedulesMap);
+      GenerateSchedulesComponent.functions2SchedulesMap.clear();
+      for (let entry of newMap.entries()) {
+        console.log("Key:" + entry[0].dateTimeStr);
+        this.fComponents.forEach(element => {
+          if (element.functionStr === entry[0].functionStr) {
+            GenerateSchedulesComponent.functions2SchedulesMap.set(element, entry[1]);
+          }
+        });
+      }
       /* All FunctionScheduleComponent are loaded */
     });
   }
@@ -67,11 +77,11 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     this.accountService.getRoles()
       .pipe(first())
       .subscribe({
-        next: (value : string[]) => {
+        next: (value: string[]) => {
           //value = ["Acolyte", "Cleaner"] ;
           /* Create `UserFunction` component for every function that was returned by server*/
           value.forEach(element => {
-            var f : UserFunction = {
+            var f: UserFunction = {
               id: '',
               userFunction: element
             }
