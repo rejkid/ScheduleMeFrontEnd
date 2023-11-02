@@ -1,17 +1,16 @@
 import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker';
-import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { Subscription, first } from 'rxjs';
+import { Account } from 'src/app/_models';
+import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { ScheduleDateTimes } from 'src/app/_models/scheduledatetimes';
+import { UserFunction } from 'src/app/_models/userfunction';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { FunctionScheduleComponent } from '../function-schedule/function-schedule.component';
-import { Schedule } from 'src/app/_models/schedule';
-import { Account } from 'src/app/_models';
-import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
-import { UserFunction } from 'src/app/_models/userfunction';
 
 
 
@@ -45,17 +44,11 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit(): void {
     this.functionComponents.changes.subscribe((comps: QueryList<FunctionScheduleComponent>) => {
+      /* Load `fComponent` array with all `FunctionScheduleComponent` created by html template */
       comps.forEach(element => {
         this.fComponents.push(element);
       });
-
-      // All FunctionScheduleComponent are loaded
-      // const e = new Event("change");
-      // this.calendar.nativeElement.dispatchEvent(e);;
-      // const e = new Event("change");
-      // const element = document.querySelector('#test')
-      // element.dispatchEvent(e);
-
+      /* All FunctionScheduleComponent are loaded */
     });
   }
 
@@ -76,6 +69,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (value : string[]) => {
           //value = ["Acolyte", "Cleaner"] ;
+          /* Create `UserFunction` component for every function that was returned by server*/
           value.forEach(element => {
             var f : UserFunction = {
               id: '',
@@ -158,6 +152,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       console.log("Key:" + entry[0].dateTimeStr);
       for (let index = 0; index < entry[1].length; index++) {
         console.log("\tValue:" + entry[1][index].firstName);
+        /* entry[1] = Accounts[] for specific `FunctionScheduleComponent`(entry[0]) */
         entry[0].addSchedule(entry[1][index]);
       }
     }
@@ -182,21 +177,21 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     });
     return array;
   }
-  isChildrenEmpty(): boolean {
+  areChildrenEmpty(): boolean {
     return this.childrenData().size <= 0;
   }
-  isClipboardEmpty(): boolean {
+  isFunc2SchedMapdEmpty(): boolean {
     return GenerateSchedulesComponent.functions2SchedulesMap.size <= 0;
   }
   private setCopyPasteButtons() {
-    if (this.isClipboardEmpty())
+    if (this.isFunc2SchedMapdEmpty())
       this.f['information'].setValue("There is no data in a buffer");
     else
       this.f['information'].setValue("There is data in a buffer");
 
-    if (this.isChildrenEmpty()) {
+    if (this.areChildrenEmpty()) {
       this.enableCopyButton = false;
-      this.enablePasteButton = this.isClipboardEmpty() ? false : true;
+      this.enablePasteButton = this.isFunc2SchedMapdEmpty() ? false : true;
     } else {
       this.enableCopyButton = true;
       this.enablePasteButton = false;

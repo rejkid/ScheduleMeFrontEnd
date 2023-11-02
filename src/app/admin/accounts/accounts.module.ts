@@ -89,8 +89,6 @@ export class AppDateAdapter extends NativeDateAdapter {
     DOBModule,
     MatProgressBarModule,
     ApplicationPipesModuleModule
-    
-
   ],
   declarations: [
     ListComponent,
@@ -100,9 +98,6 @@ export class AppDateAdapter extends NativeDateAdapter {
     CustomDateFormatDirective,
     GenerateSchedulesComponent,
     FunctionScheduleComponent,
-    
-    
-
   ],
   providers: [
     {
