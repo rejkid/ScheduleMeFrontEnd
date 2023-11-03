@@ -9,8 +9,9 @@
                 <div class="col-3">
                     <mat-form-field appearance="outline">
                         <mat-label>Schedule</mat-label>
-                        <input id="test" formControlName="scheduledDateTime" #ref matInput [ngxMatDatetimePicker]="picker"
-                            placeholder="Choose a date" required (dateChange)="onChangeDateTime($event)" />
+                        <input id="test" formControlName="scheduledDateTime" #ref matInput
+                            [ngxMatDatetimePicker]="picker" placeholder="Choose a date" required
+                            (dateChange)="onChangeDateTime($event)" />
                         <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                         <mat-hint>{{dateFormat}}</mat-hint>
                         <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
@@ -20,32 +21,44 @@
                         <mat-error *ngIf="f['scheduledDateTime'].errors">Invalid DOB</mat-error>
                     </mat-form-field>
                 </div>
-                <div class="col-1">
-                    <button [ngClass]="{'disabled' : !enableCopyButton}" #button type="button" (click)="onCopy($event, button)" class="btn btn-primary">
-                        Copy
+                <div class="col-2">
+                    <button [ngClass]="{'disabled' : !enableCopyButton}" #button type="button"
+                        (click)="onCopy($event, button)" class="btn btn-primary">
+                        Copy To Buffer
                     </button>
                 </div>
-                <div class="col-1">
-                    <button [ngClass]="{'disabled' : !enablePasteButton}" #button type="button" (click)="onPaste($event, button)" class="btn btn-primary">
-                        Paste
+                <div class="col-2">
+                    <button [ngClass]="{'disabled' : !enablePasteButton}" #button type="button"
+                        (click)="onPaste($event, button)" class="btn btn-primary">
+                        Paste From Buffer
                     </button>
                 </div>
-                <div class="col-1">
+                <div class="col-2">
                     <button #button type="button" (click)="onClear($event, button)" class="btn btn-primary">
-                        Clear
+                        Clear Buffer
                     </button>
                 </div>
                 <div class="col-3">
-                    <input type="text" class="no-outline" formControlName="information"  id="Info" name="Name">
+                    <input type="text" class="no-outline" formControlName="information" id="Info" name="Name">
                 </div>
             </div>
+            <div class="row mt-2">
+                <div class="col-2">
+                    <button #button type="button" (click)="onDeleteSchedules($event, button)" class="btn btn-primary">
+                        Delete Schedule
+                    </button>
+                </div>
+            </div>
+
+
         </form>
     </div>
 </fieldset>
 
 <div class=" mb-3 mx-0">
     <div *ngFor="let item of functions | orderByDate: 'userFunction': 'asc' ">
-        <app-function-schedule (onSchedulesLoaded)="onSchedulesLoaded($event)" #function [functionStr]=item.userFunction [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
+        <app-function-schedule (onSchedulesLoaded)="onSchedulesLoaded($event)" #function [functionStr]=item.userFunction
+            [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
     </div>
 </div>
 <div class="col-5 mb-3">

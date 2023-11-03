@@ -89,6 +89,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.form = this.formBuilder.group({
       selectedUser: ['', [Validators.required]],
     });
+    
   }
   dateTimeChanged(dateTime: string) {
     this.dateTimeStr = dateTime;
@@ -221,8 +222,13 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
         }
       });
   }
+  onDeleteSchedules(event: MouseEvent) { // rowIndex is table index
+    this.accounts4DateAndFunction.forEach(account => {
+      this.onDeleteSchedule(event, account);
+    });
+  }
 
-  onDeleteSchedule(event: MouseEvent, rowIndex: string, account: Account) { // rowIndex is table index
+  onDeleteSchedule(event: MouseEvent, account: Account) { // rowIndex is table index
     account.isDeleting = true;
 
     var schedule2Delete: Schedule = {

@@ -171,6 +171,12 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
     this.setCopyPasteButtons();
   }
+  onDeleteSchedules(event: MouseEvent, button: any) {
+    this.fComponents.forEach(element => {
+      element.onDeleteSchedules(event);
+    });
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
 
   private copyChildData(): Map<FunctionScheduleComponent, Account[]> {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
