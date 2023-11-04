@@ -52,7 +52,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   @Input() functionStr: string;
   @Input() dateTimeStr: string;
 
-  @Output() onSchedulesLoaded: EventEmitter<FunctionScheduleData>;
+  @Output() schedulesUpdatedEmitter: EventEmitter<FunctionScheduleData>;
 
   dateFormat = Constants.dateFormat;
   dateTimeFormat = Constants.dateTimeFormat;
@@ -82,18 +82,18 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private alertService: AlertService) {
-    this.onSchedulesLoaded = new EventEmitter<FunctionScheduleData>();
+    this.schedulesUpdatedEmitter = new EventEmitter<FunctionScheduleData>();
   }
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       selectedUser: ['', [Validators.required]],
     });
-    
+
   }
   dateTimeChanged(dateTime: string) {
     this.dateTimeStr = dateTime;
-    console.log("Called for:" + this.functionStr + " New datetime is:" + dateTime);
+    console.log("Called for: for:" + this.functionStr + " New datetime is:" + dateTime);
     this.loadAccounts4FunctionAndDate();
   }
   ngAfterViewInit(): void {
@@ -142,8 +142,8 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
             userFunction: this.functionStr,
             accounts: this.accounts4DateAndFunction
           }
-          /* Notify parrent that the data is ready */
-          this.onSchedulesLoaded.emit(funcSchedData);
+          /* Notify parrent that the data has been updated */
+          this.schedulesUpdatedEmitter.emit(funcSchedData);
 
         },
         complete: () => {
@@ -224,6 +224,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   }
   onDeleteSchedules(event: MouseEvent) { // rowIndex is table index
     this.accounts4DateAndFunction.forEach(account => {
+      console.log("FunctionScheduleComponent deleting functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr);
       this.onDeleteSchedule(event, account);
     });
   }
@@ -248,6 +249,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       .pipe(first())
       .subscribe({
         next: (account) => {
+          console.log("FunctionScheduleComponent functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr + " deleted");
           this.refreshAccounts();
         },
         complete: () => {

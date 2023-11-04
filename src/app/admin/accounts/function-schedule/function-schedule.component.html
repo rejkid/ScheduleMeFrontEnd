@@ -3,7 +3,7 @@
         <form [formGroup]="form">
         <div class="row mb-4">
             <div class="col-5">
-                <label>{{ functionStr }}</label>
+                <!-- <label>{{ functionStr }}</label> -->
                 <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
                     <option *ngFor="let account of accountsAvailable4Function" [value]="account.lastName + '/' 
                             + account.firstName + '/' + account.email + '/' + account.dob + '/' + account.scheduleGroup">
@@ -64,8 +64,8 @@
         showFirstLastButtons>
     </mat-paginator>
 
-    <button #button type="button" (click)="onAddSchedule($event, button)" class="btn btn-primary">
-        <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span>
+    <button #button type="button" [ngClass]="{ 'disabled': accountsAvailable4Function.length <= 0 }" (click)="onAddSchedule($event, button)" class="btn btn-primary">
+        <span *ngIf="isAdding"  class="spinner-border spinner-border-sm mr-1"></span> 
         Add {{ functionStr }}
     </button>
 </fieldset>

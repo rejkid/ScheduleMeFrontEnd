@@ -1,8 +1,5 @@
-<div class="col-5 mb-3">
-    <a routerLink="../" class="btn btn-link">Back</a>
-</div>
 <fieldset>
-    <legend>Creating Schedules:</legend>
+    <legend>View/Edit Schedule:</legend>
     <div class="mb-3">
         <form [formGroup]="form">
             <div class="row">
@@ -42,25 +39,16 @@
                     <input type="text" class="no-outline" formControlName="information" id="Info" name="Name">
                 </div>
             </div>
-            <div class="row mt-2">
-                <div class="col-2">
-                    <button #button type="button" (click)="onDeleteSchedules($event, button)" class="btn btn-primary">
-                        Delete Schedule
-                    </button>
-                </div>
-            </div>
-
-
         </form>
+    </div>
+    <div class=" mb-3 mx-0">
+        <div *ngFor="let item of functions | orderByDate: 'userFunction': 'asc' ">
+            <app-function-schedule (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #function
+                [functionStr]=item.userFunction [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
+        </div>
     </div>
 </fieldset>
 
-<div class=" mb-3 mx-0">
-    <div *ngFor="let item of functions | orderByDate: 'userFunction': 'asc' ">
-        <app-function-schedule (onSchedulesLoaded)="onSchedulesLoaded($event)" #function [functionStr]=item.userFunction
-            [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
-    </div>
-</div>
 <div class="col-5 mb-3">
     <a routerLink="../" class="btn btn-link">Back</a>
 </div>

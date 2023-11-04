@@ -1,17 +1,25 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { first } from 'rxjs/operators';
-import { ScheduleDateTime } from '../_models/scheduledatetime';
-import { ScheduleDateTimes } from '../_models/scheduledatetimes';
-import { Team, } from '../_models/team';
-import { DateFunctionTeams } from '../_models/teams';
-import { AccountService } from '../_services';
-import { Constants } from '../constants';
-
+import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
+import { ScheduleDateTimes } from 'src/app/_models/scheduledatetimes';
+import { Team } from 'src/app/_models/team';
+import { DateFunctionTeams } from 'src/app/_models/teams';
+import { AccountService } from 'src/app/_services';
+import { Constants } from 'src/app/constants';
+import { GenerateSchedulesComponent } from '../generate-schedules/generate-schedules.component';
+import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
+// import { ScheduleDateTime } from '../_models/scheduledatetime';
+// import { ScheduleDateTimes } from '../_models/scheduledatetimes';
+// import { Team, } from '../_models/team';
+// import { DateFunctionTeams } from '../_models/teams';
+// import { AccountService } from '../_services';
+// import { Constants } from '../constants';
 const COLUMNS_SCHEMA = [
   {
     key: "date",
@@ -21,17 +29,22 @@ const COLUMNS_SCHEMA = [
     key: "day",
     type: "text",
     label: "Day"
+  }, {
+    key: "delete",
+    type: "text",
+    label: "Delete"
   },
 ]
 
 @Component({
-  selector: 'app-raport-test',
-  templateUrl: './raport-for-date.component.html',
-  styleUrls: ['./raport-for-date.component.less']
+  selector: 'app-main-scheduler',
+  templateUrl: './main-scheduler.component.html',
+  styleUrls: ['./main-scheduler.component.less']
 })
-export class RaportForDateComponent implements OnInit, AfterViewInit {
+export class MainSchedulerComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(`scheduleDate`) generateScheduleComponent: GenerateSchedulesComponent;
 
   form: FormGroup;
   list: ScheduleDateTime[] = [];
@@ -52,7 +65,6 @@ export class RaportForDateComponent implements OnInit, AfterViewInit {
   lastSelectedAccount: ScheduleDateTime = null;
   highlighted: boolean;
   futureScheduleDates: ScheduleDateTime[] = [];
-  //lastSelectedAccountHighlighted: boolean;
 
   constructor(private accountService: AccountService,
     private formBuilder: FormBuilder) {
@@ -68,7 +80,7 @@ export class RaportForDateComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       dates: ['', [Validators.required, this.dateValidator]],
-      allDates: [false, '',]
+      allDates: [true, '',]
     });
   }
   onCheckboxChange(event: any) {
@@ -82,18 +94,24 @@ export class RaportForDateComponent implements OnInit, AfterViewInit {
 
 
   getAllDates() {
-    this.futureScheduleDateStrings = [];
-    this.list = [];
-    this.futureScheduleDates = [];
+    console.log("Calling subscribe");
     this.accountService.getAllDates()
       .pipe(first())
       .subscribe({
         next: (value: ScheduleDateTimes) => {
+          this.futureScheduleDateStrings = [];
+          this.list = [];
+          this.futureScheduleDates = [];
+          console.log("next called");;
           this.scheduleDateTime = value.scheduleDateTimes;
+          console.assert(this.list.length <= 0, "list not empty");
+          if (this.list.length > 0) {
+            console.log("We might have a problem");
+          }
 
           for (let index = 0; index < value.scheduleDateTimes.length; index++) {
             // Add server side dates
-            this.list.push( value.scheduleDateTimes[index]/* moment(value.scheduleDateTimes[index].date).toDate() */)
+            this.list.push(value.scheduleDateTimes[index])
           }
           this.list.sort(function (a, b) {
             var aDate = moment(a.date, Constants.dateTimeFormat).toDate();
@@ -122,7 +140,8 @@ export class RaportForDateComponent implements OnInit, AfterViewInit {
               }
               this.futureScheduleDates.push(futureScheduleDate);
             }
-
+            // if(this.futureScheduleDates.length > 0)
+            //   this.generateScheduleComponent.setCurrentDate(this.futureScheduleDates[0].date);
           }
           this.dataSource = new MatTableDataSource(this.futureScheduleDates);
           this.dataSource.paginator = this.paginator;
@@ -146,9 +165,15 @@ export class RaportForDateComponent implements OnInit, AfterViewInit {
     }
     return null;
   }
+  onSchedulesUpdated(data: FunctionScheduleData) {
+    this.getAllDates();
+  }
   onRowSelected(date: ScheduleDateTime, tr: any, index: number) {
+    console.log("MainSchedulerComponent row selected");
     date.highlighted = !date.highlighted;
     this.currentSelectedAccount = date;
+
+    this.generateScheduleComponent.setCurrentDate(this.currentSelectedAccount.date);
 
     if (this.lastSelectedAccount != null) {
       this.lastSelectedAccount.highlighted = false;
@@ -177,6 +202,10 @@ export class RaportForDateComponent implements OnInit, AfterViewInit {
           console.log();
         }
       });
-
   }
+  onDeleteSchedules(event: MouseEvent, data : ScheduleDateTime) {
+    console.log("MainSchedulerComponent deleting called");
+    this.generateScheduleComponent.onDeleteSchedules(event, data);
+  }
+
 }

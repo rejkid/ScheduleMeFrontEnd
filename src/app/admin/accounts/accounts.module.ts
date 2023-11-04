@@ -30,6 +30,7 @@ import { FunctionScheduleComponent } from './function-schedule/function-schedule
 import { AppModule } from 'src/app/app.module';
 import { OrderByDatePipe } from 'src/app/application-pipes-module/order-by-date.pipe';
 import { ApplicationPipesModuleModule } from 'src/app/application-pipes-module/application-pipes-module.module';
+import { MainSchedulerComponent } from './main-scheduler/main-scheduler.component';
 
 
 // If using Moment
@@ -98,6 +99,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     CustomDateFormatDirective,
     GenerateSchedulesComponent,
     FunctionScheduleComponent,
+    MainSchedulerComponent,
   ],
   providers: [
     {

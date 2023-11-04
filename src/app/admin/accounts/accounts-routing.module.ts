@@ -7,6 +7,7 @@ import { FunctionComponent } from './function.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { GenerateSchedulesComponent } from './generate-schedules/generate-schedules.component';
+import { MainSchedulerComponent } from './main-scheduler/main-scheduler.component';
 
 const routes: Routes = [
     { path: '', component: ListComponent },
@@ -15,7 +16,7 @@ const routes: Routes = [
     { path: 'edit/:id', component: AddEditComponent },
     { path: 'function/:id', component: FunctionComponent },
     { path: 'schedule/:id', component: ScheduleAllocatorComponent },
-    { path: 'schedule-generate', component: GenerateSchedulesComponent},
+    { path: 'schedule-generate', component: MainSchedulerComponent},
     
 ];
 
