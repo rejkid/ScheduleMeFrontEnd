@@ -104,11 +104,11 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.refreshAccounts();
   }
   private refreshAccounts() {
-    this.accountsAvailable4Function = [];
     this.accountService.getAll()
       .pipe(first())
       .subscribe({
         next: (accounts: Account[]) => {
+          this.accountsAvailable4Function = [];
           this.accounts = accounts;
           accounts.forEach(account => {
             account.isDeleting = false;
