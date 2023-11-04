@@ -30,8 +30,8 @@
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Delete </mat-header-cell>
                             <mat-cell *matCellDef="let row">
                                 <button class="btn btn-sm btn-danger btn-delete-account" type="button" #button
-                                    (click)="onDeleteSchedules($event, row)" [ngClass]="{ 'disabled': row.deleting}">
-                                    <span *ngIf="row.deleting" class="spinner-border spinner-border-sm mr-1"></span>
+                                    (click)="onDeleteSchedules($event, row)" [ngClass]="{ 'disabled': row.isDeleting}">
+                                    <span *ngIf="row.isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                                     Delete
                                 </button>
                             </mat-cell>

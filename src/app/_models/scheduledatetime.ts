@@ -1,7 +1,8 @@
 export class ScheduleDateTime {
     id: string;
     date: string;
-    day:string;
-    email:string;
-    highlighted : boolean;
+    day: string;
+    email: string;
+    highlighted: boolean;
+    isDeleting: boolean;
 }

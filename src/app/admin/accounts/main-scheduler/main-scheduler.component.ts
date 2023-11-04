@@ -135,6 +135,7 @@ export class MainSchedulerComponent {
                 id: '',
                 date: scheduleLocalDateStr,
                 highlighted: false,
+                isDeleting: false,
                 day: this.getDayStrFromDate(scheduleLocalDateStr),
                 email: this.list[index].email
               }
@@ -205,6 +206,7 @@ export class MainSchedulerComponent {
   }
   onDeleteSchedules(event: MouseEvent, data : ScheduleDateTime) {
     console.log("MainSchedulerComponent deleting called");
+    data.isDeleting = true;
     this.generateScheduleComponent.onDeleteSchedules(event, data);
   }
 

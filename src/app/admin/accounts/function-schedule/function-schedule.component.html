@@ -47,10 +47,10 @@
         </ng-container>
         <ng-container matColumnDef="action">
             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-            <mat-cell *matCellDef="let i = index; let account; let row">
+            <mat-cell *matCellDef="let i = index; let account">
                 <button class="btn btn-sm btn-danger btn-delete-account" type="button"
-                    (click)="onDeleteSchedule($event, account)" [ngClass]="{ 'disabled': row.deleting}">
-                    <span *ngIf="row.deleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
+                    (click)="onDeleteSchedule($event, account)" [ngClass]="{ 'disabled': account.isDeleting}">
+                    <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
                 </button>
             </mat-cell>
         </ng-container>

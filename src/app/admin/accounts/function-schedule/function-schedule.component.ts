@@ -111,6 +111,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
         next: (accounts: Account[]) => {
           this.accounts = accounts;
           accounts.forEach(account => {
+            account.isDeleting = false;
             account.userFunctions.forEach(userFunc => {
               if (userFunc.userFunction == this.functionStr) {
                 this.accountsAvailable4Function.push(account);
@@ -248,16 +249,14 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.accountService.deleteSchedule(account.id, schedule2Delete)
       .pipe(first())
       .subscribe({
-        next: (account) => {
+        next: (z) => {
           console.log("FunctionScheduleComponent functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr + " deleted");
           this.refreshAccounts();
         },
         complete: () => {
-          schedule2Delete.deleting = false;
         },
         error: error => {
           this.alertService.error(error);
-          schedule2Delete.deleting = false;
           this.refreshAccounts();
         }
       });
