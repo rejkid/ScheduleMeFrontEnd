@@ -46,7 +46,6 @@ const COLUMNS_SCHEMA = [
   styleUrls: ['./function-schedule.component.less']
 })
 export class FunctionScheduleComponent implements OnInit, AfterViewInit {
-
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @Input() functionStr: string;
@@ -61,13 +60,16 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
   columnsSchema: any = COLUMNS_SCHEMA;
 
+  /* Busy cursor flags */
+  isAdding: boolean = false;
   accountsLoaded: boolean = true;
+
   dataSource: MatTableDataSource<Account> = new MatTableDataSource([]);
   currentSelectedAccount: Account = null;
   lastSelectedAccount: Account = null;
   selectedAccount4Function: Account;
   accounts: Account[] = [];
-  isAdding: boolean;
+
   private _accounts4DateAndFunction: Account[] = [];
 
   public get accounts4DateAndFunction(): Account[] {
@@ -91,19 +93,19 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     });
 
   }
-  dateTimeChanged(dateTime: string) {
+  setCurrentDate(dateTime: string) {
     this.dateTimeStr = dateTime;
     console.log("Called for: for:" + this.functionStr + " New datetime is:" + dateTime);
-    this.loadAccounts4FunctionAndDate();
+    this.loadAccounts4DateAndFunction();
   }
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.dataSource = new MatTableDataSource();
-    this.accountsLoaded = false;
     this.refreshAccounts();
   }
   private refreshAccounts() {
+    this.accountsLoaded = false;
     this.accountService.getAll()
       .pipe(first())
       .subscribe({
@@ -136,7 +138,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
             this.selectedAccount4Function = this.accountsAvailable4Function[0];
           }
 
-          this.loadAccounts4FunctionAndDate();
+          this.loadAccounts4DateAndFunction();
 
           /* Notify parent that we got data from server */
           var funcSchedData: FunctionScheduleData = {
@@ -157,7 +159,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private loadAccounts4FunctionAndDate() {
+  private loadAccounts4DateAndFunction() {
     this.accounts4DateAndFunction = [];
     this.accounts.forEach(account => {
       account.schedules.forEach(schedule => {
@@ -245,7 +247,6 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       userFunction: this.functionStr,
       newUserFunction: this.functionStr,
     };
-    schedule2Delete.deleting = true;
     this.accountService.deleteSchedule(account.id, schedule2Delete)
       .pipe(first())
       .subscribe({

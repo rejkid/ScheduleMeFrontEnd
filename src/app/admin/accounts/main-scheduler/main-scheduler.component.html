@@ -43,7 +43,7 @@
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
                             [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr
-                            (click)="onRowSelected(row, tr, i)" (mouseover)="row.hovered = true"
+                            (click)="onRowSelected(row)" (mouseover)="row.hovered = true"
                             (mouseout)="row.hovered = false"></mat-row>
                     </mat-table>
                     <mat-paginator #paginator [length]="futureScheduleDateStrings.length"
@@ -55,7 +55,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <app-generate-schedules (schedulesUpdatedEmitter)="onSchedulesUpdated($event)"
+                <app-generate-schedules (dateTimeChangedEmitter)="dateTimeChanged($event)" (schedulesUpdatedEmitter)="onSchedulesUpdated($event)"
                     #scheduleDate></app-generate-schedules>
             </div>
         </div>

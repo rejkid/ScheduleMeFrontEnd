@@ -118,7 +118,6 @@ export class RaportForDateComponent implements OnInit, AfterViewInit {
                 date: scheduleLocalDateStr,
                 highlighted: false,
                 day: this.getDayStrFromDate(scheduleLocalDateStr),
-                email: this.list[index].email,
                 isDeleting: false
               }
               this.futureScheduleDates.push(futureScheduleDate);

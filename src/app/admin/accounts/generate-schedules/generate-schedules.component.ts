@@ -24,10 +24,10 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   @ViewChildren(`function`) functionComponents: QueryList<FunctionScheduleComponent>;
   @ViewChild(`ref`) dateCtrl: ElementRef;
   @Output() schedulesUpdatedEmitter: EventEmitter<FunctionScheduleData>;
+  @Output() dateTimeChangedEmitter: EventEmitter<string>;
 
   dateFormat = Constants.dateFormat;
   dateTimeFormat = Constants.dateTimeFormat;
-  isBusy: boolean = false;
   form: FormGroup;
   uploadSub: Subscription;
   functions: UserFunction[] = [];
@@ -45,6 +45,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private alertService: AlertService) {
       this.schedulesUpdatedEmitter = new EventEmitter<FunctionScheduleData>();
+      this.dateTimeChangedEmitter = new EventEmitter<string>();
   }
   ngAfterViewInit(): void {
     this.functionComponents.changes.subscribe((comps: QueryList<FunctionScheduleComponent>) => {
@@ -108,9 +109,10 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   onChangeDateTime(event: MatDatetimePickerInputEvent<any>) {
     this.fComponents.forEach(element => {
       console.log("Changing time to: "+ this.getDateTimeStr());
-      element.dateTimeChanged(this.getDateTimeStr());
+      element.setCurrentDate(this.getDateTimeStr());
     });
     this.setCopyPasteButtons();
+    this.dateTimeChangedEmitter.emit(moment(event.value).format(this.dateTimeFormat));
   }
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
@@ -118,52 +120,18 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   getDateTimeStr(): string {
     return moment(this.f['scheduledDateTime'].value).format(this.dateTimeFormat)
   }
-  // getAllDates() {
-  //   this.accountService.getAllDates()
-  //     .pipe(first())
-  //     .subscribe({
-  //       next: (value: ScheduleDateTimes) => {
-  //         var list: Date[] = [];
-  //         for (let index = 0; index < value.scheduleDateTimes.length; index++) {
-  //           // Add server side dates
-  //           list.push(moment(value.scheduleDateTimes[index].date).toDate())
-  //         }
-  //         list.sort(function (a, b) {
-  //           if (a > b) return 1
-  //           if (a < b) return -1
-  //           return 0
-  //         });
-
-
-  //         // Convert dates to date strings and optionally filter out past date strings
-  //         for (let index = 0; index < list.length; index++) {
-  //           var nowMs = Date.now();
-  //           const date = moment(list[index]).toDate();
-  //           var dateStr = moment(date).format(Constants.dateTimeFormat);
-  //           var scheduleMs = date.getTime();
-
-  //           /* Pick the first date in future to show on startup*/
-  //           if (scheduleMs > nowMs) {
-  //             this.setCurrentDate(dateStr);
-  //             break;
-  //           }
-  //         }
-  //       },
-  //       complete: () => {
-  //       },
-  //       error: error => {
-  //         console.log();
-  //       }
-  //     });
-  // }
   setCurrentDate(dateStr: string) {
     this.f['scheduledDateTime'].setValue(moment(dateStr, Constants.dateTimeFormat).toDate());
-    //var event = new Event('change');
-    
-    const event = new CustomEvent("change", { detail: dateStr });
-    (this.dateCtrl.nativeElement as HTMLInputElement).dispatchEvent(
-      event
-    );
+    // /* Trigger atrificially  `onChangeDateTime` */
+    // const event = new CustomEvent("change", { detail: dateStr });
+    // (this.dateCtrl.nativeElement as HTMLInputElement).dispatchEvent(
+    //   event
+    // );
+    this.fComponents.forEach(element => {
+      console.log("Changing time to: "+ this.getDateTimeStr());
+      element.setCurrentDate(this.getDateTimeStr());
+    });
+    this.setCopyPasteButtons();
     console.log("Generate changing date: " + dateStr);
   }
 
@@ -174,15 +142,19 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     return data;
   }
   onPaste(event: MouseEvent, button: any) {
+    //this.functionsLoaded = false;
     this.setCopyPasteButtons();
     for (let entry of GenerateSchedulesComponent.functions2SchedulesMap.entries()) {
       console.log("Key:" + entry[0].dateTimeStr);
       for (let index = 0; index < entry[1].length; index++) {
         console.log("\tValue:" + entry[1][index].firstName);
-        /* entry[1] = Accounts[] for specific `FunctionScheduleComponent`(entry[0]) */
+        /* 
+        The entry[1] is an array of Accounts[] for specific `FunctionScheduleComponent`(entry[0]) 
+        */
         entry[0].addSchedule(entry[1][index]);
       }
     }
+    //this.functionsLoaded = true;
   }
   onClear(event: MouseEvent, button: any) {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
