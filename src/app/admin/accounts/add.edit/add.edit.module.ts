@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { Constants } from 'src/app/constants';
 
-import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDateFormats, NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
-import { NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS, NgxMatMomentAdapter } from '@angular-material-components/moment-adapter';
+import { NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
 
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -12,11 +11,14 @@ import { MatTableModule } from '@angular/material/table';
 import { MaterialModule } from 'src/app/material/material.module';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { AddEditComponent } from './add-edit.component';
-import { MatInputModule } from '@angular/material/input';
-import { AccountsRoutingModule } from '../accounts-routing.module';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
+import { RouterModule } from '@angular/router';
+import { AddEditComponent } from './add-edit.component';
+
+
+
 
 
 const CUSTOM_MOMENT_FORMATS = {
@@ -37,22 +39,34 @@ const CUSTOM_MOMENT_FORMATS = {
   ],
   imports: [
     CommonModule,
-    BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    AccountsRoutingModule,
+    
 
     MaterialModule,
+    MatCardModule,
     MatInputModule,
     MatTableModule,
     MatDatepickerModule,
     MatFormFieldModule,
     NgxMatDatetimePickerModule,
+    RouterModule
+    
+    
+    
   ],
   exports: [
-    CommonModule,
+    /* CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MaterialModule,
+    MatCardModule,
+    MatInputModule,
+    MatTableModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    NgxMatDatetimePickerModule,
+    RouterModule */
   ],
   providers: [
    

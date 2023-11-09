@@ -21,6 +21,7 @@ const baseUrl = `${environment.apiUrl}/accounts`;
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
+    
     private accountSubject: BehaviorSubject<Account>;
     public account: Observable<Account>;
 
@@ -183,6 +184,12 @@ export class AccountService {
 
     uploadAccountsFile(formData: FormData) {
         return this.http.post<Account[]>(`${baseUrl}/upload-accounts`, formData, {
+            reportProgress: true,
+            observe: 'events'
+        });
+    }
+    uploadTimeSlotsFile(formData: FormData) {
+        return this.http.post<Account[]>(`${baseUrl}/upload-timeslots`, formData, {
             reportProgress: true,
             observe: 'events'
         });

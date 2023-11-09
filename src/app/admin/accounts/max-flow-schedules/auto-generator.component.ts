@@ -1,44 +1,47 @@
-import { AfterViewInit, Component, ElementRef, Input, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, finalize } from 'rxjs';
 import { AccountService, AlertService } from 'src/app/_services';
 
 @Component({
-  selector: 'app-upload-accounts',
-  templateUrl: './upload-accounts.component.html',
-  styleUrls: ['./upload-accounts.component.less']
+  selector: 'app-auto-generator',
+  templateUrl: './auto-generator.component.html',
+  styleUrls: ['./auto-generator.component.less']
 })
-export class UploadAccountsComponent implements OnInit, AfterViewInit {
+export class AutoGeneratorComponent implements OnInit, AfterViewInit{
   @ViewChildren("progressFile") progressChildren: QueryList<ElementRef>;
-  @ViewChild("progressFile") progressChild: ElementRef;
-  @Input() requiredFileType: string;
-
-  fileName = '';
-  uploadProgress: number = 0;
-  uploadSub: Subscription;
-  submitted = false;
+  
+  private accountService: AccountService;
+  private alertService: AlertService;
+  private router: Router;
+  private route: ActivatedRoute;
+  private renderer: Renderer2;
+fileName: any;
   fileHasBeenSelected: boolean = false;
+  submitted: boolean;
+  uploadSub: Subscription;
+  uploadProgress: number = 0;
 
-  accountService: AccountService;
-  constructor(accountService: AccountService,
-    private alertService: AlertService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private renderer: Renderer2) {
-
-    this.accountService = accountService;
+	constructor($accountService: AccountService, $alertService: AlertService, $router: Router, $route: ActivatedRoute) {
+		this.accountService = $accountService;
+		this.alertService = $alertService;
+		this.router = $router;
+		this.route = $route;
+	}
+  routerComment() {
+    this.router.navigate(['../'], { relativeTo: this.route });
+}
+  ngOnInit(): void {
+    this.fileName = "";
   }
   ngAfterViewInit(): void {
+    /* We need the code below because if ngIf directive in the template file  */
     this.progressChildren.changes.subscribe((comps: QueryList <ElementRef>) =>
     {
       if(comps.first != undefined)
         comps.first.nativeElement.removeAttribute("value")
     });
   }
-  ngOnInit(): void {
-    this.fileName = "";
-  }
-
   onFileSelected(event: Event) {
     const file: File = (event.target as HTMLInputElement).files[0];
 
@@ -49,6 +52,7 @@ export class UploadAccountsComponent implements OnInit, AfterViewInit {
       this.fileHasBeenSelected = false;
     }
   }
+
   onSubmit(event: any, fileUpload: any) {
 
     const file: File = fileUpload.files[0];
@@ -60,11 +64,11 @@ export class UploadAccountsComponent implements OnInit, AfterViewInit {
       formData.append("file", file);
 
       if (file.type == "application/x-msdownload") {
-        this.alertService.error("File must be an .xlsm file type");
+        this.alertService.error("File must be an .xlsx file type");
         return;
       }
 
-      const upload$ = this.accountService.uploadAccountsFile(formData)
+      const upload$ = this.accountService.uploadTimeSlotsFile(formData)
         .pipe(
           finalize(() => {
             this.reset();
@@ -73,15 +77,6 @@ export class UploadAccountsComponent implements OnInit, AfterViewInit {
 
       this.uploadSub = upload$.subscribe({
         next: (value) => {
-          //this.submitted = false;
-          // if (value.type == HttpEventType.UploadProgress) {
-          //   this.uploadProgress = Math.round(100 * (value.loaded / value.total));
-          //   console.log("Progress:" + this.uploadProgress);
-          //   if (this.uploadProgress == 100) {
-          //     this.uploadProgress = 0;
-          //     //this.progressChild.nativeElement.removeAttribute("value");
-          //   }
-          // }
         },
         complete: () => {
           this.alertService.info("Done");

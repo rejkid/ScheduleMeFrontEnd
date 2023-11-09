@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { FloatingSchedulesComponent } from './floating-schedules/floating-schedules.component';
 
-import { HomeComponent } from './home';
-import { RaportForDateComponent } from './raport-for-date/raport-for-date.component';
 import { AuthGuard } from './_helpers';
 import { Role } from './_models';
+import { HomeComponent } from './home';
+import { RaportForDateComponent } from './raport-for-date/raport-for-date.component';
 
 const accountModule = () => import('./account/account.module').then(x => x.AccountModule);
 const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule);

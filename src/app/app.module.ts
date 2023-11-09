@@ -7,7 +7,7 @@ import { BrowserModule } from '@angular/platform-browser';
 //import { fakeBackendProvider } from './_helpers';
 
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AlertComponent } from './_components';
 import { ErrorInterceptor, JwtInterceptor, appInitializer } from './_helpers';
 import { AccountService } from './_services';
@@ -30,10 +30,9 @@ import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 
-import { OrderByDatePipe } from './application-pipes-module/order-by-date.pipe';
-import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
-import { AccountsModule } from './admin/accounts/accounts.module';
 import { ApplicationPipesModuleModule } from './application-pipes-module/application-pipes-module.module';
+import { AutoGeneratorModule } from './admin/accounts/max-flow-schedules/auto-generator.module';
+import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
 
 @NgModule({
     imports: [
@@ -58,7 +57,9 @@ import { ApplicationPipesModuleModule } from './application-pipes-module/applica
         MatFormFieldModule,
         NgxMatDatetimePickerModule,
         NgxMatNativeDateModule,
-        ApplicationPipesModuleModule
+        ApplicationPipesModuleModule,
+        AutoGeneratorModule,
+        AddEditModule,
         
     ],
     exports: [

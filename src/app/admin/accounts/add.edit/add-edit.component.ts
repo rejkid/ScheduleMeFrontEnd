@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { MustMatch } from 'src/app/_helpers';
-import { TimeHandler } from 'src/app/_helpers/time.handler';
 
 import * as moment from 'moment';
 import { Account, Role } from 'src/app/_models';
@@ -12,7 +11,8 @@ import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 
 @Component({ templateUrl: './add-edit.component.html',
-styleUrls: ['./add-edit.component.less'], })
+styleUrls: ['./add-edit.component.less'], 
+})
 export class AddEditComponent implements OnInit, AfterViewInit {
 
     DATE_FORMAT = Constants.dateFormat;

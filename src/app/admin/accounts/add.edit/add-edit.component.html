@@ -142,6 +142,6 @@
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
             Update
         </button>
-        <a routerLink="/admin/accounts" class="btn btn-link">Back</a>
+        <a [routerLink]="['/admin/accounts']" class="btn btn-link">Back</a>
     </div>
 </form>

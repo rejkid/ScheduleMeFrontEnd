@@ -15,22 +15,21 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { ApplicationPipesModuleModule } from 'src/app/application-pipes-module/application-pipes-module.module';
 import { Constants } from 'src/app/constants';
 import { DOBModule } from 'src/app/dob/dob.module';
 import { MaterialModule } from 'src/app/material/material.module';
 import { ScheduleModule } from 'src/app/schedule/schedule.module';
 import { AccountsRoutingModule } from './accounts-routing.module';
 import { CustomDateFormatDirective } from './custom-date-format.directive';
+import { FunctionScheduleComponent } from './function-schedule/function-schedule.component';
 import { FunctionComponent } from './function.component';
+import { GenerateSchedulesComponent } from './generate-schedules/generate-schedules.component';
 import { ListComponent } from './list.component';
+import { MainSchedulerComponent } from './main-scheduler/main-scheduler.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
-import { GenerateSchedulesComponent } from './generate-schedules/generate-schedules.component';
-import { FunctionScheduleComponent } from './function-schedule/function-schedule.component';
-import { AppModule } from 'src/app/app.module';
-import { OrderByDatePipe } from 'src/app/application-pipes-module/order-by-date.pipe';
-import { ApplicationPipesModuleModule } from 'src/app/application-pipes-module/application-pipes-module.module';
-import { MainSchedulerComponent } from './main-scheduler/main-scheduler.component';
+
 
 
 // If using Moment
@@ -89,7 +88,8 @@ export class AppDateAdapter extends NativeDateAdapter {
     MatSelectModule,
     DOBModule,
     MatProgressBarModule,
-    ApplicationPipesModuleModule
+    ApplicationPipesModuleModule,
+  
   ],
   declarations: [
     ListComponent,
