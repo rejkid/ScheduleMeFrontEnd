@@ -11,10 +11,9 @@ import { UploadAccountsComponent } from './upload-accounts/upload-accounts.compo
 
 const routes: Routes = [
     { path: '', component: ListComponent },
-    { path: 'add', component: AddEditComponent },
+    { path: 'add-edit', loadChildren: () => import('./add.edit/add.edit.module').then(x => x.AddEditModule)/* component: AddEditComponent */ },
     { path: 'upload', component: UploadAccountsComponent},
-    { path: 'auto-generate-schedules', component: AutoGeneratorComponent},
-    { path: 'edit/:id', component: AddEditComponent },
+    { path: 'auto-generate-schedules', loadChildren: () => import('./max-flow-schedules/auto-generator.module').then(x => x.AutoGeneratorModule)/* component: AutoGeneratorComponent */},
     { path: 'function/:id', component: FunctionComponent },
     { path: 'schedule/:id', component: ScheduleAllocatorComponent },
     { path: 'schedule-generate', component: MainSchedulerComponent},

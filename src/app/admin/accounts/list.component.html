@@ -12,7 +12,7 @@
 <div class="container" >
     <div class="row equal">
         <div class="col-2 gx-0">
-            <a routerLink="add" class="btn btn-sm btn-success mb-2">Create Account</a>
+            <a routerLink="add-edit/add" class="btn btn-sm btn-success mb-2">Create Account</a>
         </div>
         <div class="col-2  gx-0">
             <a routerLink="upload" class="btn btn-sm btn-success mb-2">Upload Accounts</a>
@@ -27,7 +27,7 @@
             <a routerLink="schedule-generate" class="btn btn-sm btn-success mb-2">Create Schedules</a>
         </div>
         <div class="col-2  gx-0">
-            <a routerLink="auto-generate-schedules" class="btn btn-sm btn-success mb-2">Generate Schedules</a>
+            <a routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-success mb-2">Generate Schedules</a>
         </div>
     </div>
 </div>
@@ -52,7 +52,7 @@
             <td>{{account.role}}</td>
             <td><input type="checkbox" [checked]="account.isVerified" [disabled]="true"/></td>
             <td style="white-space: nowrap" >
-                <button class="ml-1" routerLink="edit/{{account.id}}" [disabled]="!account.isVerified" class="btn btn-sm btn-primary mr-1" >Edit</button>
+                <button class="ml-1" routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified" class="btn btn-sm btn-primary mr-1" >Edit</button>
                 <button class="ml-1" routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Duties</button>
                 <button class="ml-1" routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Schedule</button>
                 <button class="ml-1" (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting" >

@@ -31,8 +31,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 
 import { ApplicationPipesModuleModule } from './application-pipes-module/application-pipes-module.module';
-import { AutoGeneratorModule } from './admin/accounts/max-flow-schedules/auto-generator.module';
-import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
+//import { AutoGeneratorModule } from './admin/accounts/max-flow-schedules/auto-generator.module';
+//import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
 
 @NgModule({
     imports: [
@@ -58,8 +58,8 @@ import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
         NgxMatDatetimePickerModule,
         NgxMatNativeDateModule,
         ApplicationPipesModuleModule,
-        AutoGeneratorModule,
-        AddEditModule,
+        //AutoGeneratorModule,
+        // AddEditModule,
         
     ],
     exports: [

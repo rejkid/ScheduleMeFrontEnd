@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AutoGeneratorComponent } from './auto-generator.component';
+import { AutoGeneratorRoutingModule } from './auto-generator-routing.module';
 
 
 
@@ -11,7 +12,8 @@ import { AutoGeneratorComponent } from './auto-generator.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
+    RouterModule,
+    AutoGeneratorRoutingModule
   ],
   declarations: [
     AutoGeneratorComponent

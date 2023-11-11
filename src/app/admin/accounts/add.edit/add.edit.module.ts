@@ -16,6 +16,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { RouterModule } from '@angular/router';
 import { AddEditComponent } from './add-edit.component';
+import { AddEditRoutingModule } from './add.edit-routing.module';
 
 
 
@@ -50,7 +51,8 @@ const CUSTOM_MOMENT_FORMATS = {
     MatDatepickerModule,
     MatFormFieldModule,
     NgxMatDatetimePickerModule,
-    RouterModule
+    RouterModule,
+    AddEditRoutingModule
     
     
     
