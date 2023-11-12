@@ -79,7 +79,7 @@ fileName: any;
           this.alertService.info("Done");
           this.submitted = false;
           this.uploadProgress = -1;
-          //this.router.navigate(['../../'], { relativeTo: this.route });
+          this.router.navigate(['../../'], { relativeTo: this.route });
         },
         error: error => {
           this.alertService.error(error);
