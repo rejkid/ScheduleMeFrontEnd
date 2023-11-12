@@ -1,8 +1,9 @@
-<div class="col-5 mb-3">
-    <a routerLink="../" class="btn btn-link">Back</a>
-</div>
 <div class="container-fluid">
     <form [formGroup]="form">
+        <div class="col mx-md-2">
+            <a routerLink="../" class="btn btn-primary">Back</a>
+        </div>
+
         <div class="row">
             <div class="col-12">
                 <fieldset style="overflow:auto">
@@ -55,9 +56,12 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <app-generate-schedules (dateTimeChangedEmitter)="dateTimeChanged($event)" (schedulesUpdatedEmitter)="onSchedulesUpdated($event)"
-                    #scheduleDate></app-generate-schedules>
+                <app-generate-schedules (dateTimeChangedEmitter)="dateTimeChanged($event)"
+                    (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #scheduleDate></app-generate-schedules>
             </div>
+        </div>
+        <div class="col px-md-2">
+            <a routerLink="../" class="btn btn-primary">Back</a>
         </div>
     </form>
 </div>
