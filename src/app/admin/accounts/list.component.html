@@ -12,23 +12,23 @@
 <p>All accounts from secure (admin only) api end point:</p>
 <div class="container">
     <div class="row equal">
-        <div class="col-2 gx-0">
+        <div class="col-2">
             <a routerLink="add-edit/add" class="btn btn-sm btn-success mb-2">Create Account</a>
         </div>
-        <div class="col-2  gx-0">
+        <div class="col-2">
             <a routerLink="upload" class="btn btn-sm btn-success mb-2">Upload Accounts</a>
         </div>
-        <div class="col-2  gy-0">
+        <div class="col-2">
+            <a routerLink="schedule-generate" class="btn btn-sm btn-success mb-2">Create Schedules</a>
+        </div>
+        <div class="col-2">
+            <a routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-success mb-2">Generate Schedules</a>
+        </div>
+        <div class="col-2">
             <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn-success mb-2">
                 <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                 Delete Accounts
             </a>
-        </div>
-        <div class="col-2  gx-0">
-            <a routerLink="schedule-generate" class="btn btn-sm btn-success mb-2">Create Schedules</a>
-        </div>
-        <div class="col-2  gx-0">
-            <a routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-success mb-2">Generate Schedules</a>
         </div>
     </div>
 </div>
@@ -42,7 +42,6 @@
                 Email
             </th>
             <th style="width:5%">Role</th>
-            <th style="width:5%">Verified</th>
             <th style="width:15%"></th>
         </tr>
     </thead>
@@ -51,7 +50,6 @@
             <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
             <td>{{account.email}}</td>
             <td>{{account.role}}</td>
-            <td><input type="checkbox" [checked]="account.isVerified" [disabled]="true" /></td>
             <td style="white-space: nowrap">
                 <div class="row">
                     <div class="col-1 px-1">
