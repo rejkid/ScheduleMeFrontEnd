@@ -1,15 +1,16 @@
 ﻿<h1>Accounts Auto Email</h1>
-<div class="container" >
+<div class="container">
     <div class="row equal">
         <div class="mb-3 col-2 gx-0">
-            <input type="checkbox" #tr (click)="onChangeHandler($event, tr)" [checked]="autoEmail" [disabled]="false" />&nbsp;Send e-mails:
+            <input type="checkbox" #tr (click)="onChangeHandler($event, tr)" [checked]="autoEmail"
+                [disabled]="false" />&nbsp;Send e-mails:
         </div>
     </div>
 </div>
 
 <h1>Accounts</h1>
 <p>All accounts from secure (admin only) api end point:</p>
-<div class="container" >
+<div class="container">
     <div class="row equal">
         <div class="col-2 gx-0">
             <a routerLink="add-edit/add" class="btn btn-sm btn-success mb-2">Create Account</a>
@@ -37,7 +38,7 @@
         <tr>
             <th style="width:10%">Name</th>
             <th style="width:10%">
-                <img src="./assets/images/email.png" alt=""/>
+                <img src="./assets/images/email.png" alt="" />
                 Email
             </th>
             <th style="width:5%">Role</th>
@@ -50,15 +51,30 @@
             <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
             <td>{{account.email}}</td>
             <td>{{account.role}}</td>
-            <td><input type="checkbox" [checked]="account.isVerified" [disabled]="true"/></td>
-            <td style="white-space: nowrap" >
-                <button class="ml-1" routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified" class="btn btn-sm btn-primary mr-1" >Edit</button>
-                <button class="ml-1" routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Duties</button>
-                <button class="ml-1" routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1" [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Schedule</button>
-                <button class="ml-1" (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting" >
-                    <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
-                    <span *ngIf="!account.isDeleting">Delete</span>
-                </button>
+            <td><input type="checkbox" [checked]="account.isVerified" [disabled]="true" /></td>
+            <td style="white-space: nowrap">
+                <div class="row">
+                    <div class="col-1 px-1">
+                        <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
+                            class="btn btn-sm btn-primary mr-1">Edit</button>
+                    </div>
+                    <div class="col-2">
+                        <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1"
+                            [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Duties</button>
+
+                    </div>
+                    <div class="col-3">
+                        <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1"
+                            [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Schedule</button>
+                    </div>
+                    <div class="col-1">
+                        <button (click)="deleteAccount(account.id)"
+                            class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting">
+                            <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
+                            <span *ngIf="!account.isDeleting">Delete</span>
+                        </button>
+                    </div>
+                </div>
             </td>
         </tr>
         <tr *ngIf="!accounts">
