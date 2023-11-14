@@ -10,11 +10,11 @@
                 <select #element formControlName="availableSchedule4Function" class="form-select">
                     <option *ngFor="let item of poolElements">
                         <span *ngIf='item.userFunction === "Cleaner"' class="spinner-border spinner-border-sm mr-1">
-                        {{ item.date }}/{{ item.userFunction }}/{{ item.scheduleGroup }}
-                    </span>
+                            {{ item.date }}/{{ item.userFunction }}/{{ item.scheduleGroup }}
+                        </span>
                         <span *ngIf='item.userFunction !="Cleaner"' class="spinner-border spinner-border-sm mr-1">
-                        {{ item.date }}/{{ item.userFunction }}
-                    </span>
+                            {{ item.date }}/{{ item.userFunction }}
+                        </span>
                     </option>
                 </select>
             </div>
@@ -40,46 +40,46 @@
     <span class="spinner-border spinner-border-lg align-center"></span>
 </div>
 
-<div class="color-sample mat-elevation-z3" 
-         [style.background-color]="color">
-<div class="border">
-    <mat-table #table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="date">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Date/Time </mat-header-cell>
-            <mat-cell *matCellDef="let schedule">{{schedule.date}}
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="userFunction">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Duty </mat-header-cell>
-            <mat-cell *matCellDef="let schedule">{{schedule.userFunction}}
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="scheduleGroup">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
-            <mat-cell *matCellDef="let schedule">{{schedule.scheduleGroup}}
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="action">
-            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-            <mat-cell *matCellDef="let i = index; let schedule; let row">
-                <button class="btn btn-sm btn-danger btn-delete-account" type="button" (click)="onDeleteSchedule($event, row, i, schedule)"
-                    [ngClass]="{ 'disabled': isScheduleFromPast(row) || row.deleting}">
-                    <span *ngIf="row.deleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
-                </button>
-            </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{hovered: row.hovered}"
-            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false" #tr (click)="onRowSelected(row, tr)">
-        </mat-row>
-    </mat-table>
+<div class="color-sample mat-elevation-z3 mb-2" [style.background-color]="color">
+    <div class="border">
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="date">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Date/Time </mat-header-cell>
+                <mat-cell *matCellDef="let schedule">{{schedule.date}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="userFunction">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Duty </mat-header-cell>
+                <mat-cell *matCellDef="let schedule">{{schedule.userFunction}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="scheduleGroup">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
+                <mat-cell *matCellDef="let schedule">{{schedule.scheduleGroup}}
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="action">
+                <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                <mat-cell *matCellDef="let i = index; let schedule; let row">
+                    <button class="btn btn-sm btn-danger btn-delete-account" type="button"
+                        (click)="onDeleteSchedule($event, row, i, schedule)"
+                        [ngClass]="{ 'disabled': isScheduleFromPast(row) || row.deleting}">
+                        <span *ngIf="row.deleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{hovered: row.hovered}"
+                (mouseover)="row.hovered = true" (mouseout)="row.hovered = false" #tr (click)="onRowSelected(row, tr)">
+            </mat-row>
+        </mat-table>
 
-    <mat-paginator #paginator [length]="schedules.length" [pageSizeOptions]="[5, 10, 30, 50]" showFirstLastButtons>
-    </mat-paginator>
-</div>
+        <mat-paginator #paginator [length]="schedules.length" [pageSizeOptions]="[5, 10, 30, 50]" showFirstLastButtons>
+        </mat-paginator>
+    </div>
 </div>
 
 <div class="mb-3">
-    <a routerLink="/schedule" disabled="false" class="btn btn-link">Back</a>
+    <a routerLink="/schedule" disabled="false" class="btn btn-primary">Back</a>
 </div>
 <div class="row mt-3"></div>
