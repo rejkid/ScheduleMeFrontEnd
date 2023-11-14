@@ -79,7 +79,6 @@ export class MainSchedulerComponent {
   }
   onCheckboxChange(event: any) {
     this.getAllDates();
-    //this.teams = []; // Remove all current teams - we have new set of dates
   }
 
   get f() {
