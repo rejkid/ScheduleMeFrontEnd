@@ -51,21 +51,21 @@
             <td>{{account.email}}</td>
             <td>{{account.role}}</td>
             <td style="white-space: nowrap">
-                <div class="row">
-                    <div class="col-1 px-1">
+                <div class="container">
+                    <div class="div-delete">
                         <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
                             class="btn btn-sm btn-primary mr-1">Edit</button>
                     </div>
-                    <div class="col-2">
+                    <div class="div-delete ms-1" *ngIf="account.role !=RoleAdminEnum">
                         <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                            [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Duties</button>
+                            [disabled]="!account.isVerified" >Duties</button>
 
                     </div>
-                    <div class="col-3">
+                    <div class="div-delete  ms-1" *ngIf="account.role !=RoleAdminEnum">
                         <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                            [disabled]="!account.isVerified" *ngIf="account.role !=RoleAdminEnum">Schedule</button>
+                            [disabled]="!account.isVerified" >Schedule</button>
                     </div>
-                    <div class="col-1">
+                    <div class="div-delete  ms-1">
                         <button (click)="deleteAccount(account.id)"
                             class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting">
                             <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
