@@ -1,4 +1,3 @@
-import { MatDatetimePickerInputEvent } from '@angular-material-components/datetime-picker';
 import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -106,7 +105,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     this.schedulesUpdatedEmitter.emit(data);
   }
 
-  onChangeDateTime(event: MatDatetimePickerInputEvent<any>) {
+  onChangeDateTime(event: any) {
     this.fComponents.forEach(element => {
       console.log("Changing time to: "+ this.getDateTimeStr());
       element.setCurrentDate(this.getDateTimeStr());
