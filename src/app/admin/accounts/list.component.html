@@ -41,6 +41,7 @@
                 <img src="./assets/images/email.png" alt="" />
                 Email
             </th>
+            <th style="width:5%">DOB</th>
             <th style="width:5%">Role</th>
             <th style="width:15%"></th>
         </tr>
@@ -49,6 +50,7 @@
         <tr *ngFor="let account of accounts">
             <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
             <td>{{account.email}}</td>
+            <td>{{account.dob}}</td>
             <td>{{account.role}}</td>
             <td style="white-space: nowrap">
                 <div class="container">
