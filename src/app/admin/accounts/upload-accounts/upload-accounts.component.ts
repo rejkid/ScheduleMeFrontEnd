@@ -60,7 +60,7 @@ export class UploadAccountsComponent implements OnInit, AfterViewInit {
       formData.append("file", file);
 
       if (file.type == "application/x-msdownload") {
-        this.alertService.error("File must be an .xlsm file type");
+        this.alertService.error("File must be an .xlsx file type");
         return;
       }
 
