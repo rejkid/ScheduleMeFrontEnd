@@ -36,7 +36,7 @@ export class FunctionComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.accountService.getRoles()
+          this.accountService.getTasks()
             .pipe(first())
             .subscribe({
               next: (value) => {

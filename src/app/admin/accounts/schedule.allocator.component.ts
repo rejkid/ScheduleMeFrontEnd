@@ -122,7 +122,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       .pipe(first())
         .subscribe(account => {
 
-        this.accountService.getRoles()
+        this.accountService.getTasks()
           .pipe(first())
           .subscribe({
             next: (value) => {
@@ -305,7 +305,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       .pipe(first())
       .subscribe(account => {
 
-        this.accountService.getRoles()
+        this.accountService.getTasks()
           .pipe(first())
           .subscribe({
             next: (value) => {

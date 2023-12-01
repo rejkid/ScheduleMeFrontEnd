@@ -265,7 +265,7 @@ export class AccountService {
         clearTimeout(this.refreshTokenTimeout);
     }
 
-    getRoles() {
-        return this.http.get<[]>(`${baseUrl}/role-configuration`);
+    getTasks() {
+        return this.http.get<[]>(`${baseUrl}/tasks`);
     }
 }

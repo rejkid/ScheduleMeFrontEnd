@@ -124,7 +124,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (account) => {
 
-          this.accountService.getRoles()
+          this.accountService.getTasks()
             .pipe(first())
             .subscribe({
               next: (value) => {

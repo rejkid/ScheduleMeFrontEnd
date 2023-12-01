@@ -41,7 +41,7 @@ export class ScheduleFunctionComponent implements OnInit {
           next: (account) => {
             this.account = account;
             this.isLoaded = true;
-            this.accountService.getRoles()
+            this.accountService.getTasks()
             .pipe(first())
             .subscribe({
               next: (value: any) => {

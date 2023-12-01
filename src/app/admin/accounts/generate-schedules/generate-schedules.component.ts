@@ -74,7 +74,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     });
     //this.getAllDates();
     this.functionsLoaded = false;
-    this.accountService.getRoles()
+    this.accountService.getTasks()
       .pipe(first())
       .subscribe({
         next: (value: string[]) => {
