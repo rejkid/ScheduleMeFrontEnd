@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -87,6 +87,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   poolElements: SchedulePoolElement[] = [];
   public color: ThemePalette = 'primary';
 
+  groupTask : string = "G";
+
   connection: signalR.HubConnection;
 
   constructor(accountService: AccountService,
@@ -116,11 +118,20 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     this.connection.on("SendUpdate", (id: number) => {
       this.updateSchedulesFromServer();
     });
+
+    this.form = this.formBuilder.group({
+      scheduledDate: ['', Validators.required],
+      cleanerGroup: ['K', ] ,
+      function: ['', [Validators.required, this.functionValidator]],
+    });
+
   }
   ngAfterViewInit(): void {
     this.accountService.getById(this.id)
       .pipe(first())
         .subscribe(account => {
+
+        this.account = account;
 
         this.accountService.getTasks()
           .pipe(first())
@@ -151,22 +162,22 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
               this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
 
               this.isLoaded = true;
+
+              this.f["cleanerGroup"].setValue(this.group);
+
+              //this.groupTask = this.group;
             },
             error: error => {
               this.alertService.error(error);
             }
           });
       });
+
   }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
 
-    this.form = this.formBuilder.group({
-      scheduledDate: ['', Validators.required],
-      cleanerGroup: ['', ] ,
-      function: ['', [Validators.required, this.functionValidator]],
-    });
   }
 
   ngOnDestroy() {
@@ -195,6 +206,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   onDutyChanged(event: any) {
     if(event.value == this.CLEANER_STR) {
       this.form.get('cleanerGroup').enable();
+      this.f["cleanerGroup"].setValue(this.group);
     } else {
       this.form.get('cleanerGroup').disable();
     }
@@ -410,5 +422,18 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     if(this.form == undefined)
      return false;
     return this.form.get('function').value === this.CLEANER_STR
+  }
+  get group() : string {
+    var fun = this.account.userFunctions.find(f => {
+      console.log(f);
+      return f.group.length > 0
+    });
+    if (fun != null)
+      return fun.group
+    else
+      return "";
+  }
+  get isReadOnly() : boolean {
+    return this.group.length > 0;
   }
 }

@@ -1,5 +1,5 @@
 <fieldset>
-    <legend>{{functionStr}}</legend>
+    <legend>{{titlePrefix}}{{functionStr}}</legend>
         <form [formGroup]="form">
         <div class="row mb-4">
             <div class="col-5">
@@ -42,7 +42,7 @@
         <ng-container matColumnDef="group">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
             <mat-cell *matCellDef="let account">
-                <input type="text" matInput [value]="account.scheduleGroup" readonly>
+                <input type="text" matInput [value]="getGroup(account)" readonly>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="action">

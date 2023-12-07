@@ -71,6 +71,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   accounts: Account[] = [];
 
   private _accounts4DateAndFunction: Account[] = [];
+  titlePrefix: string = "";
 
   public get accounts4DateAndFunction(): Account[] {
     return this._accounts4DateAndFunction;
@@ -148,6 +149,26 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
           /* Notify parrent that the data has been updated */
           this.schedulesUpdatedEmitter.emit(funcSchedData);
 
+          /* Check if we are group task */
+          this.accountService.getGroupTasks()
+            .pipe(first())
+            .subscribe({
+              next: (groupTasks : string[]) => {
+                if(groupTasks.includes(this.functionStr))
+                {
+                  this.titlePrefix = "Group "
+                }
+                console.log(groupTasks);
+              },
+              complete: () => {
+                this.isAdding = false;
+              },
+              error: error => {
+                this.alertService.error(error);
+                this.isAdding = false;
+              }
+            });
+
         },
         complete: () => {
           this.accountsLoaded = true;
@@ -177,6 +198,10 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
 
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
+
+  getGroup(account : Account) : string {
+    return account.userFunctions.find(x => x.userFunction == this.functionStr).group;
+  }
 
   onChangeUser(event: Event) {
     var valueSelected = (event.target as HTMLInputElement).value;

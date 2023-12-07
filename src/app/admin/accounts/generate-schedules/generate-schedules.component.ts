@@ -83,7 +83,8 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
           value.forEach(element => {
             var f: UserFunction = {
               id: '',
-              userFunction: element
+              userFunction: element,
+              group: ''
             }
             this.functions.push(f);
           });

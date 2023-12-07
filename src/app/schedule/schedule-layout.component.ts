@@ -1,4 +1,4 @@
 ﻿import { Component } from '@angular/core';
 
-@Component({ templateUrl: 'schedule-layout.component.html' })
+@Component({selector: 'schedule-layout-component', templateUrl: 'schedule-layout.component.html' })
 export class ScheduleLayoutComponent { }

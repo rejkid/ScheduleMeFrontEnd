@@ -268,4 +268,7 @@ export class AccountService {
     getTasks() {
         return this.http.get<[]>(`${baseUrl}/tasks`);
     }
+    getGroupTasks() {
+        return this.http.get<[]>(`${baseUrl}/group-tasks`);
+    }
 }

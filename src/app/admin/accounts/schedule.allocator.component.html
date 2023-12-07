@@ -1,12 +1,14 @@
-<form [formGroup]="form" *ngIf="isLoaded && !isAdmin">
 
 
+
+    <form [formGroup]="form" *ngIf="isLoaded && !isAdmin">
     <div class="row">
         <div class="mb-3 col-5">
             <label>Define schedules for {{account.firstName}} {{account.lastName}}</label>
         </div>
     </div>
 
+    
     <fieldset>
         <legend>Date & Duty:</legend>
         <div class="container">
@@ -49,10 +51,8 @@
                 <div class="mb-3 col-3" *ngIf=isCleaner>
                     <mat-form-field appearance="outline">
                         <mat-label>Team</mat-label>
-                        <input type="text" #data matInput formControlName="cleanerGroup" matInput
-                            placeholder="Specify a group" [value]="account.scheduleGroup" required />
-                        <mat-error *ngIf="f['cleanerGroup'].enabled && f['cleanerGroup'].hasError('required')">The field
-                            is required</mat-error>
+                        <input type="text" #groupData matInput class="form-control" formControlName="cleanerGroup" placeholder="Specify a group" [readonly]="isReadOnly"/>
+                        <mat-error *ngIf="f['cleanerGroup'].enabled && f['cleanerGroup'].hasError('required')">The field is required</mat-error>
                     </mat-form-field>
                 </div>
             </div>
