@@ -1,13 +1,14 @@
 <fieldset>
     <legend>{{titlePrefix}}{{functionStr}}</legend>
-        <form [formGroup]="form">
+    <form [formGroup]="form">
         <div class="row mb-4">
             <div class="col-5">
                 <!-- <label>{{ functionStr }}</label> -->
                 <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
-                    <option *ngFor="let account of accountsAvailable4Function" [value]="account.lastName + '/' 
-                            + account.firstName + '/' + account.email + '/' + account.dob + '/' + account.scheduleGroup">
-                            {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}/{{ account.scheduleGroup }}
+                    <option *ngFor="let account of accountsAvailable4Function"
+                        [value]="account.lastName + '/' 
+                                + account.firstName + '/' + account.email + '/' + account.dob + '/' + getGroup(account)">
+                        {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}/{{ getGroup(account) }}
                     </option>
                 </select>
             </div>

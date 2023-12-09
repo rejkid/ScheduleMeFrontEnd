@@ -98,6 +98,11 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.dateTimeStr = dateTime;
     console.log("Called for: for:" + this.functionStr + " New datetime is:" + dateTime);
     this.loadAccounts4DateAndFunction();
+    if (this.accounts4DateAndFunction.length > 0) {
+      var group = this.getGroup(this.accounts4DateAndFunction[0]);
+      this.loadAccounts4Function(group);
+      console.log(this.accounts4DateAndFunction);
+    }
   }
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -113,13 +118,10 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
         next: (accounts: Account[]) => {
           this.accountsAvailable4Function = [];
           this.accounts = accounts;
-          accounts.forEach(account => {
+
+          this.loadAccounts4Function(null);
+          this.accounts.forEach(account => {
             account.isDeleting = false;
-            account.userFunctions.forEach(userFunc => {
-              if (userFunc.userFunction == this.functionStr) {
-                this.accountsAvailable4Function.push(account);
-              }
-            });
           });
           /* Select first account as the default one*/
           if (this.selectedAccount4Function !== undefined) {
@@ -127,14 +129,14 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
               + this.selectedAccount4Function.firstName + "/"
               + this.selectedAccount4Function.email + "/"
               + this.selectedAccount4Function.dob + "/"
-              + this.selectedAccount4Function.scheduleGroup;
+              + this.getGroup(this.selectedAccount4Function) /* this.selectedAccount4Function.scheduleGroup */;
             this.f['selectedUser'].setValue(selected);
           } else if (this.accountsAvailable4Function.length > 0) {
             var selected = this.accountsAvailable4Function[0].lastName + "/"
               + this.accountsAvailable4Function[0].firstName + "/"
               + this.accountsAvailable4Function[0].email + "/"
               + this.accountsAvailable4Function[0].dob + "/"
-              + this.accountsAvailable4Function[0].scheduleGroup;
+              + this.getGroup(this.accountsAvailable4Function[0]) /* this.accountsAvailable4Function[0].scheduleGroup */;
             this.f['selectedUser'].setValue(selected);
             this.selectedAccount4Function = this.accountsAvailable4Function[0];
           }
@@ -178,6 +180,17 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
           this.accountsLoaded = true;
         }
       });
+  }
+
+  private loadAccounts4Function(group : string) {
+    this.accountsAvailable4Function = [];
+    this.accounts.forEach(account => {
+      account.userFunctions.forEach(userFunc => {
+        if (userFunc.userFunction == this.functionStr && (group == null || userFunc.group == group)) {
+          this.accountsAvailable4Function.push(account);
+        }
+      });
+    });
   }
 
   private loadAccounts4DateAndFunction() {
