@@ -101,7 +101,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     if (this.accounts4DateAndFunction.length > 0) {
       var group = this.getGroup(this.accounts4DateAndFunction[0]);
       this.loadAccounts4Function(group);
-      console.log(this.accounts4DateAndFunction);
+      console.log("setCurrentDate"+this.accounts4DateAndFunction);
     }
   }
   ngAfterViewInit(): void {
@@ -160,7 +160,6 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
                 {
                   this.titlePrefix = "Group "
                 }
-                console.log(groupTasks);
               },
               complete: () => {
                 this.isAdding = false;

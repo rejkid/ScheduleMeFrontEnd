@@ -87,7 +87,6 @@ export class MainSchedulerComponent {
 
 
   getAllDates() {
-    console.log("Calling subscribe");
     this.accountService.getAllDates()
       .pipe(first())
       .subscribe({
@@ -95,7 +94,6 @@ export class MainSchedulerComponent {
           this.futureScheduleDateStrings = [];
           this.list = [];
           this.futureScheduleDates = [];
-          console.log("next called");;
           this.scheduleDateTime = value.scheduleDateTimes;
           console.assert(this.list.length <= 0, "list not empty");
 

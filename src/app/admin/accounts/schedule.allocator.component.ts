@@ -425,7 +425,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   }
   get group() : string {
     var fun = this.account.userFunctions.find(f => {
-      console.log(f);
+      // console.log(f);
       return f.group.length > 0
     });
     if (fun != null)

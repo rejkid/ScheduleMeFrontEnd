@@ -88,7 +88,6 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
             }
             this.functions.push(f);
           });
-          console.log();
         },
         complete: () => {
           this.functionsLoaded = true;
