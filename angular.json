@@ -79,10 +79,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "Scheduler:build:production"
+              "buildTarget": "Scheduler:build:production"
             },
             "development": {
-              "browserTarget": "Scheduler:build:development"
+              "buildTarget": "Scheduler:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -90,7 +90,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "Scheduler:build"
+            "buildTarget": "Scheduler:build"
           }
         },
         "test": {

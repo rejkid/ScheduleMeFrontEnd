@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, finalize } from 'rxjs';
+import { Subscription/* , finalize */ } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { AccountService, AlertService } from 'src/app/_services';
 
 @Component({

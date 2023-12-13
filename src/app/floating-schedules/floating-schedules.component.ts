@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
-import { first } from 'rxjs';
+//import { first } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { AccountService, AlertService } from '../_services';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-floating-schedules',
