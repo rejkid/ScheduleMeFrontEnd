@@ -13,7 +13,8 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/core": "^15.0.0",
+    "@angular-devkit/core": "^15.2.10",
+    "@angular-devkit/schematics": "^17.0.6",
     "@angular-material-components/datetime-picker": "^15.0.0",
     "@angular-material-components/moment-adapter": "^15.0.0",
     "@angular/animations": "^15.0.0",
@@ -45,12 +46,13 @@
     "@angular/compiler-cli": "^15.0.0",
     "@types/google-libphonenumber": "^7.4.28",
     "@types/jasmine": "~4.0.0",
+    "angular-cli-ghpages": "^1.0.7",
     "jasmine-core": "~4.1.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   }
 }
