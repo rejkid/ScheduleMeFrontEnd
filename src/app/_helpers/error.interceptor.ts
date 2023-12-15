@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpContextToken } from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpContextToken, HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -17,9 +17,11 @@ export class ErrorInterceptor implements HttpInterceptor {
             }
             var erro = this.error(err);
             console.error("ErrorInterceptor: " + erro);
-            return throwError(() => erro);
+            throw erro;
+            
         }))
     }
+    
     error(e: any): any {
         if (this.isPrimitive(e)) {
             return e;
