@@ -1,0 +1,32 @@
+Client side (Angular)
+
+1) Register end point for remote calls:
+    `connection = new HubConnectionBuilder().withUrl(('https://localhost:7219/<your endpoint>'));`
+2) Start listening on Hub  
+    `connection.start();`
+2) Provide handler for each server call
+    `connection..on('SendOffersToUser', (result: any) => {
+      this.offers.push(result);
+    });`
+
+
+Server side:
+1) In Program.css/Startup.css register server end point to brodcast messages to clients:
+  app.MapHub<SignalrDemoHub>("/<your endpoint>");
+  
+2) Define interface the client will be called on:
+  `public interface IMessageHubClient
+      {
+          Task SendOffersToUser(List<string> message);
+      }`
+3) Implement interface above:
+`public class MessageHub : Hub<IMessageHubClient>
+    {
+        public async Task SendOffersToUser(List<string> message)
+        {
+            //await Clients.All.SendOffersToUser(message);
+            await Clients.Caller.SendOffersToUser(message);
+        }
+    }`
+      
+4) Trigger the function above - from either Controller.cs or some other remote service
