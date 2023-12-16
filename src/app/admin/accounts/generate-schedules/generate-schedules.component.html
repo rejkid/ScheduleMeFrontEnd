@@ -46,10 +46,14 @@
         </form>
     </div>
     <div class=" mb-3 mx-0">
-        <div *ngFor="let item of functions | orderByDate: 'userFunction': 'asc' ">
-            <app-function-schedule  (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #function
+        @if(functionsLoaded) {
+        @for(item of functions | orderByDate: 'userFunction': 'asc'; track item) {
+        <div>
+            <app-function-schedule (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #function
                 [functionStr]=item.userFunction [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
         </div>
+        }
+    }
     </div>
 </fieldset>
 

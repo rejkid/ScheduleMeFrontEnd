@@ -22,7 +22,7 @@ export class OrderByDatePipe implements PipeTransform {
         }
       });
       return array;
-    } else if (property == "function") {
+    } else if (property === "userFunction") {
       array.sort((a, b) => {
         if (order === 'asc') {
           if (a[property] > b[property]) return 1;

@@ -5,11 +5,16 @@
             <div class="col-5">
                 <!-- <label>{{ functionStr }}</label> -->
                 <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
-                    <option *ngFor="let account of accountsAvailable4Function"
-                        [value]="account.lastName + '/' 
-                                + account.firstName + '/' + account.email + '/' + account.dob + '/' + getGroup(account)">
-                        {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}/{{ getGroup(account) }}
+                    @for (account of accountsAvailable4Function;track account) {
+                    <option
+                        [value]="account.lastName + '/' + account.firstName + '/' + account.email + '/' + account.dob + '/' + getGroup(account)">
+
+
+                        {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}/{{
+                        getGroup(account) }}
+
                     </option>
+                    }
                 </select>
             </div>
         </div>
@@ -51,7 +56,10 @@
             <mat-cell *matCellDef="let i = index; let account">
                 <button class="btn btn-sm btn-danger btn-delete-account" type="button"
                     (click)="onDeleteSchedule($event, account)" [ngClass]="{ 'disabled': account.isDeleting}">
-                    <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
+                    @if(account.isDeleting) {
+                    <span class="spinner-border spinner-border-sm mr-1"></span> 
+                    } Delete
+                    
                 </button>
             </mat-cell>
         </ng-container>
@@ -65,8 +73,11 @@
         showFirstLastButtons>
     </mat-paginator>
 
-    <button #button type="button" [ngClass]="{ 'disabled': accountsAvailable4Function.length <= 0 }" (click)="onAddSchedule($event, button)" class="btn btn-primary">
-        <span *ngIf="isAdding"  class="spinner-border spinner-border-sm mr-1"></span> 
+    <button #button type="button" [ngClass]="{ 'disabled': accountsAvailable4Function.length <= 0 }"
+        (click)="onAddSchedule($event, button)" class="btn btn-primary">
+        @if(isAdding) {
+        <span  class="spinner-border spinner-border-sm mr-1"></span>
+        }
         Add {{ functionStr }}
     </button>
 </fieldset>
