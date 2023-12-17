@@ -41,22 +41,10 @@
             <div class="col-12" *ngIf="futureScheduleDateStrings">
 
                 <div class="mb-3">
-                    <!--                     <select #dates formControlName="dates" class="form-select"
-                        (ngModelChange)="onSelected($event)">Choose
-                        <option value="" selected hidden>Choose here</option>
-                        <option *ngFor="let date of futureScheduleDateStrings">{{date}}/{{getDayStrFromDate(date)}}
-                        </option>
-                    </select>
-                    <div *ngIf="f['dates'].dirty && f['dates'].hasError('invalidDate')" class="alert alert-danger">Date
-                        must
-                        be
-                        valid
-                    </div>
- -->
                 </div>
 
-                <fieldset *ngFor="let team of teams | orderByDate: 'function': 'asc' ">
-                    <!-- <fieldset *ngFor="let team of teams"> -->
+                @for (team of teams | orderByDate: 'userFunction': 'asc' ; track team) {
+                <fieldset>
                     <legend>{{team.function}} :</legend>
                     <div class="border border-primary">
 
@@ -82,6 +70,7 @@
                         </table>
                     </div>
                 </fieldset>
+            }
 
             </div>
         </div>

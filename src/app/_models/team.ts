@@ -6,7 +6,7 @@ import { Users } from "./users";
 
 export class Team {
     id: string;
-    function : string;
+    userFunction : string;
     string: Date;
     users: User[] = [];
 }
