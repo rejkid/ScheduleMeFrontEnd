@@ -47,7 +47,7 @@
     </div>
     <div class=" mb-3 mx-0">
         @if(functionsLoaded) {
-        @for(item of functions | orderByDate: 'userFunction': 'asc'; track item) {
+        @for(item of functions | orderByDate: 'userFunction': 'asc'; track item.userFunction; let index = $index) {
         <div>
             <app-function-schedule (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #function
                 [functionStr]=item.userFunction [dateTimeStr]="getDateTimeStr()"></app-function-schedule>

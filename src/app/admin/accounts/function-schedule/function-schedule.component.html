@@ -5,7 +5,7 @@
             <div class="col-5">
                 <!-- <label>{{ functionStr }}</label> -->
                 <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
-                    @for (account of accountsAvailable4Function;track account) {
+                    @for (account of accountsAvailable4Function;track account.id; let index = $index) {
                     <option
                         [value]="account.lastName + '/' + account.firstName + '/' + account.email + '/' + account.dob + '/' + getGroup(account)">
 
