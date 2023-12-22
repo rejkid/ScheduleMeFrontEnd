@@ -38,6 +38,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   functionsLoaded: boolean = true;
   enableCopyButton: boolean = false;
   enablePasteButton: boolean = false;
+  advancedButtonsVisibility: any = false;
 
   constructor(private accountService: AccountService,
     private route: ActivatedRoute,

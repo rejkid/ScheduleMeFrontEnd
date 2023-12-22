@@ -30,6 +30,11 @@ const COLUMNS_SCHEMA = [
     label: "E-mail"
   },
   {
+    key: "dob",
+    type: "text",
+    label: "DateOfBirth"
+  },
+  {
     key: "group",
     type: "text",
     label: "ScheduleGroup"

@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OrderByDatePipe } from './order-by-date.pipe';
+import { OrderByDateOrFunctionPipe } from './order-by-date-or-function.pipe';
 
 
 
 @NgModule({
   declarations: [
-    OrderByDatePipe
+    OrderByDateOrFunctionPipe
   ],
   exports: [
-    OrderByDatePipe
+    OrderByDateOrFunctionPipe
   ],
   imports: [
     CommonModule

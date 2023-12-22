@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'orderByDate'
+  name: 'orderByDateOrFunction',
 })
-export class OrderByDatePipe implements PipeTransform {
+export class OrderByDateOrFunctionPipe implements PipeTransform {
 
   transform(array: any[], property: string, order: 'asc' | 'desc'): any[] {
     if (!Array.isArray(array) || !property) {

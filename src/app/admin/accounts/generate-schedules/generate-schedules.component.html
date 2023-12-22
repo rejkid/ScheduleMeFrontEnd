@@ -22,15 +22,17 @@
                         <mat-error *ngIf="f['scheduledDateTime'].errors">Invalid DOB</mat-error>
                     </mat-form-field>
                 </div>
+
+                @if(advancedButtonsVisibility) {
                 <div class="col-2">
-                    <button [ngClass]="{'disabled' : !enableCopyButton}" #button type="button"
-                        (click)="onCopy($event, button)" class="btn btn-primary">
+                    <button [ngClass]="{'disabled' : !enableCopyButton}" #button type="button" (click)="onCopy($event, button)"
+                        class="btn btn-primary">
                         Copy To Buffer
                     </button>
                 </div>
                 <div class="col-2">
-                    <button [ngClass]="{'disabled' : !enablePasteButton}" #button type="button"
-                        (click)="onPaste($event, button)" class="btn btn-primary">
+                    <button [ngClass]="{'disabled' : !enablePasteButton}" #button type="button" (click)="onPaste($event, button)"
+                        class="btn btn-primary">
                         Paste From Buffer
                     </button>
                 </div>
@@ -39,15 +41,19 @@
                         Clear Buffer
                     </button>
                 </div>
+                
+                
                 <div class="col-3">
                     <input type="text" class="no-outline" formControlName="information" id="Info" name="Name">
                 </div>
+                }
+
             </div>
         </form>
     </div>
     <div class=" mb-3 mx-0">
         @if(functionsLoaded) {
-        @for(item of functions | orderByDate: 'userFunction': 'asc'; track item.userFunction; let index = $index) {
+        @for(item of functions | orderByDateOrFunction: 'userFunction': 'asc'; track item.userFunction; let index = $index) {
         <div>
             <app-function-schedule (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #function
                 [functionStr]=item.userFunction [dateTimeStr]="getDateTimeStr()"></app-function-schedule>

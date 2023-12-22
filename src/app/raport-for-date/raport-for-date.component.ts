@@ -12,6 +12,7 @@ import { DateFunctionTeams } from '../_models/teams';
 import { AccountService } from '../_services';
 import { Constants } from '../constants';
 
+
 const COLUMNS_SCHEMA = [
   {
     key: "date",
@@ -27,7 +28,7 @@ const COLUMNS_SCHEMA = [
 @Component({
   selector: 'app-raport-test',
   templateUrl: './raport-for-date.component.html',
-  styleUrls: ['./raport-for-date.component.less']
+  styleUrls: ['./raport-for-date.component.less'],
 })
 export class RaportForDateComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -10,8 +10,10 @@
                         [value]="account.lastName + '/' + account.firstName + '/' + account.email + '/' + account.dob + '/' + getGroup(account)">
 
 
-                        {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}/{{
-                        getGroup(account) }}
+                        {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}
+                        @if(getGroup(account)) {
+                        /{{getGroup(account) }}
+                        }
 
                     </option>
                     }
@@ -43,6 +45,12 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> E-mail </mat-header-cell>
             <mat-cell *matCellDef="let account">
                 <input type="text" matInput [value]="account.email" readonly>
+            </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="dob">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> DOB </mat-header-cell>
+            <mat-cell *matCellDef="let account">
+                <input type="text" matInput [value]="account.dob" readonly>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="group">

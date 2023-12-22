@@ -43,9 +43,9 @@
                 <div class="mb-3">
                 </div>
 
-                @for (team of teams | orderByDate: 'userFunction': 'asc' ; track team) {
+                @for (team of teams | orderByDateOrFunction: 'userFunction': 'asc' ; track team) {
                 <fieldset>
-                    <legend>{{team.function}} :</legend>
+                    <legend>{{team.userFunction}} :</legend>
                     <div class="border border-primary">
 
                         <table id=scheduledTable class="table table-striped">
