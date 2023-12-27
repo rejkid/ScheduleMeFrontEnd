@@ -31,6 +31,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 
 import { ApplicationPipesModuleModule } from './application-pipes-module/application-pipes-module.module';
+import { OrderByDateOrFunctionPipe } from './application-pipes-module/order-by-date-or-function.pipe';
 //import { AutoGeneratorModule } from './admin/accounts/max-flow-schedules/auto-generator.module';
 //import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
 
@@ -60,6 +61,7 @@ import { ApplicationPipesModuleModule } from './application-pipes-module/applica
         ApplicationPipesModuleModule,
         //AutoGeneratorModule,
         // AddEditModule,
+        OrderByDateOrFunctionPipe
         
     ],
     exports: [

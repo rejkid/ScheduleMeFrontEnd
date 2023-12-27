@@ -29,6 +29,7 @@ import { ListComponent } from './list.component';
 import { MainSchedulerComponent } from './main-scheduler/main-scheduler.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
+import { OrderByDateOrFunctionPipe } from 'src/app/application-pipes-module/order-by-date-or-function.pipe';
 
 
 
@@ -89,6 +90,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     DOBModule,
     MatProgressBarModule,
     ApplicationPipesModuleModule,
+    OrderByDateOrFunctionPipe
   
   ],
   declarations: [
@@ -100,6 +102,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     GenerateSchedulesComponent,
     FunctionScheduleComponent,
     MainSchedulerComponent,
+    
   ],
   providers: [
     {

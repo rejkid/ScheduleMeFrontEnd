@@ -6,10 +6,10 @@ import { OrderByDateOrFunctionPipe } from './order-by-date-or-function.pipe';
 
 @NgModule({
   declarations: [
-    OrderByDateOrFunctionPipe
+    //OrderByDateOrFunctionPipe
   ],
   exports: [
-    OrderByDateOrFunctionPipe
+    //OrderByDateOrFunctionPipe
   ],
   imports: [
     CommonModule

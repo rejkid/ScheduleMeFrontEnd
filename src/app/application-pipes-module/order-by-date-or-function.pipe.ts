@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'orderByDateOrFunction',
+  standalone: true,
 })
 export class OrderByDateOrFunctionPipe implements PipeTransform {
 
