@@ -25,6 +25,9 @@
             <a routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-success mb-2">Generate Schedules</a>
         </div>
         <div class="col-2">
+            <a routerLink="download-schedules-file" class="btn btn-sm btn-success mb-2">Download Schedules</a>
+        </div>
+        <div class="col-2">
             <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn-success mb-2">
                 <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                 Delete Accounts

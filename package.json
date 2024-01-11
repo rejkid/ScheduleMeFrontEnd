@@ -15,12 +15,10 @@
   "dependencies": {
     "@angular-devkit/core": "^17.0.6",
     "@angular-devkit/schematics": "^17.0.6",
-
     "@angular-material-components/datetime-picker": "^16.0.0",
     "@angular-material-components/moment-adapter": "^16.0.0",
     "@angular/animations": "^17.0.6",
     "@angular/cdk": "^16.0.0",
-
     "@angular/cli": "^17.0.6",
     "@angular/common": "^17.0.6",
     "@angular/compiler": "^17.0.6",
@@ -50,6 +48,7 @@
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.6",
     "@angular/compiler-cli": "^17.0.6",
+    "@types/file-saver": "^2.0.7",
     "@types/google-libphonenumber": "^7.4.28",
     "@types/jasmine": "~4.0.0",
     "angular-cli-ghpages": "^1.0.7",

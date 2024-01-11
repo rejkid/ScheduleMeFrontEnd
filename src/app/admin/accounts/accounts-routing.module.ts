@@ -8,6 +8,7 @@ import { MainSchedulerComponent } from './main-scheduler/main-scheduler.componen
 import { AutoGeneratorComponent } from './max-flow-schedules/auto-generator.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
+import { DownloadSchedulesFileComponent } from './download-schedules-file/download-schedules-file.component';
 
 const routes: Routes = [
     { path: '', component: ListComponent },
@@ -17,6 +18,7 @@ const routes: Routes = [
     { path: 'function/:id', component: FunctionComponent },
     { path: 'schedule/:id', component: ScheduleAllocatorComponent },
     { path: 'schedule-generate', component: MainSchedulerComponent},
+    { path: 'download-schedules-file', component: DownloadSchedulesFileComponent},
     
 ];
 

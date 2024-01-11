@@ -1,0 +1,22 @@
+<fieldset>
+    <legend>Download Schedules</legend>
+    <div class="container">
+        <div class="row">
+            <div class="mb-3 col-6">
+                <div class="file-download">
+                    <button type="button" color="primary" class="btn btn-primary mybutton"
+                        (click)="onSubmit($event)">
+                        
+                        <img  src="./assets/images/Download.png"/>Download Schedules
+                        </button>
+                </div>
+            </div>
+            @if(submitted) {
+            <div col-12>
+                <label for="file">File progress:</label>
+                <progress #progressFile id="progress-bar" max="100" [value]=downloadProgress></progress>
+            </div>
+            }
+        </div>
+    </div>
+</fieldset>

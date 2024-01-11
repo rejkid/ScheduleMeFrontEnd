@@ -1,8 +1,8 @@
-﻿import { HttpClient } from '@angular/common/http';
+﻿import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 
 //import { environment } from '@environments/environment';
 import { Account, Role } from '../_models';
@@ -21,7 +21,7 @@ const baseUrl = `${environment.apiUrl}/accounts`;
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
-    
+
     private accountSubject: BehaviorSubject<Account>;
     public account: Observable<Account>;
 
@@ -111,6 +111,15 @@ export class AccountService {
         return this.http.get<DateFunctionTeams>(`${baseUrl}/teams-for-date/${dateStr}`);
     }
 
+    downloadSchedulesFile() {
+        const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+        });
+        return this.http.get<Blob>(`${baseUrl}/download-schedules-file`, {
+            headers: headers, responseType:
+                'blob' as 'json'
+        })
+    }
     getAvailableSchedules(id: any) {
         return this.http.get<SchedulePoolElements>(`${baseUrl}/available_schedules/${id}`);
     }
@@ -197,7 +206,7 @@ export class AccountService {
     deleteAllUserAccounts() {
         return this.http.delete(`${baseUrl}/delete-all-user-accounts`);
     }
-    getAutoEmail() : any {
+    getAutoEmail(): any {
         return this.http.get(`${baseUrl}/auto-email`);
     }
     setAutoEmail(autoEmail: Boolean) {
