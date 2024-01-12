@@ -3,12 +3,14 @@ import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
 
-@Component({ templateUrl: 'list.component.html', styleUrls: ['./list.component.less'],})
+@Component({ 
+    templateUrl: 'list.component.html', 
+    styleUrls: ['./list.component.less'],
+})
 export class ListComponent implements OnInit {
     accounts: Account[];
     autoEmail: Boolean;
     isDeleting: boolean = false;
-    //alertService: any;
 
     constructor(private accountService: AccountService,
         private alertService: AlertService) { }

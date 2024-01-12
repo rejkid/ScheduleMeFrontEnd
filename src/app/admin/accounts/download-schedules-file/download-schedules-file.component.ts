@@ -1,16 +1,22 @@
 import { AfterViewInit, Component, ElementRef, OnInit, QueryList, Renderer2, ViewChild, ViewChildren } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AccountService, AlertService } from 'src/app/_services';
 import { saveAs } from "file-saver";
 import { HttpEvent, HttpEventType, HttpResponse, HttpProgressEvent } from '@angular/common/http';
 import { SafeUrl } from '@angular/platform-browser';
 import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-download-schedules-file',
   standalone: true,
-  imports: [],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RouterLinkActive,
+    RouterOutlet
+    ],
   templateUrl: './download-schedules-file.component.html',
   styleUrl: './download-schedules-file.component.less'
 })
@@ -77,7 +83,6 @@ export class DownloadSchedulesFileComponent implements OnInit, AfterViewInit {
           a.click();
         },
         complete: () => {
-          this.alertService.info("Done");
           //this.router.navigate(['../'], { relativeTo: this.route });
         },
         error: error => {
