@@ -120,8 +120,8 @@ export class AccountService {
                 'blob' as 'json'
         })
     }
-    getAvailableSchedules(id: any) {
-        return this.http.get<SchedulePoolElements>(`${baseUrl}/available_schedules/${id}`);
+    getAvailablePoolElementsForAccount(id: any) {
+        return this.http.get<SchedulePoolElements>(`${baseUrl}/available_pool-elements-for-account/${id}`);
     }
     GetAllAvailablePoolElements() {
         return this.http.get<SchedulePoolElements>(`${baseUrl}/all-available-pool-elements`);

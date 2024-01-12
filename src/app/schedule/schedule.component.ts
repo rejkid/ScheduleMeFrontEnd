@@ -144,7 +144,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
                 this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
 
                 var aDateValid = this.form.controls['availableSchedule4Function'].valid;
-                this.accountService.getAvailableSchedules(account.id)
+                this.accountService.getAvailablePoolElementsForAccount(account.id)
                   .pipe(first())
                   .subscribe({
                     next: (pollElements) => {
@@ -296,7 +296,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
         next: (account) => {
           this.initSchedules(account);
 
-          this.accountService.getAvailableSchedules(account.id)
+          this.accountService.getAvailablePoolElementsForAccount(account.id)
             .pipe(first())
             .subscribe({
               next: (pollElements) => {
