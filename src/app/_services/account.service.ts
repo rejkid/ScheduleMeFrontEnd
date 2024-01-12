@@ -123,8 +123,8 @@ export class AccountService {
     getAvailableSchedules(id: any) {
         return this.http.get<SchedulePoolElements>(`${baseUrl}/available_schedules/${id}`);
     }
-    getAllAvailableSchedules() {
-        return this.http.get<SchedulePoolElements>(`${baseUrl}/all-available_schedules`);
+    GetAllAvailablePoolElements() {
+        return this.http.get<SchedulePoolElements>(`${baseUrl}/all-available-pool-elements`);
     }
     addSchedule(id: any, schedule: any) {
         return this.http.put<Account>(`${baseUrl}/add-schedule/${id}`, schedule);

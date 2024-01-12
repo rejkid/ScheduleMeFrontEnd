@@ -44,7 +44,7 @@ export class FloatingSchedulesComponent implements OnInit {
   }
 
   private updateSchedulesFromServer() {
-    this.accountService.getAllAvailableSchedules()
+    this.accountService.GetAllAvailablePoolElements()
       .pipe(first())
       .subscribe({
         next: (pollElements) => {
@@ -71,7 +71,7 @@ export class FloatingSchedulesComponent implements OnInit {
       .subscribe({
         next: (schedulePoolElement) => {
           console.log(schedulePoolElement.email);
-          this.accountService.getAllAvailableSchedules()
+          this.accountService.GetAllAvailablePoolElements()
             .pipe(first())
             .subscribe({
               next: (pollElements) => {
