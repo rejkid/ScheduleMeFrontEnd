@@ -5,17 +5,23 @@
     "version": "0.2.0",
    
     "configurations": [
+
         {
-            "type": "pwa-chrome",
+            "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:4200",
             "webRoot": "${workspaceFolder}",
             "sourceMaps": true,
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ],
+            // "outFiles": [
+            //     "${workspaceFolder}/dist/**/*.js",
+            //     "**/node_modules/**/*.js"
+            // ],
+            // "resolveSourceMapLocations": [
+            //     "${workspaceFolder}/**",
+            //     "${workspaceFolder}/dist/**",
+            //     "**/node_modules/**"
+            // ],
         }
     ]
 }

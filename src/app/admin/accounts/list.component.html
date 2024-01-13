@@ -16,22 +16,22 @@
             <a routerLink="add-edit/add" class="btn btn-sm btn-success mb-2">Create Account</a>
         </div>
         <div class="col-2">
-            <a routerLink="upload" class="btn btn-sm btn-success mb-2">Upload Accounts</a>
+            <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn-success mb-2">
+                <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
+                Delete Accounts
+            </a>
         </div>
         <div class="col-2">
-            <a routerLink="schedule-generate" class="btn btn-sm btn-success mb-2">Create\View Schedules</a>
+            <a routerLink="upload" class="btn btn-sm btn-success mb-2">Upload Accounts</a>
         </div>
         <div class="col-2">
             <a routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-success mb-2">Generate Schedules</a>
         </div>
         <div class="col-2">
-            <a routerLink="download-schedules-file" class="btn btn-sm btn-success mb-2">Download Schedules</a>
+            <a routerLink="schedule-generate" class="btn btn-sm btn-success mb-2">Create\View Schedules</a>
         </div>
         <div class="col-2">
-            <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn-success mb-2">
-                <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
-                Delete Accounts
-            </a>
+            <a routerLink="download-schedules-file" class="btn btn-sm btn-success mb-2">Download Schedules</a>
         </div>
     </div>
 </div>
