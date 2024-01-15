@@ -280,4 +280,7 @@ export class AccountService {
     getGroupTasks() {
         return this.http.get<[]>(`${baseUrl}/group-tasks`);
     }
+    getAllTasks() {
+        return this.http.get<[]>(`${baseUrl}/all-tasks`);
+    }
 }

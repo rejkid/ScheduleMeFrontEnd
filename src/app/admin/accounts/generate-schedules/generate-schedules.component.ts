@@ -45,8 +45,8 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private alertService: AlertService) {
-      this.schedulesUpdatedEmitter = new EventEmitter<FunctionScheduleData>();
-      this.dateTimeChangedEmitter = new EventEmitter<string>();
+    this.schedulesUpdatedEmitter = new EventEmitter<FunctionScheduleData>();
+    this.dateTimeChangedEmitter = new EventEmitter<string>();
   }
   ngAfterViewInit(): void {
     this.functionComponents.changes.subscribe((comps: QueryList<FunctionScheduleComponent>) => {
@@ -80,7 +80,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       .pipe(first())
       .subscribe({
         next: (value: string[]) => {
-          //value = ["Acolyte", "Cleaner"] ;
+          //value = ["Acolyte"] ;
           /* Create `UserFunction` component for every function that was returned by server*/
           value.forEach(element => {
             var f: UserFunction = {
@@ -90,6 +90,29 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
             }
             this.functions.push(f);
           });
+          this.accountService.getGroupTasks()
+            .pipe(first())
+            .subscribe({
+              next: (value: string[]) => {
+                //value = ["Choir"] ;
+                /* Create `UserFunction` component for every function that was returned by server*/
+                value.forEach(element => {
+                  var f: UserFunction = {
+                    id: '',
+                    userFunction: element,
+                    group: ''
+                  }
+                  this.functions.push(f);
+                });
+              },
+              complete: () => {
+                this.functionsLoaded = true;
+              },
+              error: error => {
+                this.alertService.error(error);
+                this.functionsLoaded = false;
+              }
+            });
         },
         complete: () => {
           this.functionsLoaded = true;
@@ -109,7 +132,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
 
   onChangeDateTime(event: any) {
     this.fComponents.forEach(element => {
-      console.log("Changing time to: "+ this.getDateTimeStr());
+      console.log("Changing time to: " + this.getDateTimeStr());
       element.setCurrentDate(this.getDateTimeStr());
     });
     this.setCopyPasteButtons();
@@ -129,7 +152,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     //   event
     // );
     this.fComponents.forEach(element => {
-      console.log("Changing time to: "+ this.getDateTimeStr());
+      console.log("Changing time to: " + this.getDateTimeStr());
       element.setCurrentDate(this.getDateTimeStr());
     });
     this.setCopyPasteButtons();
@@ -161,16 +184,16 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
     this.setCopyPasteButtons();
   }
-  onDeleteSchedules(event: MouseEvent, data : ScheduleDateTime) {
+  onDeleteSchedules(event: MouseEvent, data: ScheduleDateTime) {
     this.fComponents.forEach(element => {
 
       /* Make sure the row is selected first so the ``dateTimeStr`` is set up properly 
       `functionStr` is set on creation time by this class*/
       this.setCurrentDate(data.date)
-      
+
 
       element.onDeleteSchedules(event);
-      console.log("GenerateSchedulesComponent deleting functionStr:"+element.functionStr+" dateStr:"+ element.dateTimeStr);
+      console.log("GenerateSchedulesComponent deleting functionStr:" + element.functionStr + " dateStr:" + element.dateTimeStr);
     });
   }
 

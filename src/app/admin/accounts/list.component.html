@@ -13,13 +13,13 @@
 <div class="container">
     <div class="row equal">
         <div class="col-2">
-            <a routerLink="add-edit/add" class="btn btn-sm btn-success mb-2">Create Account</a>
-        </div>
-        <div class="col-2">
-            <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn-success mb-2">
+            <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn btn-danger mb-2">
                 <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                 Delete Accounts
             </a>
+        </div>
+        <div class="col-2">
+            <a routerLink="add-edit/add" class="btn btn-sm btn-success mb-2">Create Account</a>
         </div>
         <div class="col-2">
             <a routerLink="upload" class="btn btn-sm btn-success mb-2">Upload Accounts</a>
