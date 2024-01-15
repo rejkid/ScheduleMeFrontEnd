@@ -3,18 +3,32 @@ import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
 
-@Component({ 
-    templateUrl: 'list.component.html', 
+@Component({
+    templateUrl: 'list.component.html',
     styleUrls: ['./list.component.less'],
 })
 export class ListComponent implements OnInit {
     accounts: Account[];
     autoEmail: Boolean;
     isDeleting: boolean = false;
+    static HighlightRow: Number;
 
     constructor(private accountService: AccountService,
-        private alertService: AlertService) { }
+        private alertService: AlertService) {
 
+    }
+    clickedRow(index: Number, event: MouseEvent) {
+
+        if (event.ctrlKey) {
+            ListComponent.HighlightRow = ListComponent.HighlightRow == index ? -1 : index;
+        } else {
+            ListComponent.HighlightRow = index;//this.HighlightRow == index ? -1 : index;
+        }
+
+    }
+    get staticHighlightRow() {
+        return ListComponent.HighlightRow;
+    }
     ngOnInit() {
         this.refreshList();
 
