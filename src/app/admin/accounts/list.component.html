@@ -1,11 +1,8 @@
 ﻿<h1>Accounts Auto Email</h1>
-<div class="container">
-    <div class="row equal">
-        <div class="mb-3 col-2 gx-0">
-            <input type="checkbox" #tr (click)="onChangeHandler($event, tr)" [checked]="autoEmail"
-                [disabled]="false" />&nbsp;Send e-mails:
-        </div>
-    </div>
+<div class="mb-3 gx-3">
+    <input type="checkbox" id="send" #tr (click)="onChangeHandler($event, tr)" [checked]="autoEmail"
+        [disabled]="false" />
+        <label class="sendEmailClass" for="send">Send e-mails:</label>
 </div>
 
 <h1>Accounts</h1>

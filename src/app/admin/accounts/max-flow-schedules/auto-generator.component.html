@@ -1,8 +1,8 @@
-<fieldset>
+<fieldset >
     <legend>Import Timeslots & Generate Schedules</legend>
     <div class="container">
         <div class="row">
-            <div class="mb-3 col-6">
+            <div class="mb-3 col-6 px-0">
                 <div class="file-upload">
 
                     {{fileName || "No file uploaded yet."}}
@@ -21,15 +21,13 @@
                     </div>
                 </form>
             </div>
-            <div >
-                <div class="row">
-                    <div class="col-1">
-                        <button [disabled]="!fileHasBeenSelected || submitted" (click)="onSubmit($event, fileUpload)"
-                            class="btn btn-primary">Submit</button>
-                    </div>
-                    <div class="col-1">
-                        <a [routerLink]="['../../']"  class="btn btn-primary">Back</a>
-                    </div>
+            <div class="px-0">
+                <div class="submit pe-3">
+                    <button [disabled]="!fileHasBeenSelected || submitted" (click)="onSubmit($event, fileUpload)"
+                        class="btn btn-primary">Submit</button>
+                </div>
+                <div class="back">
+                    <a [routerLink]="['../../']" class="btn btn-primary">Back</a>
                 </div>
             </div>
 
