@@ -102,4 +102,8 @@ import { OrderByDateOrFunctionPipe } from './application-pipes-module/order-by-d
     ],
     bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+    constructor() {
+        console.log('AppModule loaded.');
+      }
+ }

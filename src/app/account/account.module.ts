@@ -73,4 +73,8 @@ const CUSTOM_MOMENT_FORMATS = {
     {provide: MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS},
   ],
 })
-export class AccountModule { }
+export class AccountModule {
+  constructor() {
+    console.log('AccountModule loaded.');
+  }
+ }
