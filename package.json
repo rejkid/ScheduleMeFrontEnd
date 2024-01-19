@@ -13,8 +13,8 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/core": "^17.0.6",
-    "@angular-devkit/schematics": "^17.0.6",
+    "@angular-devkit/core": "^16.0.0",
+    "@angular-devkit/schematics": "^16.0.0",
     "@angular-material-components/datetime-picker": "^16.0.0",
     "@angular-material-components/moment-adapter": "^16.0.0",
     "@angular/animations": "^17.0.6",
