@@ -22,18 +22,32 @@
             <a routerLink="upload" class="btn btn-sm btn-primary mb-2">Import Accounts</a>
         </div>
         <div class="col-2">
-            <a routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-primary mb-2">Generate Schedules</a>
+            <a routerLink="auto-generate-schedules/generate">
+                <button type="button" class="btn btn-sm btn-primary mb-2">Generate
+                    Schedules
+                </button>
+            </a>
         </div>
+        <!-- <div class="col-2">
+            <a type="button" routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-outline-primary mb-2">Generate Schedules</a>
+        </div> -->
         <div class="col-2">
+            <a routerLink="schedule-generate"><button type="button" class="btn btn-sm btn-primary mb-2">Create\Modify
+                    Schedules</button></a>
+        </div>
+        <!--         <div class="col-2">
             <a routerLink="schedule-generate" class="btn btn-sm btn-primary mb-2">Create\Modify Schedules</a>
         </div>
+ -->
         <div class="col-2">
-            <a routerLink="download-schedules-file" class="btn btn-sm btn-secondary mb-2">View Schedules</a>
+            <a routerLink="download-schedules-file"><button type="button" class="btn btn-sm btn-secondary mb-2">View
+                    Schedules</button></a>
         </div>
+
     </div>
 </div>
 
-<table class="table table-striped"  >
+<table class="table table-striped">
     <thead>
         <tr>
             <th style="width:10%">Name</th>
@@ -44,7 +58,8 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let account of accounts; let i = index" [class.active]="i == staticHighlightRow" (click)="clickedRow(i, $event)">
+        <tr *ngFor="let account of accounts; let i = index" [class.active]="i == staticHighlightRow"
+            (click)="clickedRow(i, $event)">
             <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
             <td>{{account.email}}</td>
             <td>{{account.dob}}</td>
@@ -57,16 +72,16 @@
                     </div>
                     <div class="div-element ms-1" *ngIf="account.role !=RoleAdminEnum">
                         <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                            [disabled]="!account.isVerified" >Duties</button>
+                            [disabled]="!account.isVerified">Duties</button>
 
                     </div>
                     <div class="div-element  ms-1" *ngIf="account.role !=RoleAdminEnum">
                         <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                            [disabled]="!account.isVerified" >Schedule</button>
+                            [disabled]="!account.isVerified">Schedule</button>
                     </div>
                     <div class="div-element  ms-1">
-                        <button (click)="deleteAccount(account.id)"
-                            class="btn btn-sm btn-danger btn-delete-account" [disabled]="account.isDeleting">
+                        <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account"
+                            [disabled]="account.isDeleting">
                             <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
                             <span *ngIf="!account.isDeleting">Delete</span>
                         </button>

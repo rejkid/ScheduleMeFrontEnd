@@ -12,8 +12,10 @@
             "url": "http://localhost:4200",
             "webRoot": "${workspaceFolder}",
             "sourceMaps": true,
+            // "trace": true,
+            // "outFiles": ["${workspaceFolder}/dist/scheduler/*.js"],
             // "resolveSourceMapLocations": [
-            //     "${workspaceFolder}/**",
+            //     "${workspaceFolder}/dist/scheduler/*.map",
             //     "!**/node_modules/**"
             // ],
             
