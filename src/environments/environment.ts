@@ -9,12 +9,12 @@ export const environment = {
   //apiUrl: 'https://oloaschedulemebackend.azurewebsites.net/',
   //apiUrl: 'http://localhost:4000',
   //apiUrl: 'http://rejkid.hopto.org:4000'
-  apiUrl: 'https://localhost:5001',
+  apiUrl: 'http://localhost:5000',
 
   //baseUrl: 'https://rejkid.hopto.org:4000',
   //baseUrl: 'https://oloaschedulemebackend.azurewebsites.net/'
   //baseUrl: 'http://localhost:4000'
-  baseUrl: 'https://localhost:5001'
+  baseUrl: 'http://localhost:5000'
 
 };
 
