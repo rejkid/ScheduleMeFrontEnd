@@ -9,6 +9,7 @@ import { Account, Role } from 'src/app/_models';
 import { UserFunction } from 'src/app/_models/userfunction';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
+import { firstValueFrom } from 'rxjs';
 
 @Component({ templateUrl: './add-edit.component.html',
 styleUrls: ['./add-edit.component.less'], 
@@ -42,7 +43,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
 
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.id = this.route.snapshot.params['id'];
         this.isAddMode = !this.id;
 
@@ -63,19 +64,41 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         });
 
         if (!this.isAddMode) {
-            this.accountService.getById(this.id)
-                .pipe(first())
-                .subscribe({
-                    next: (x) => {
-                        // Edit mode
-                        this.account = x; // initial account
-                        this.form.patchValue(x);
-                        this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
-                    },
-                    error: error => {
-                        console.error(error);
-                    }
-                });
+            // this.accountService.getById(this.id)
+            //     .pipe(first())
+            //     .subscribe({
+            //         next: (x) => {
+            //             // Edit mode
+            //             this.account = x; // initial account
+            //             this.form.patchValue(x);
+            //             this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
+            //         },
+            //         error: error => {
+            //             console.error(error);
+            //         }
+            //     });
+
+            /* One way of converting observable into Promise and handling the Promise */
+            var observable = this.accountService.getById(this.id);
+            try {
+                const value = await firstValueFrom(observable)
+                // Edit mode
+                this.account = value; // initial account
+                this.form.patchValue(value);
+                this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
+            } catch (error) {
+                console.error(error);
+            } 
+            
+            /* Second way of converting observable into Promise and handling the Promise*/
+            /* firstValueFrom(observable).then((value) => {
+                // Edit mode
+                this.account = value; // initial account
+                this.form.patchValue(value);
+                this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
+            }).catch((error) => {
+                console.error(error);
+            });*/
         } else {
         }
     }
