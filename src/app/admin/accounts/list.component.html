@@ -58,7 +58,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let account of accounts; let i = index" [class.active]="i == staticHighlightRow"
+        <tr *ngFor="let account of accounts(); let i = index" [class.active]="i == staticHighlightRow"
             (click)="clickedRow(i, $event)">
             <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
             <td>{{account.email}}</td>

@@ -1,14 +1,16 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { signal , Component, OnInit } from '@angular/core';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
+
 
 @Component({
     templateUrl: 'list.component.html',
     styleUrls: ['./list.component.less'],
 })
 export class ListComponent implements OnInit {
-    accounts: Account[];
+    
+    accounts = signal<Account[]>([]);
     autoEmail: Boolean;
     isDeleting: boolean = false;
     static HighlightRow: Number;
@@ -38,8 +40,8 @@ export class ListComponent implements OnInit {
         this.accountService.getAll()
             .pipe(first())
             .subscribe(accounts => {
-                this.accounts = accounts;
-                this.accounts.sort(function (a, b) {
+                this.accounts.set(accounts);
+                this.accounts().sort(function (a, b) {
                     return a.role.localeCompare(b.role);
                 });
             });
@@ -51,12 +53,12 @@ export class ListComponent implements OnInit {
     }
 
     deleteAccount(id: string) {
-        const account = this.accounts.find(x => x.id === id);
+        const account = this.accounts().find(x => x.id === id);
         account.isDeleting = true;
         this.accountService.delete(id)
             .pipe(first())
             .subscribe(() => {
-                this.accounts = this.accounts.filter(x => x.id !== id)
+                this.accounts.set(this.accounts().filter(x => x.id !== id))
             });
     }
     public get RoleAdminEnum() {
@@ -97,4 +99,8 @@ export class ListComponent implements OnInit {
                 }
             });
     }
+}
+
+function WritableSignal<T>(arg0: undefined[]) {
+    throw new Error('Function not implemented.');
 }
