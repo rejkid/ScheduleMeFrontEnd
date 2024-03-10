@@ -106,103 +106,20 @@
                             <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
                             <span *ngIf="!account.isDeleting">Delete</span>
                         </button>
-                        
+
                     </mat-cell>
                 </ng-container>
 
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
-                <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;" 
-                [ngClass]="{'highlighted': i == staticHighlightRow}" #tr 
-                (click)="clickedRow(row, tr, i, $event)" (mouseover)="row.hovered = true" (mouseout)="row.hovered = false" ></mat-row>
-
-                <!-- <mat-row *matRowDef="let row; columns: displayedColumns;let i = $index;"
-                    [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr
-                    (click)="clickedRow(row, $event)" (mouseover)="row.hovered = true"
-                    (mouseout)="row.hovered = false"></mat-row> -->
+                <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
+                    [ngClass]="{'highlighted': i == staticHighlightRow}" #tr (click)="clickedRow(row, tr, i, $event)"
+                    (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
 
             </mat-table>
             <mat-paginator #paginator [length]="accounts.length" [pageSizeOptions]="[30, 50, 100]" showFirstLastButtons>
             </mat-paginator>
 
-            <!-- <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th style="width:10%">Name</th>
-                        <th style="width:10%">Email</th>
-                        <th style="width:5%">DOB</th>
-                        <th style="width:5%">Role</th>
-                        <th style="width:15%"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let account of accounts(); let i = index" [class.active]="i == staticHighlightRow"
-                        (click)="clickedRow(i, $event)">
-                        <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
-                        <td>{{account.email}}</td>
-                        <td>{{account.dob}}</td>
-                        <td>{{account.role}}</td>
-                        <td style="white-space: nowrap">
-                            <div class="container">
-                                <div class="div-element">
-                                    <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
-                                        class="btn btn-sm btn-primary mr-1">Edit</button>
-                                </div>
-                                <div class="div-element ms-1" *ngIf="account.role !=RoleAdminEnum">
-                                    <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                                        [disabled]="!account.isVerified">Duties</button>
-
-                                </div>
-                                <div class="div-element  ms-1" *ngIf="account.role !=RoleAdminEnum">
-                                    <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                                        [disabled]="!account.isVerified">Schedule</button>
-                                </div>
-                                <div class="div-element  ms-1">
-                                    <button (click)="deleteAccount(account.id)"
-                                        class="btn btn-sm btn-danger btn-delete-account"
-                                        [disabled]="account.isDeleting">
-                                        <span *ngIf="account.isDeleting"
-                                            class="spinner-border spinner-border-sm"></span>
-                                        <span *ngIf="!account.isDeleting">Delete</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr *ngIf="!accounts">
-                        <td colspan="4" class="text-center">
-                            <span class="spinner-border spinner-border-lg align-center"></span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table> -->
         </div>
     </div>
 </div>
-
-
-<!-- <h1>Accounts</h1>
-<p>All accounts from secure (admin only) api end point:</p>
-<div class="container">
-    <div class="row">
-        <div class="col-2">
-            <button routerLink="./" (click)="onDeleteAllUserAccounts($event)" type="button" class="btn btn-sm btn-primary mb-2">Delete Accounts</button>
-            <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
-        </div>
-        <div class="col-2">
-            <button routerLink="add-edit/add" class="btn btn-sm btn-primary mb-2">Create Account</button>
-        </div>
-        <div class="col-2">
-            <button routerLink="upload" class="btn btn-sm btn-primary mb-2">Import Accounts</button>
-        </div>
-        <div class="col-2">
-                <button routerLink="auto-generate-schedules/generate" type="button" class="btn btn-sm btn-primary mb-2">Generate Schedules</button>
-        </div>
-        <div class="col-2">
-            <button routerLink="schedule-generate" type="button" class="btn btn-sm btn-primary mb-2">Create\Modify Schedules</button>
-        </div>
-        <div class="col-2">
-            <button routerLink="download-schedules-file" type="button" class="btn btn-sm btn-secondary mb-2">View Schedules</button>
-        </div>
-    </div>
-</div> -->
