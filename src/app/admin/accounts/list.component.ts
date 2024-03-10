@@ -1,25 +1,69 @@
-﻿import { signal , Component, OnInit } from '@angular/core';
+﻿import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
 
+const COLUMNS_SCHEMA = [
+    {
+        key: "name",
+        type: "text",
+        label: "Name"
+    },
+    {
+        key: "email",
+        type: "text",
+        label: "Email"
+    },
+    {
+        key: "dob",
+        type: "text",
+        label: "DOB"
+    },
+    {
+        key: "role",
+        type: "text",
+        label: "Role"
+    },
+    {
+        key: "action",
+        type: "text",
+        label: "Action"
+    },
+]
 
 @Component({
     templateUrl: 'list.component.html',
     styleUrls: ['./list.component.less'],
 })
-export class ListComponent implements OnInit {
-    
+export class ListComponent implements OnInit, AfterViewInit {
+    @ViewChild('paginator') paginator!: MatPaginator;
+    @ViewChild(MatSort) sort!: MatSort;
+
+    dataSource: MatTableDataSource<Account>;
+    displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
+    columnsSchema: any = COLUMNS_SCHEMA;
+
     accounts = signal<Account[]>([]);
     autoEmail: Boolean;
     isDeleting: boolean = false;
-    static HighlightRow: Number;
+    static HighlightRow: Number = -1;
+
+    currentSelectedContact : Account = null;
+    lastSelectedContact : Account = null;
+    highlighted: boolean;
 
     constructor(private accountService: AccountService,
         private alertService: AlertService) {
 
     }
-    clickedRow(index: Number, event: MouseEvent) {
+    ngAfterViewInit(): void {
+        this.refreshList();
+    }
+
+    clickedRow(contact: Account, input: any, index : number, event: MouseEvent) {
 
         if (event.ctrlKey) {
             ListComponent.HighlightRow = ListComponent.HighlightRow == index ? -1 : index;
@@ -27,23 +71,60 @@ export class ListComponent implements OnInit {
             ListComponent.HighlightRow = index;//this.HighlightRow == index ? -1 : index;
         }
 
-    }
+        contact.highlighted = !contact.highlighted;
+        this.currentSelectedContact = contact;
+
+        if(this.lastSelectedContact != null) {
+            this.lastSelectedContact.highlighted = false;
+          }
+          this.lastSelectedContact = this.currentSelectedContact;
+    
+          if(!contact.highlighted) {
+            // If row is deselected mark both contacts as deselected(null);
+            this.lastSelectedContact = null;
+          this.currentSelectedContact = null;
+          }
+          console.log("clickedRow: row == this.staticHighlightRow: " + (index == this.staticHighlightRow));
+        }
     get staticHighlightRow() {
         return ListComponent.HighlightRow;
     }
     ngOnInit() {
-        this.refreshList();
+        //this.refreshList();
 
     }
-
+    /* I am not sure if we need 'input' parameter - keep it for now*/
+    applyFilter(t: any, input: any) {
+        const target = t as HTMLTextAreaElement;
+        var filterValue = target.value;
+        filterValue = filterValue.trim(); // Remove whitespace
+        filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
+        this.dataSource.filter = filterValue;
+    }
     private refreshList() {
         this.accountService.getAll()
             .pipe(first())
             .subscribe(accounts => {
                 this.accounts.set(accounts);
+
+
                 this.accounts().sort(function (a, b) {
-                    return a.role.localeCompare(b.role);
+                    if (a.role.localeCompare(b.role) == 0) {
+                        if (a.email.localeCompare(b.email) == 0) {
+                            return a.dob.localeCompare(b.dob);
+                        }
+                        else {
+                            return a.email.localeCompare(b.email);
+                        }
+                    }
+                    else {
+                        return (a.role.localeCompare(b.role));
+                    }
                 });
+                this.dataSource = new MatTableDataSource(this.accounts());
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+
             });
         this.accountService.getAutoEmail()
             .pipe(first())
@@ -58,7 +139,7 @@ export class ListComponent implements OnInit {
         this.accountService.delete(id)
             .pipe(first())
             .subscribe(() => {
-                this.accounts.set(this.accounts().filter(x => x.id !== id))
+                this.refreshList();
             });
     }
     public get RoleAdminEnum() {
@@ -99,8 +180,9 @@ export class ListComponent implements OnInit {
                 }
             });
     }
+    public get Role() {
+        return Role;
+    }
 }
 
-function WritableSignal<T>(arg0: undefined[]) {
-    throw new Error('Function not implemented.');
-}
+

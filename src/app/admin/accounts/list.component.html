@@ -1,98 +1,208 @@
-﻿<h1>Accounts Auto Email</h1>
-<div class="mb-3">
-    <label class="sendEmailClass pe-3" for="send">Send e-mails:</label>
-    <input type="checkbox" id="send" #tr (click)="onChangeHandler($event, tr)" [checked]="autoEmail"
-        [disabled]="false" />
+﻿<div class="container">
+    <h1>Accounts Auto Email</h1>
+    <div class="mb-3">
+        <label class="sendEmailClass pe-3" for="send">Send e-mails:</label>
+        <input type="checkbox" id="send" #tr (click)="onChangeHandler($event, tr)" [checked]="autoEmail"
+            [disabled]="false" />
+    </div>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Menu</a>
+        </div>
+    </nav>
+
+    <div class="row ">
+        <div class="col-2 ">
+            <nav class="navbar  bg-body-tertiary">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button routerLink="./" (click)="onDeleteAllUserAccounts($event)" type="button"
+                            class="btn btn-sm btn-danger mb-2" data-placement="top" title="Delete Accounts">Delete
+                            Accounts</button>
+                        <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
+                    </li>
+                    <li class="nav-item">
+                        <button routerLink="add-edit/add" class="btn btn-sm btn-primary mb-2" data-placement="top"
+                            title="Create Account">Create Account</button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class=" dropdown-toggle btn btn-sm btn-primary mb-2" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false" data-placement="top"
+                            title="Import Accounts & Generate Schedules">
+                            Import&Gen.
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" routerLink="upload" data-placement="top"
+                                    title="Import Accounts">Import Accounts</a></li>
+                            <li><a class="dropdown-item" routerLink="auto-generate-schedules/generate"
+                                    data-placement="top" title="Generate Schedules">Generate Schedules</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <button routerLink="schedule-generate" type="button" class="btn btn-sm btn-primary mb-2"
+                            data-toggle="tooltip" data-placement="top" title="Create\Modify Schedules">Mod.
+                            Schedules</button>
+
+                    </li>
+
+                    <li class="nav-item">
+                        <button routerLink="download-schedules-file" type="button" class="btn btn-sm btn-secondary mb-2"
+                            data-placement="top" title="View Schedules">View Schedules</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="col-10">
+            <div class="container">
+                <mat-form-field appearance="outline">
+                    <mat-label>Filter</mat-label>
+                    <input matInput (keyup)="applyFilter($event.target, input)" placeholder="Search columns" #input>
+                </mat-form-field>
+            </div>
+            <mat-table matSort class="lessons-table mat-elevation-z8" [dataSource]="dataSource">
+                <ng-container matColumnDef="{{displayedColumns[0]}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+                    <mat-cell *matCellDef="let account">
+                        <input type="text" matInput [value]="account.title+' '+account.firstName+' '+account.lastName"
+                            readonly />
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="{{displayedColumns[1]}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+                    <mat-cell *matCellDef="let account">
+                        <input type="text" matInput [value]="account.email" readonly />
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="{{displayedColumns[2]}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> DOB </mat-header-cell>
+                    <mat-cell *matCellDef="let contact">
+                        <input type="text" matInput [value]="contact.dob" readonly />
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="{{displayedColumns[3]}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> Role </mat-header-cell>
+                    <mat-cell *matCellDef="let account">
+                        <input type="text" matInput [value]="account.role" readonly />
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="{{displayedColumns[4]}}">
+                    <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                    <mat-cell *matCellDef="let account">
+
+                        <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
+                            class="btn btn-sm btn-primary mr-1">Edit</button>
+                        <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1"
+                            [disabled]="!account.isVerified || account.role == Role.Admin">Duties</button>
+                        <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1"
+                            [disabled]="!account.isVerified  || account.role == Role.Admin">Schedule</button>
+                        <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account"
+                            [disabled]="account.isDeleting || account.role == Role.Admin">
+                            <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
+                            <span *ngIf="!account.isDeleting">Delete</span>
+                        </button>
+                        
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+
+                <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;" 
+                [ngClass]="{'highlighted': i == staticHighlightRow}" #tr 
+                (click)="clickedRow(row, tr, i, $event)" (mouseover)="row.hovered = true" (mouseout)="row.hovered = false" ></mat-row>
+
+                <!-- <mat-row *matRowDef="let row; columns: displayedColumns;let i = $index;"
+                    [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr
+                    (click)="clickedRow(row, $event)" (mouseover)="row.hovered = true"
+                    (mouseout)="row.hovered = false"></mat-row> -->
+
+            </mat-table>
+            <mat-paginator #paginator [length]="accounts.length" [pageSizeOptions]="[30, 50, 100]" showFirstLastButtons>
+            </mat-paginator>
+
+            <!-- <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th style="width:10%">Name</th>
+                        <th style="width:10%">Email</th>
+                        <th style="width:5%">DOB</th>
+                        <th style="width:5%">Role</th>
+                        <th style="width:15%"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let account of accounts(); let i = index" [class.active]="i == staticHighlightRow"
+                        (click)="clickedRow(i, $event)">
+                        <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
+                        <td>{{account.email}}</td>
+                        <td>{{account.dob}}</td>
+                        <td>{{account.role}}</td>
+                        <td style="white-space: nowrap">
+                            <div class="container">
+                                <div class="div-element">
+                                    <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
+                                        class="btn btn-sm btn-primary mr-1">Edit</button>
+                                </div>
+                                <div class="div-element ms-1" *ngIf="account.role !=RoleAdminEnum">
+                                    <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1"
+                                        [disabled]="!account.isVerified">Duties</button>
+
+                                </div>
+                                <div class="div-element  ms-1" *ngIf="account.role !=RoleAdminEnum">
+                                    <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1"
+                                        [disabled]="!account.isVerified">Schedule</button>
+                                </div>
+                                <div class="div-element  ms-1">
+                                    <button (click)="deleteAccount(account.id)"
+                                        class="btn btn-sm btn-danger btn-delete-account"
+                                        [disabled]="account.isDeleting">
+                                        <span *ngIf="account.isDeleting"
+                                            class="spinner-border spinner-border-sm"></span>
+                                        <span *ngIf="!account.isDeleting">Delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!accounts">
+                        <td colspan="4" class="text-center">
+                            <span class="spinner-border spinner-border-lg align-center"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table> -->
+        </div>
+    </div>
 </div>
 
-<h1>Accounts</h1>
+
+<!-- <h1>Accounts</h1>
 <p>All accounts from secure (admin only) api end point:</p>
 <div class="container">
     <div class="row">
         <div class="col-2">
-            <a routerLink="./" (click)="onDeleteAllUserAccounts($event)" class="btn btn-sm btn btn-danger mb-2">
-                <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
-                Delete Accounts
-            </a>
+            <button routerLink="./" (click)="onDeleteAllUserAccounts($event)" type="button" class="btn btn-sm btn-primary mb-2">Delete Accounts</button>
+            <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
         </div>
         <div class="col-2">
-            <a routerLink="add-edit/add" class="btn btn-sm btn-primary mb-2">Create Account</a>
+            <button routerLink="add-edit/add" class="btn btn-sm btn-primary mb-2">Create Account</button>
         </div>
         <div class="col-2">
-            <a routerLink="upload" class="btn btn-sm btn-primary mb-2">Import Accounts</a>
+            <button routerLink="upload" class="btn btn-sm btn-primary mb-2">Import Accounts</button>
         </div>
         <div class="col-2">
-            <a routerLink="auto-generate-schedules/generate">
-                <button type="button" class="btn btn-sm btn-primary mb-2">Generate
-                    Schedules
-                </button>
-            </a>
+                <button routerLink="auto-generate-schedules/generate" type="button" class="btn btn-sm btn-primary mb-2">Generate Schedules</button>
         </div>
-        <!-- <div class="col-2">
-            <a type="button" routerLink="auto-generate-schedules/generate" class="btn btn-sm btn-outline-primary mb-2">Generate Schedules</a>
-        </div> -->
         <div class="col-2">
-            <a routerLink="schedule-generate"><button type="button" class="btn btn-sm btn-primary mb-2">Create\Modify
-                    Schedules</button></a>
+            <button routerLink="schedule-generate" type="button" class="btn btn-sm btn-primary mb-2">Create\Modify Schedules</button>
         </div>
-        <!--         <div class="col-2">
-            <a routerLink="schedule-generate" class="btn btn-sm btn-primary mb-2">Create\Modify Schedules</a>
-        </div>
- -->
         <div class="col-2">
-            <a routerLink="download-schedules-file"><button type="button" class="btn btn-sm btn-secondary mb-2">View
-                    Schedules</button></a>
+            <button routerLink="download-schedules-file" type="button" class="btn btn-sm btn-secondary mb-2">View Schedules</button>
         </div>
-
     </div>
-</div>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th style="width:10%">Name</th>
-            <th style="width:10%">Email</th>
-            <th style="width:5%">DOB</th>
-            <th style="width:5%">Role</th>
-            <th style="width:15%"></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let account of accounts(); let i = index" [class.active]="i == staticHighlightRow"
-            (click)="clickedRow(i, $event)">
-            <td>{{account.title}} {{account.firstName}} {{account.lastName}}</td>
-            <td>{{account.email}}</td>
-            <td>{{account.dob}}</td>
-            <td>{{account.role}}</td>
-            <td style="white-space: nowrap">
-                <div class="container">
-                    <div class="div-element">
-                        <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
-                            class="btn btn-sm btn-primary mr-1">Edit</button>
-                    </div>
-                    <div class="div-element ms-1" *ngIf="account.role !=RoleAdminEnum">
-                        <button routerLink="function/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                            [disabled]="!account.isVerified">Duties</button>
-
-                    </div>
-                    <div class="div-element  ms-1" *ngIf="account.role !=RoleAdminEnum">
-                        <button routerLink="schedule/{{account.id}}" class="btn btn-sm btn-primary mr-1"
-                            [disabled]="!account.isVerified">Schedule</button>
-                    </div>
-                    <div class="div-element  ms-1">
-                        <button (click)="deleteAccount(account.id)" class="btn btn-sm btn-danger btn-delete-account"
-                            [disabled]="account.isDeleting">
-                            <span *ngIf="account.isDeleting" class="spinner-border spinner-border-sm"></span>
-                            <span *ngIf="!account.isDeleting">Delete</span>
-                        </button>
-                    </div>
-                </div>
-            </td>
-        </tr>
-        <tr *ngIf="!accounts">
-            <td colspan="4" class="text-center">
-                <span class="spinner-border spinner-border-lg align-center"></span>
-            </td>
-        </tr>
-    </tbody>
-</table>
+</div> -->

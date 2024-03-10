@@ -15,9 +15,11 @@
                 </div>
                 <form method="post" enctype="multipart/form-data">
                     <div>
+                        <code >
                         <!-- <label for="file">Choose file to upload</label> -->
                         <input type="file" class="file-input" #fileUpload accept=".xlsx" required
                             (change)="onFileSelected($event)" />
+                        </code>
                     </div>
                 </form>
             </div>
