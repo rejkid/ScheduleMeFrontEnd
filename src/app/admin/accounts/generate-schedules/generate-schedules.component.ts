@@ -12,6 +12,7 @@ import { Constants } from 'src/app/constants';
 import { FunctionScheduleComponent } from '../function-schedule/function-schedule.component';
 import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
 import { first } from 'rxjs/operators';
+import { UserFunctions } from 'src/app/_models/userfunctions';
 
 
 
@@ -79,40 +80,18 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     this.accountService.getTasks()
       .pipe(first())
       .subscribe({
-        next: (value: string[]) => {
-          //value = ["Acolyte"] ;
+        next: (value: UserFunctions) => {
+          //value = ["Acolyte","Cleaner"] ;
           /* Create `UserFunction` component for every function that was returned by server*/
-          value.forEach(element => {
+          value.functions.forEach(element => {
             var f: UserFunction = {
               id: '',
-              userFunction: element,
-              group: ''
+              userFunction: element.userFunction,
+              group: '',
+              isGroup : element.isGroup
             }
             this.functions.push(f);
           });
-          this.accountService.getGroupTasks()
-            .pipe(first())
-            .subscribe({
-              next: (value: string[]) => {
-                //value = ["Choir"] ;
-                /* Create `UserFunction` component for every function that was returned by server*/
-                value.forEach(element => {
-                  var f: UserFunction = {
-                    id: '',
-                    userFunction: element,
-                    group: ''
-                  }
-                  this.functions.push(f);
-                });
-              },
-              complete: () => {
-                this.functionsLoaded = true;
-              },
-              error: error => {
-                this.alertService.error(error);
-                this.functionsLoaded = false;
-              }
-            });
         },
         complete: () => {
           this.functionsLoaded = true;

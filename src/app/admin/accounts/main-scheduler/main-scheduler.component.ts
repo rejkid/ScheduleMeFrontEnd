@@ -2,7 +2,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortable, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { first } from 'rxjs/operators';
@@ -105,15 +105,16 @@ export class MainSchedulerComponent {
           this.list.sort(function (a, b) {
             var aDate = moment(a.date, Constants.dateTimeFormat).toDate();
             var bDate = moment(b.date, Constants.dateTimeFormat).toDate();
-            if (aDate > bDate) return 1
-            if (aDate < bDate) return -1
-            return 0
+            if (aDate > bDate) return 1;
+              else if (aDate < bDate) return -1;
+            else
+              return 0
           });
 
           // Convert dates to date strings and optionally filter out past date strings
           for (let index = 0; index < this.list.length; index++) {
             var nowMs = Date.now();
-            const scheduleServerDate = moment(this.list[index].date).toDate();
+            const scheduleServerDate = moment(this.list[index].date, Constants.dateTimeFormat).toDate();
             var scheduleLocalDateStr = moment(scheduleServerDate).format(Constants.dateTimeFormat);
             var scheduleMs = scheduleServerDate.getTime();
 
@@ -142,6 +143,28 @@ export class MainSchedulerComponent {
         }
       });
   }
+  // sortData(sort: Sort) {
+  //   if (!sort.active || sort.direction == '') {
+  //     return;
+  //   }
+  //   console.log(sort);
+  //   this.futureScheduleDates.sort((a, b) => {
+  //     let isAsc = sort.direction == 'asc';
+  //     const date1 = moment(a.date, Constants.dateTimeFormat).toDate().getTime();
+  //     const date2 = moment(b.date, Constants.dateTimeFormat).toDate().getTime();
+  //     if (date1 < date2) {
+  //       console.log("date1 is earlier than date2");
+  //       return isAsc ? -1 : 1;
+  //     } else if (date1 > date2) {
+  //       console.log("date1 is later than date2");
+  //       return isAsc ? 1 : -1;;
+  //     } else {
+  //       console.log("date1 and date2 are the same");
+  //       return 0;
+  //     }
+  //   });
+  //   this.dataSource = new MatTableDataSource(this.futureScheduleDates);
+  // }
   getDayStrFromDate(dateStr: string): string {
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var date = moment(dateStr, Constants.dateTimeFormat).toDate();
@@ -243,5 +266,4 @@ export class MainSchedulerComponent {
     data.isDeleting = true;
     this.generateScheduleComponent.onDeleteSchedules(event, data);
   }
-
 }

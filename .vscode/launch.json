@@ -9,9 +9,10 @@
             "name": "Launch Chrome",
             "request": "launch",
             "type": "chrome",
-            "url": "http://localhost:4200",
+            "url": "http://rejkid:4200",
             "webRoot": "${workspaceFolder}",
             "sourceMaps": true,
+            
             // "trace": true,
             // "outFiles": ["${workspaceFolder}/dist/scheduler/*.js"],
             // "resolveSourceMapLocations": [

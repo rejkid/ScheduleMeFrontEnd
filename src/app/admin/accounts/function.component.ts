@@ -15,7 +15,7 @@ export class FunctionComponent implements OnInit {
   userFunctionIndexer: number = 0;
 
   userFunctions: UserFunction[] = [];
-  functions: string[] = [];
+  possibleTasks: UserFunction[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
   loading = false;
@@ -41,7 +41,7 @@ export class FunctionComponent implements OnInit {
             .pipe(first())
             .subscribe({
               next: (value) => {
-                this.functions = value;
+                this.possibleTasks = value.functions;
 
                 this.account = account;
                 this.userFunctions = account.userFunctions.slice();
@@ -50,15 +50,15 @@ export class FunctionComponent implements OnInit {
                 this.form = this.formBuilder.group({
 
                   function: ['', [Validators.required, this.functionValidator]],
-                  cleanerGroup: ['', [this.groupValidator.bind(this)]] ,
+                  groupTask: ['', [this.groupValidator.bind(this)]] ,
 
                 }, { validator: (group : FormGroup) => {
                   if (group.controls['function'].value == 'Cleaner') {
-                    return Validators.required(group.controls['cleanerGroup']);
+                    return Validators.required(group.controls['groupTask']);
                   }
                   return null;
                 }});
-                this.form.get('function').setValue(this.functions[0]);
+                this.form.get('function').setValue(this.possibleTasks[0].userFunction);
 
                 this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
 
@@ -85,14 +85,14 @@ export class FunctionComponent implements OnInit {
     return null;
   }
   groupValidator(control: FormControl): { [s: string]: boolean } {
-    if (this.isCleaner && control.value === '') {
+    if (this.isGroupTaskSelected &&  control.value === '') {
       return { invalidGroup: true };
     }
     return null;
   }
   get isValid() {
     var funcValid = this.f['function'].valid; 
-    var groupValid = this.f['cleanerGroup'].valid;
+    var groupValid = this.f['groupTask'].valid;
     var formValid = this.form.valid;
     return this.form.valid;
 
@@ -102,6 +102,7 @@ export class FunctionComponent implements OnInit {
 
     var currentValue = this.form.controls['function'].value;
 
+    /* Sanity check */
     for (let index = 0; index < this.userFunctions.length; index++) {
       if (this.userFunctions[index].userFunction === currentValue) {
         this.alertService.error(currentValue + " already exists");
@@ -109,7 +110,7 @@ export class FunctionComponent implements OnInit {
       }
     }
 
-    // stop here if form is invalid
+    // Stop here if form is invalid
     if (this.form.invalid) {
       return;
     }
@@ -117,7 +118,8 @@ export class FunctionComponent implements OnInit {
     var userFunction: UserFunction = {
       id: (++this.userFunctionIndexer).toString(),
       userFunction: this.form.controls['function'].value,
-      group: this.f['cleanerGroup'].value
+      group: this.isGroupTaskSelected ? this.f['groupTask'].value : "",
+      isGroup: this.isGroupTaskSelected,
     }
     this.userFunctions.push(userFunction);
     this.addFunction4Account(userFunction);
@@ -162,26 +164,31 @@ export class FunctionComponent implements OnInit {
   get isAdmin() {
     return this.account.role == Role.Admin;
   }
-  get isCleaner() {
+  get isGroupTaskSelected() {
     if(this.form == undefined)
      return false;
-    return this.form.get('function').value === Constants.CLEANER_STR;
+    for (let index = 0; index < this.possibleTasks.length; index++) {
+      const possibleTask = this.possibleTasks[index];
+      if(possibleTask.userFunction === this.form.get('function').value)
+      {
+        return possibleTask.isGroup;
+      }
+    }
+    return false;
   }
-  get group() : string {
-    var fun = this.account.userFunctions.find(f => {
-      console.log(f);
-      return f.group.length > 0
+  get assignedGroup() : string {
+    const taskSelected = this.form.controls['function'].value;
+    var task = this.account.userFunctions.find((f) => {
+      return f.userFunction === taskSelected;
     });
-    if (fun != null)
-      return fun.group
-    else
-      return "";
+    return (task != null && task != undefined) ? task.group : "";
   }
-  onDutyChanged(event: Event) {
+  onTaskChanged(event: Event) {
     var valueSelected = (event.target as HTMLInputElement).value;
-    if(valueSelected == Constants.CLEANER_STR) {
-      this.f["cleanerGroup"].setValue(this.group);
+    if(this.isGroupTaskSelected) {
+      this.f["groupTask"].setValue(this.assignedGroup);
     } else {
+      this.f["groupTask"].setValue("");
     }
   }
 }

@@ -15,6 +15,7 @@ import { ScheduleDateTimes } from '../_models/scheduledatetimes';
 import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { SchedulePoolElements } from '../_models/schedulepoolelements';
 import { DateFunctionTeams } from '../_models/teams';
+import { UserFunctions } from '../_models/userfunctions';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -275,7 +276,7 @@ export class AccountService {
     }
 
     getTasks() {
-        return this.http.get<[]>(`${baseUrl}/tasks`);
+        return this.http.get<UserFunctions>(`${baseUrl}/tasks`);
     }
     getGroupTasks() {
         return this.http.get<[]>(`${baseUrl}/group-tasks`);

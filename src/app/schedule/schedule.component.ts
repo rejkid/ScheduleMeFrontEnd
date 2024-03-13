@@ -60,7 +60,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   schedules: Schedule[] = [];
   userFunctionIndexer: number = 0;
-  functions: string[] = [];
+  functions: UserFunction[] = [];
   submitted = false;
   accountService: AccountService;
   account: Account;
@@ -128,7 +128,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
             .pipe(first())
             .subscribe({
               next: (value) => {
-                this.functions = value;
+                this.functions = value.functions;
 
                 this.initSchedules(account);
 

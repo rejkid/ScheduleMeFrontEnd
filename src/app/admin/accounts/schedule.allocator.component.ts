@@ -15,9 +15,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { UpperCasePipe } from '@angular/common';
 import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatSort, MatSortable, Sort } from '@angular/material/sort';
 import * as signalR from '@microsoft/signalr';
 import { Constants } from '../../constants';
+import { MatSelectChange } from '@angular/material/select';
 
 const COLUMNS_SCHEMA = [
   {
@@ -65,7 +66,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   schedules: Schedule[] = [];
   userFunctionIndexer: number = 0;
-  functions: string[] = [];
+  possibleTasks: UserFunction[] = [];
   submitted = false;
   accountService: AccountService;
   account: Account;
@@ -80,14 +81,14 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   isLoggedAsAdmin: boolean = false;
 
-  currentSelectedSchedule : Schedule = null;
-  lastSelectedSchedule : Schedule = null;
-  idx : number;
+  currentSelectedSchedule: Schedule = null;
+  lastSelectedSchedule: Schedule = null;
+  idx: number;
 
   poolElements: SchedulePoolElement[] = [];
   public color: ThemePalette = 'primary';
 
-  groupTask : string = "G";
+  groupTask: string = "G";
 
   connection: signalR.HubConnection;
 
@@ -119,17 +120,17 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       this.updateSchedulesFromServer();
     });
 
+    /* This form relates to upper part of the template*/
     this.form = this.formBuilder.group({
       scheduledDate: ['', Validators.required],
-      cleanerGroup: ['K', ] ,
+      groupTask: ['K',],
       function: ['', [Validators.required, this.functionValidator]],
     });
-
   }
   ngAfterViewInit(): void {
     this.accountService.getById(this.id)
       .pipe(first())
-        .subscribe(account => {
+      .subscribe(account => {
 
         this.account = account;
 
@@ -137,7 +138,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
           .pipe(first())
           .subscribe({
             next: (value) => {
-              this.functions = value;
+              this.possibleTasks = value.functions;
               this.initSchedules(account);
 
               // Initial sorting by date
@@ -149,12 +150,12 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
               if (this.userFunctions.length > 0) {
                 this.form.get('function').setValue(this.userFunctions[0].userFunction);
               }
-              if (!this.isCleaner) {
-                this.form.get('cleanerGroup').disable();
+              if (!this.isGroupTaskSelected) {
+                this.form.get('groupTask').disable();
               } else {
-                this.form.get('cleanerGroup').addValidators(Validators.required);
-                this.form.get('cleanerGroup').addValidators(Validators.minLength(1));
-                this.form.get('cleanerGroup').setValue(account.scheduleGroup);
+                this.form.get('groupTask').addValidators(Validators.required);
+                this.form.get('groupTask').addValidators(Validators.minLength(1));
+                this.form.get('groupTask').setValue(account.scheduleGroup);
               }
 
               this.account = account;
@@ -163,16 +164,14 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
               this.isLoaded = true;
 
-              this.f["cleanerGroup"].setValue(this.group);
+              this.f["groupTask"].setValue(this.assignedGroup);
 
-              //this.groupTask = this.group;
             },
             error: error => {
               this.alertService.error(error);
             }
           });
       });
-
   }
 
   ngOnInit(): void {
@@ -183,9 +182,9 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   ngOnDestroy() {
     console.log("Called");
     this.connection.stop().
-    catch((err) => 
-      console.error(err.toString())
-    );
+      catch((err) =>
+        console.error(err.toString())
+      );
   }
   /* I am not sure if we need 'input' parameter - keep it for now*/
   applyFilter(t: any, input: any) {
@@ -202,15 +201,15 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     }
     return null;
   }
-  
-  onDutyChanged(event: any) {
-    if(event.value == this.CLEANER_STR) {
-      this.form.get('cleanerGroup').enable();
-      this.f["cleanerGroup"].setValue(this.group);
-    } else {
-      this.form.get('cleanerGroup').disable();
-    }
-  }
+
+  // onDutyChanged(event: any) {
+  //   if (event.value == this.CLEANER_STR) {
+  //     this.form.get('groupTask').enable();
+  //     this.f["groupTask"].setValue(this.assignedGroup);
+  //   } else {
+  //     this.form.get('groupTask').disable();
+  //   }
+  // }
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 
@@ -224,7 +223,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     // stop here if form is invalid
     if (this.form.invalid) {
       this.form.markAsTouched(); //markAllAsTouched();
-      this.f['cleanerGroup'].markAsTouched();
+      this.f['groupTask'].markAsTouched();
       return;
     }
 
@@ -251,9 +250,9 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onInputFunc(date: HTMLInputElement, event : any ) {
+  onInputFunc(date: HTMLInputElement, event: any) {
     var k = event.key;
-    
+
     var retVal = this.uppercasePipe.transform(event.key);
     return retVal;
   }
@@ -276,8 +275,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     }
 
     var scheduleGroupVal = "";
-    if (this.form.controls['cleanerGroup'].enabled) {
-      scheduleGroupVal = this.form.controls['cleanerGroup'].value;
+    if (this.form.controls['groupTask'].enabled) {
+      scheduleGroupVal = this.form.controls['groupTask'].value;
     }
     var schedule: Schedule = {
       accountId: this.account.id,
@@ -321,7 +320,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
           .pipe(first())
           .subscribe({
             next: (value) => {
-              this.functions = value;
+              this.possibleTasks = value.functions;
               this.initSchedules(account);
             },
             error: error => {
@@ -352,7 +351,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     this.updateSchedules(schedule);
   }
 
-  onCleanerGroupPressed(event : any) {
+  onCleanerGroupPressed(event: any) {
     console.log("You entered: ", event.target.value);
   }
 
@@ -378,7 +377,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onRowSelected(schedule: Schedule, tr: any, index : number) {
+  onRowSelected(schedule: Schedule, tr: any, index: number) {
     schedule.highlighted = !schedule.highlighted;
     this.currentSelectedSchedule = schedule;
 
@@ -386,54 +385,83 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       var date = moment(schedule.date, Constants.dateTimeFormat).toDate();
       this.form.get('scheduledDate').setValue(date);
       this.form.get('function').setValue(schedule.userFunction);
-      this.form.get('cleanerGroup').setValue(schedule.scheduleGroup);
+      this.form.get('groupTask').setValue(schedule.scheduleGroup);
     }
-    if(this.lastSelectedSchedule != null) {
+    if (this.lastSelectedSchedule != null) {
       this.lastSelectedSchedule.highlighted = false;
     }
     this.lastSelectedSchedule = this.currentSelectedSchedule;
 
-    if(!schedule.highlighted) {
+    if (!schedule.highlighted) {
       // If row is deselected mark both schedules as deselected(null);
       this.lastSelectedSchedule = null;
-    this.currentSelectedSchedule = null;
+      this.currentSelectedSchedule = null;
     }
-  } 
+  }
 
   initSchedules(account: Account) {
-    var date = 
-    this.schedules = account.schedules.slice();
-    // Fix up the date string for the schedules
-    this.schedules.forEach(element => {
-      var date = new Date(element.date);
-      var dateTimeStr = moment(date).format(Constants.dateTimeFormat);
-      element.date = dateTimeStr;
-    }); 
+    var date =
+      this.schedules = account.schedules.slice();
 
     this.dataSource = new MatTableDataSource(this.schedules);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
   }
+  sortData(sort: Sort) {
+    if (!sort.active || sort.direction == '') {
+      return;
+    }
+    console.log(sort);
+    this.schedules.sort((a, b) => {
+      let isAsc = sort.direction == 'asc';
+      const date1 = new Date(a.date).getTime();
+      const date2 = new Date(b.date).getTime();
+      if (date1 < date2) {
+        console.log("date1 is earlier than date2");
+        return isAsc ? -1 : 1;
+      } else if (date1 > date2) {
+        console.log("date1 is later than date2");
+        return isAsc ? 1 : -1;;
+      } else {
+        console.log("date1 and date2 are the same");
+        return 0;
+      }
+    });
+    this.dataSource = new MatTableDataSource(this.schedules);
+  }
+
   get isAdmin() {
     return this.account.role == Role.Admin;
   }
-  get isCleaner() {
+  get isGroupTaskSelected() {
     if(this.form == undefined)
      return false;
-    return this.form.get('function').value === this.CLEANER_STR
+    for (let index = 0; index < this.possibleTasks.length; index++) {
+      const possibleTask = this.possibleTasks[index];
+      if(possibleTask.userFunction === this.form.get('function').value)
+      {
+        return possibleTask.isGroup;
+      }
+    }
+    return false;
   }
-  get group() : string {
-    var fun = this.account.userFunctions.find(f => {
-      // console.log(f);
-      return f.group.length > 0
+  get assignedGroup(): string {
+    const taskSelected = this.form.controls['function'].value;
+    var task = this.account.userFunctions.find((f) => {
+      return f.userFunction === taskSelected;
     });
-    if (fun != null)
-      return fun.group
-    else
-      return "";
+    return (task != null && task != undefined) ? task.group : "";
   }
-  get isReadOnly() : boolean {
-    return this.group.length > 0;
+  onTaskChanged(event: MatSelectChange) {
+    var valueSelected = event.value;
+    if(this.isGroupTaskSelected) {
+      this.f["groupTask"].setValue(this.assignedGroup);
+    } else {
+      this.f["groupTask"].setValue("");
+    }
+  }
+  get isReadOnly(): boolean {
+    return this.assignedGroup.length > 0;
   }
 }

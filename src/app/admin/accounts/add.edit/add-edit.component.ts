@@ -71,7 +71,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             //             // Edit mode
             //             this.account = x; // initial account
             //             this.form.patchValue(x);
-            //             this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
+            //             this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
             //         },
             //         error: error => {
             //             console.error(error);
@@ -85,7 +85,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                 // Edit mode
                 this.account = value; // initial account
                 this.form.patchValue(value);
-                this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
+                this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
             } catch (error) {
                 console.error(error);
             } 
