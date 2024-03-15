@@ -1,4 +1,5 @@
-﻿import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+﻿import { ViewportScroller } from '@angular/common';
+import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -56,14 +57,15 @@ export class ListComponent implements OnInit, AfterViewInit {
     highlighted: boolean;
 
     constructor(private accountService: AccountService,
-        private alertService: AlertService) {
+        private alertService: AlertService,
+        private scroller: ViewportScroller) {
 
     }
     ngAfterViewInit(): void {
         this.refreshList();
     }
 
-    clickedRow(contact: Account, input: any, index : number, event: MouseEvent) {
+    clickedRow(contact: Account, input: any, index: number, event: MouseEvent) {
 
         if (event.ctrlKey) {
             ListComponent.HighlightRow = ListComponent.HighlightRow == index ? -1 : index;
@@ -74,18 +76,18 @@ export class ListComponent implements OnInit, AfterViewInit {
         contact.highlighted = !contact.highlighted;
         this.currentSelectedContact = contact;
 
-        if(this.lastSelectedContact != null) {
+        if (this.lastSelectedContact != null) {
             this.lastSelectedContact.highlighted = false;
-          }
-          this.lastSelectedContact = this.currentSelectedContact;
-    
-          if(!contact.highlighted) {
+        }
+        this.lastSelectedContact = this.currentSelectedContact;
+
+        if (!contact.highlighted) {
             // If row is deselected mark both contacts as deselected(null);
             this.lastSelectedContact = null;
-          this.currentSelectedContact = null;
-          }
-          console.log("clickedRow: row == this.staticHighlightRow: " + (index == this.staticHighlightRow));
+            this.currentSelectedContact = null;
         }
+        console.log("clickedRow: row == this.staticHighlightRow: " + (index == this.staticHighlightRow));
+    }
     get staticHighlightRow() {
         return ListComponent.HighlightRow;
     }

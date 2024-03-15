@@ -1,6 +1,5 @@
 
 
-
     <form [formGroup]="form" *ngIf="isLoaded && !isAdmin">
     <div class="row">
         <div class="mb-3 col-5">
@@ -51,7 +50,7 @@
                 <div class="mb-3 col-3" *ngIf=isGroupTaskSelected>
                     <mat-form-field appearance="outline">
                         <!-- <mat-label>Team</mat-label> -->
-                        <input type="text" #groupData matInput class="form-control" formControlName="groupTask"  [readonly]="isReadOnly"/>
+                        <input type="text" #groupDataCtrl matInput class="form-control" formControlName="groupTask"  [readonly]="isReadOnly"/>
                         <mat-error *ngIf="f['groupTask'].enabled && f['groupTask'].hasError('required')">The field is required</mat-error>
                     </mat-form-field>
                 </div>
@@ -143,8 +142,9 @@
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
-            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr (click)="onRowSelected(row, tr, i)"
-            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
+                    [ngClass]="{'highlighted': i == staticHighlightRow}" #tr (click)="onRowSelected(row, tr, i, $event)"
+                    (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
+        
 
     </mat-table>
 

@@ -22,7 +22,7 @@ import { UserFunctions } from 'src/app/_models/userfunctions';
   styleUrls: ['./generate-schedules.component.less']
 })
 export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
-  @ViewChildren(`function`) functionComponents: QueryList<FunctionScheduleComponent>;
+  @ViewChildren('functionSchedule') functionComponents: QueryList<FunctionScheduleComponent>;
   @ViewChild(`ref`) dateCtrl: ElementRef;
   @Output() schedulesUpdatedEmitter: EventEmitter<FunctionScheduleData>;
   @Output() dateTimeChangedEmitter: EventEmitter<string>;
@@ -57,14 +57,26 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       });
       var newMap = new Map<FunctionScheduleComponent, Account[]>(GenerateSchedulesComponent.functions2SchedulesMap);
       GenerateSchedulesComponent.functions2SchedulesMap.clear();
-      for (let entry of newMap.entries()) {
-        console.log("Key:" + entry[0].dateTimeStr);
+
+      Array.from(newMap.keys()).map(key => {
+        console.log(key);
         this.fComponents.forEach(element => {
-          if (element.functionStr === entry[0].functionStr) {
-            GenerateSchedulesComponent.functions2SchedulesMap.set(element, entry[1]);
+          if (element.functionStr === key.functionStr) {
+            GenerateSchedulesComponent.functions2SchedulesMap.set(element, newMap.get(key));
           }
         });
-      }
+      });
+      /* All FunctionScheduleComponent are loaded */
+
+      // for (let entry of newMap.entries()) {
+      //   console.log("Key:" + entry[0].dateTimeStr);
+
+      //   this.fComponents.forEach(element => {
+      //     if (element.functionStr === entry[0].functionStr) {
+      //       GenerateSchedulesComponent.functions2SchedulesMap.set(element, entry[1]);
+      //     }
+      //   });
+      // }
       /* All FunctionScheduleComponent are loaded */
     });
   }
@@ -88,7 +100,9 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
               id: '',
               userFunction: element.userFunction,
               group: '',
-              isGroup : element.isGroup
+              isGroup : element.isGroup,
+              isDeleting : false,
+              highlighted : false
             }
             this.functions.push(f);
           });
@@ -169,8 +183,6 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       /* Make sure the row is selected first so the ``dateTimeStr`` is set up properly 
       `functionStr` is set on creation time by this class*/
       this.setCurrentDate(data.date)
-
-
       element.onDeleteSchedules(event);
       console.log("GenerateSchedulesComponent deleting functionStr:" + element.functionStr + " dateStr:" + element.dateTimeStr);
     });

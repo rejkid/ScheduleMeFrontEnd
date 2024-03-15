@@ -267,7 +267,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
           //this.refreshAccounts();
           this.alertService.error(error);
           this.isAdding = false;
-          this.scroller.scrollToAnchor("alert");
+          this.scroller.scrollToAnchor("pageStart");
           
         }
       });

@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 
 import { MatTableDataSource } from '@angular/material/table';
 
-import { UpperCasePipe } from '@angular/common';
+import { UpperCasePipe, ViewportScroller } from '@angular/common';
 import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable, Sort } from '@angular/material/sort';
@@ -49,11 +49,13 @@ const COLUMNS_SCHEMA = [
 })
 
 export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
-
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild('groupDataCtrl') groupCtrl: ElementRef;
 
   readonly CLEANER_STR = Constants.CLEANER_STR;
+
+  static HighlightRow: Number = -1;
 
   dateFormat = Constants.dateTimeFormat;
   dateTimeFormat = Constants.dateTimeFormat;
@@ -98,7 +100,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
-    private uppercasePipe: UpperCasePipe) {
+    private uppercasePipe: UpperCasePipe,
+    private scroller: ViewportScroller) {
 
     this.accountService = accountService;
     this.onScheduledAdded = new EventEmitter();
@@ -128,6 +131,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     });
   }
   ngAfterViewInit(): void {
+    
     this.accountService.getById(this.id)
       .pipe(first())
       .subscribe(account => {
@@ -245,6 +249,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
         error: error => {
           this.updateSchedulesFromServer();
           this.alertService.error(error);
+          this.scroller.scrollToAnchor("pageStart");
           this.isAdding = false;
         }
       });
@@ -269,13 +274,15 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
       var scheduleFunction = this.schedules[index].userFunction;
       if (scheduleTimeStr == formTimeStr && scheduleFunction == formFunction) {
-        this.alertService.warn("The user is already " + scheduleFunction + " for that date/time");
+        this.alertService.error("The user is already " + scheduleFunction + " for that date/time");
+        this.scroller.scrollToAnchor("pageStart");
+
         return null;
       }
     }
 
     var scheduleGroupVal = "";
-    if (this.form.controls['groupTask'].enabled) {
+    if (this.groupCtrl != undefined && this.groupCtrl.nativeElement.checkVisibility()) {
       scheduleGroupVal = this.form.controls['groupTask'].value;
     }
     var schedule: Schedule = {
@@ -377,9 +384,15 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onRowSelected(schedule: Schedule, tr: any, index: number) {
+  onRowSelected(schedule: Schedule, tr: any, index: number, event: any) {
     schedule.highlighted = !schedule.highlighted;
     this.currentSelectedSchedule = schedule;
+
+    if (event.ctrlKey) {
+      ScheduleAllocatorComponent.HighlightRow = ScheduleAllocatorComponent.HighlightRow == index ? -1 : index;
+    } else {
+      ScheduleAllocatorComponent.HighlightRow = index;//this.HighlightRow == index ? -1 : index;
+    }
 
     if (!schedule.deleting) {
       var date = moment(schedule.date, Constants.dateTimeFormat).toDate();
@@ -464,4 +477,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   get isReadOnly(): boolean {
     return this.assignedGroup.length > 0;
   }
+  get staticHighlightRow() {
+    return ScheduleAllocatorComponent.HighlightRow;
+}
 }

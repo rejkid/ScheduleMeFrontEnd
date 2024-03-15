@@ -55,7 +55,7 @@
         @if(functionsLoaded) {
         @for(item of functions | orderByDateOrFunction: 'userFunction': 'asc'; track item.userFunction; let index = $index) {
         <div>
-            <app-function-schedule (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #function
+            <app-function-schedule (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #functionSchedule
                 [functionStr]=item.userFunction [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
         </div>
         }

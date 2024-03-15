@@ -5,3 +5,14 @@
   display: -webkit-flex; /* Safari */     
   display: flex; /* Standard syntax */
 }
+:host {
+  --bg-color: rgba(100, 100, 100, .5);
+
+}
+.highlighted {
+  background: var(--bg-color);
+}
+.mat-mdc-table .mat-mdc-row:hover,
+.mat-mdc-table .mat-mdc-footer-row:hover {
+    background: var(--bg-color);
+}

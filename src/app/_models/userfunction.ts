@@ -3,4 +3,6 @@ export class UserFunction {
     userFunction: string;
     group: string;
     isGroup : boolean;
+    isDeleting : boolean;
+    highlighted : boolean;
 }
