@@ -162,6 +162,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 },
                 error: error => {
                     this.alertService.error(error);
+                    this.scroller.scrollToAnchor("pageStart");
                     this.isDeleting = false;
                 }
             });
@@ -179,7 +180,9 @@ export class ListComponent implements OnInit, AfterViewInit {
                 },
                 error: error => {
                     this.alertService.error(error);
+                    this.scroller.scrollToAnchor("pageStart");
                 }
+                
             });
     }
     public get Role() {
