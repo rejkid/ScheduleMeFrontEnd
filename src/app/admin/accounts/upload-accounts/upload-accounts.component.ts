@@ -51,6 +51,7 @@ export class UploadAccountsComponent implements OnInit, AfterViewInit {
     }
   }
   onSubmit(event: any, fileUpload: any) {
+    this.alertService.clear();
 
     const file: File = fileUpload.files[0];
 
