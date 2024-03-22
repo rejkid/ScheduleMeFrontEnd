@@ -1,9 +1,10 @@
 ﻿<div class="app-container" [ngClass]="{ 'bg-light': account }">
     <!-- main nav -->
+    
     <nav class="navbar navbar-expand navbar-dark bg-dark" *ngIf="account">
-        <div class="navbar-nav">
+        <div class="navbar-nav nav-underline">
             <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-                class="nav-item nav-link">Home</a>
+                class="nav-item nav-link" role="presentation">Home</a>
             <a routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">Profile</a>
             <a *ngIf="account.role === Role.Admin" routerLink="/admin" routerLinkActive="active"
                 class="nav-item nav-link">Admin</a>
