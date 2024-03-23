@@ -48,7 +48,6 @@ export class MainSchedulerComponent {
   isLoaded: boolean = false;
 
   isUsersLoaded: boolean = false;
-  //teams: Team[] = [];
   scheduleDateTime: ScheduleDateTime[] = [];
 
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
@@ -122,7 +121,7 @@ export class MainSchedulerComponent {
               this.futureScheduleDateStrings.push(scheduleLocalDateStr + "/" + this.getDayStrFromDate(scheduleLocalDateStr));
 
               var futureScheduleDate: ScheduleDateTime = {
-                id: '',
+                id: this.list[index].id,
                 date: scheduleLocalDateStr,
                 highlighted: false,
                 isDeleting: false,
@@ -130,41 +129,27 @@ export class MainSchedulerComponent {
               }
               this.futureScheduleDates.push(futureScheduleDate);
             }
-            // if(this.futureScheduleDates.length > 0)
-            //   this.generateScheduleComponent.setCurrentDate(this.futureScheduleDates[0].date);
           }
-          this.dataSource = new MatTableDataSource(this.futureScheduleDates);
+          this.dataSource.data = this.futureScheduleDates;
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
           this.isLoaded = true;
+
+          /* Set up selected row if still exists*/
+          if(this.currentSelectedAccount != null) {
+            var id = this.currentSelectedAccount.id ;
+            var selected = this.futureScheduleDates.filter(function(item) { return item.id == id});
+            /* selected.length == 0 if user selected and deleted row in Schedules - top screen table */
+            if(selected != null && selected.length == 1) {
+              selected[0].highlighted = this.currentSelectedAccount.highlighted;
+            }
+          }
         },
         error: error => {
           console.log();
         }
       });
   }
-  // sortData(sort: Sort) {
-  //   if (!sort.active || sort.direction == '') {
-  //     return;
-  //   }
-  //   console.log(sort);
-  //   this.futureScheduleDates.sort((a, b) => {
-  //     let isAsc = sort.direction == 'asc';
-  //     const date1 = moment(a.date, Constants.dateTimeFormat).toDate().getTime();
-  //     const date2 = moment(b.date, Constants.dateTimeFormat).toDate().getTime();
-  //     if (date1 < date2) {
-  //       console.log("date1 is earlier than date2");
-  //       return isAsc ? -1 : 1;
-  //     } else if (date1 > date2) {
-  //       console.log("date1 is later than date2");
-  //       return isAsc ? 1 : -1;;
-  //     } else {
-  //       console.log("date1 and date2 are the same");
-  //       return 0;
-  //     }
-  //   });
-  //   this.dataSource = new MatTableDataSource(this.futureScheduleDates);
-  // }
   getDayStrFromDate(dateStr: string): string {
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var date = moment(dateStr, Constants.dateTimeFormat).toDate();
@@ -206,11 +191,6 @@ export class MainSchedulerComponent {
         this.generateScheduleComponent.setCurrentDate(this.currentSelectedAccount.date);
       }
     }
-    // scheduleDateTime.highlighted = !scheduleDateTime.highlighted;
-    // this.currentSelectedAccount = scheduleDateTime;
-
-
-
     if (this.lastSelectedAccount != null) {
       this.lastSelectedAccount.highlighted = false;
     }
@@ -221,7 +201,6 @@ export class MainSchedulerComponent {
       this.lastSelectedAccount = null;
       this.currentSelectedAccount = null;
     }
-    //this.selectSchedules4Date(date.date);
   }
   dateTimeChanged(date: string) {
 
@@ -233,34 +212,9 @@ export class MainSchedulerComponent {
       day: this.getDayStrFromDate(date),
     }
     this.onRowSelected(futureScheduleDate);
-
-    // if (this.currentSelectedAccount) {
-    //   // Reset selection
-    //   this.currentSelectedAccount.highlighted = !this.currentSelectedAccount.highlighted;
-    //   if (!this.currentSelectedAccount.highlighted) {
-    //     this.lastSelectedAccount = null;
-    //     this.currentSelectedAccount = null;
-    //   }
-    // }
   }
 
 
-  // selectSchedules4Date(value: string): void {
-  //   this.dateSelected = value;
-  //   if (this.futureScheduleDateStrings.length <= 0)
-  //     return;
-
-  //   this.accountService.getTeamsByFunctionForDate(value)
-  //     .pipe(first())
-  //     .subscribe({
-  //       next: (dateFunctionTeams: DateFunctionTeams) => {
-  //         this.teams = dateFunctionTeams.dateFunctionTeams;
-  //       },
-  //       error: error => {
-  //         console.log();
-  //       }
-  //     });
-  // }
   onDeleteSchedules(event: MouseEvent, data: ScheduleDateTime) {
     console.log("MainSchedulerComponent deleting called");
     data.isDeleting = true;
