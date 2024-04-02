@@ -14,6 +14,7 @@ import { DateFunctionTeams } from 'src/app/_models/teams';
 import { AccountService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { GenerateSchedulesComponent } from '../generate-schedules/generate-schedules.component';
+import { TimeHandler } from 'src/app/_helpers/time.handler';
 const COLUMNS_SCHEMA = [
   {
     key: "date",
@@ -150,6 +151,11 @@ export class MainSchedulerComponent {
         }
       });
   }
+  sortData(sort: Sort) {
+    TimeHandler.sortData(this.futureScheduleDates, sort);
+    this.dataSource = new MatTableDataSource(this.futureScheduleDates);
+  }
+
   getDayStrFromDate(dateStr: string): string {
     var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     var date = moment(dateStr, Constants.dateTimeFormat).toDate();

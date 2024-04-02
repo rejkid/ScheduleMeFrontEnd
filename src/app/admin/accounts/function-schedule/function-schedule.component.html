@@ -1,21 +1,13 @@
+@if(!isInitializing) {
 <fieldset>
     <legend>{{titlePrefix}}{{functionStr}}</legend>
-    <form [formGroup]="form">
+    <form [formGroup]="form" novalidate>
         <div class="row mb-4">
-            <div class="col-5">
-                <!-- <label>{{ functionStr }}</label> -->
-                <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
-                    @for (account of accountsAvailable4Function;track account.id; let index = $index) {
-                    <option
-                        [value]="account.lastName + '/' + account.firstName + '/' + account.email + '/' + account.dob + '/' + getGroup(account)">
-
-
-                        {{ account.lastName }}/{{ account.firstName }}/{{ account.email }}/{{ account.dob }}
-                        @if(getGroup(account)) {
-                        /{{getGroup(account) }}
-                        }
-
-                    </option>
+            <div class="col-5 form-group">
+                <label>{{ functionStr }}</label>
+                <select  #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
+                    @for (str of string2AccountMap.keys();track str; let index = $index) {
+                    <option [value]="str">{{ str }}</option>
                     }
                 </select>
             </div>
@@ -56,7 +48,7 @@
         <ng-container matColumnDef="group">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
             <mat-cell *matCellDef="let account">
-                <input type="text" matInput [value]="getGroup(account)" readonly>
+                <input type="text" matInput [value]="thisTask.group" readonly>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="action">
@@ -81,7 +73,7 @@
         showFirstLastButtons>
     </mat-paginator>
 
-    <button #button type="button" [ngClass]="{ 'disabled': accountsAvailable4Function.length <= 0 }"
+    <button #button type="button" [ngClass]="{ 'disabled': accounts4DateAndFunction.length <= 0 }"
         (click)="onAddSchedule($event, button)" class="btn btn-primary">
         @if(isAdding) {
         <span  class="spinner-border spinner-border-sm mr-1"></span>
@@ -89,3 +81,4 @@
         Add {{ functionStr }}
     </button>
 </fieldset>
+}

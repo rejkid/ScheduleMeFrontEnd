@@ -19,6 +19,7 @@ import { MatSort, MatSortable, Sort } from '@angular/material/sort';
 import * as signalR from '@microsoft/signalr';
 import { Constants } from '../../constants';
 import { MatSelectChange } from '@angular/material/select';
+import { TimeHandler } from 'src/app/_helpers/time.handler';
 
 const COLUMNS_SCHEMA = [
   {
@@ -93,6 +94,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   groupTask: string = "G";
 
   connection: signalR.HubConnection;
+  uniqueTasks: string[];
+  uniqueGroups: string[];
 
   constructor(accountService: AccountService,
     private route: ActivatedRoute,
@@ -130,6 +133,12 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       function: ['', [Validators.required, this.functionValidator]],
     });
   }
+
+  ngOnInit(): void {
+    this.id = this.route.snapshot.params['id'];
+
+  }
+
   ngAfterViewInit(): void {
     
     this.accountService.getById(this.id)
@@ -148,19 +157,32 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
               // Initial sorting by date
               this.sort.sort(({ id: 'date', start: 'asc' }) as MatSortable);
 
-              this.userFunctions = account.userFunctions.slice();
+              this.uniqueTasks = [... new Set(account.userFunctions.slice().map((f) => {
+                return f.userFunction
+              }))]
+              if(this.uniqueTasks.length > 0) {
+                this.form.get('function').setValue(this.uniqueTasks[0]);
+              }
+
+              this.uniqueGroups = [... new Set(account.userFunctions.slice().map((f) => {
+                return f.group
+              }))]
+              if(this.uniqueGroups.length > 0) {
+                this.form.get('groupTask').setValue(this.uniqueGroups[0]);
+              }
 
               this.form.get('scheduledDate').setValue(new Date());
               if (this.userFunctions.length > 0) {
                 this.form.get('function').setValue(this.userFunctions[0].userFunction);
               }
-              if (!this.isGroupTaskSelected) {
-                this.form.get('groupTask').disable();
-              } else {
-                this.form.get('groupTask').addValidators(Validators.required);
-                this.form.get('groupTask').addValidators(Validators.minLength(1));
-                this.form.get('groupTask').setValue(account.scheduleGroup);
-              }
+
+              // if (!this.isGroupTaskSelected) {
+              //   this.form.get('groupTask').disable();
+              // } else {
+              //   this.form.get('groupTask').addValidators(Validators.required);
+              //   this.form.get('groupTask').addValidators(Validators.minLength(1));
+              //   this.form.get('groupTask').setValue(account.scheduleGroup);
+              // }
 
               this.account = account;
               this.onScheduledAdded.emit(this.schedules);
@@ -168,7 +190,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
               this.isLoaded = true;
 
-              this.f["groupTask"].setValue(this.assignedGroup);
+              //this.f["groupTask"].setValue(this.assignedGroup);
 
             },
             error: error => {
@@ -176,11 +198,6 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
             }
           });
       });
-  }
-
-  ngOnInit(): void {
-    this.id = this.route.snapshot.params['id'];
-
   }
 
   ngOnDestroy() {
@@ -231,7 +248,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    var schedule = this.createSchedule('scheduledDate', 'function');
+    var schedule = this.createSchedule('scheduledDate', 'function', 'groupTask');
     if (schedule == null)
       return; // Already exists
 
@@ -261,30 +278,28 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     var retVal = this.uppercasePipe.transform(event.key);
     return retVal;
   }
-  createSchedule(dateStr: string, functionStr: string): Schedule {
+  createSchedule(dateStr: string, functionStr: string, groupStr : string): Schedule {
     var formDate = new Date(this.form.controls[dateStr].value);
     formDate.setSeconds(0); // Re-set seconds to zero
-    var formTimeStr = moment(formDate).format(Constants.dateTimeFormat);
 
-    var formFunction = this.form.controls[functionStr].value;
+    var formTimeStr = moment(formDate).format(Constants.dateTimeFormat);
+    var formFunctionStr = this.form.controls[functionStr].value;
+    var formGroup = this.form.controls[groupStr].value;
 
     for (let index = 0; index < this.schedules.length; index++) {
-      var scheduleTime = new Date(this.schedules[index].date).getTime();
       var scheduleTimeStr = this.schedules[index].date;
-
       var scheduleFunction = this.schedules[index].userFunction;
-      if (scheduleTimeStr == formTimeStr && scheduleFunction == formFunction) {
-        this.alertService.error("The user is already " + scheduleFunction + " for that date/time");
+      var scheduleGroup = this.schedules[index].scheduleGroup;
+
+      if (scheduleTimeStr == formTimeStr && scheduleFunction == formFunctionStr && scheduleGroup == formGroup) {
+        var GroupStr = scheduleGroup.length > 0 ? "/" + formGroup : "";
+        this.alertService.error("The user is already " + scheduleFunction + GroupStr + " for that date/time");
         this.scroller.scrollToAnchor("pageStart");
 
         return null;
       }
     }
 
-    var scheduleGroupVal = "";
-    if (this.groupCtrl != undefined && this.groupCtrl.nativeElement.checkVisibility()) {
-      scheduleGroupVal = this.form.controls['groupTask'].value;
-    }
     var schedule: Schedule = {
       accountId: this.account.id,
       date: formTimeStr,
@@ -293,9 +308,9 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       required: true,
       deleting: false,
       userAvailability: true,
-      scheduleGroup: scheduleGroupVal,
-      userFunction: this.form.controls[functionStr].value,
-      newUserFunction: this.form.controls[functionStr].value
+      scheduleGroup: formGroup,
+      userFunction: formFunctionStr,
+      newUserFunction: formFunctionStr
     }
     return schedule;
   }
@@ -422,25 +437,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   }
   sortData(sort: Sort) {
-    if (!sort.active || sort.direction == '') {
-      return;
-    }
-    console.log(sort);
-    this.schedules.sort((a, b) => {
-      let isAsc = sort.direction == 'asc';
-      const date1 = new Date(a.date).getTime();
-      const date2 = new Date(b.date).getTime();
-      if (date1 < date2) {
-        console.log("date1 is earlier than date2");
-        return isAsc ? -1 : 1;
-      } else if (date1 > date2) {
-        console.log("date1 is later than date2");
-        return isAsc ? 1 : -1;;
-      } else {
-        console.log("date1 and date2 are the same");
-        return 0;
-      }
-    });
+    TimeHandler.sortData(this.schedules, sort);
     this.dataSource = new MatTableDataSource(this.schedules);
   }
 
@@ -459,24 +456,32 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     }
     return false;
   }
-  get assignedGroup(): string {
-    const taskSelected = this.form.controls['function'].value;
-    var task = this.account.userFunctions.find((f) => {
-      return f.userFunction === taskSelected;
-    });
-    return (task != null && task != undefined) ? task.group : "";
-  }
-  onTaskChanged(event: MatSelectChange) {
-    var valueSelected = event.value;
-    if(this.isGroupTaskSelected) {
-      this.f["groupTask"].setValue(this.assignedGroup);
-    } else {
-      this.f["groupTask"].setValue("");
-    }
-  }
-  get isReadOnly(): boolean {
-    return this.assignedGroup.length > 0;
-  }
+  // get assignedGroup(): string {
+  //   const taskSelected = this.form.controls['function'].value;
+  //   var task = this.account.userFunctions.find((f) => {
+  //     return f.userFunction === taskSelected;
+  //   });
+  //   return (task != null && task != undefined) ? task.group : "";
+  // }
+  // onTaskChanged(event: MatSelectChange) {
+  //   var valueSelected = event.value;
+  //   if(this.isGroupTaskSelected) {
+  //     this.f["groupTask"].setValue(this.assignedGroup);
+  //   } else {
+  //     this.f["groupTask"].setValue("");
+  //   }
+  // }
+  // onGroupChanged(event: MatSelectChange) {
+  //   var valueSelected = event.value;
+  //   if(this.isGroupTaskSelected) {
+  //     this.f["groupTask"].setValue(this.assignedGroup);
+  //   } else {
+  //     this.f["groupTask"].setValue("");
+  //   }
+  // }
+  // get isReadOnly(): boolean {
+  //   return this.assignedGroup.length > 0;
+  // }
   get staticHighlightRow() {
     return ScheduleAllocatorComponent.HighlightRow;
 }

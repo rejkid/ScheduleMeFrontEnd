@@ -93,7 +93,19 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       .pipe(first())
       .subscribe({
         next: (value: UserFunctions) => {
-          //value = ["Acolyte","Cleaner"] ;
+          /* Test case */
+          /*
+          var fakeFunction: UserFunction = {
+            id: '',
+            userFunction: "Cleaner",
+            group: '',
+            isGroup : true,
+            isDeleting : false,
+            highlighted : false
+          }
+          this.functions.push(fakeFunction);
+          */
+
           /* Create `UserFunction` component for every function that was returned by server*/
           value.functions.forEach(element => {
             var f: UserFunction = {

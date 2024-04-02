@@ -18,6 +18,7 @@ import { DateFunctionTeams } from '../_models/teams';
 import { UserFunctions } from '../_models/userfunctions';
 import { UserFunction } from '../_models/userfunction';
 import { UserFunctionDTO } from '../_models/userfunctionDTO';
+import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -101,6 +102,10 @@ export class AccountService {
 
     getAll() {
         return this.http.get<Account[]>(baseUrl);
+    }
+
+    getByDate(accountsByDateAndTaskDTO: AccountsByDateAndTaskDTO) {
+        return this.http.post<Account[]>(`${baseUrl}/accounts-by-date`, accountsByDateAndTaskDTO);
     }
 
     getById(id: string) {

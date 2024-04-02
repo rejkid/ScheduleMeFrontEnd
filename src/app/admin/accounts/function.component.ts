@@ -161,14 +161,16 @@ export class FunctionComponent implements OnInit {
     this.submitted = true;
 
     var currentValue = this.f['function'].value;
+    var currentGroupTask = this.f['groupTask'].value;
 
     /* Sanity check */
-    for (let index = 0; index < this.userFunctions().length; index++) {
-      if (this.userFunctions()[index].userFunction === currentValue) {
-        this.alertService.error(currentValue + " already exists");
+    var existing : UserFunction[] = this.userFunctions().filter((f) => {
+      return (f.userFunction === currentValue && f.group === currentGroupTask)
+    });
+    if (existing.length > 0) {
+      this.alertService.error(currentValue + " already exists");
         this.scroller.scrollToAnchor("pageStart");
         return;
-      }
     }
 
     // Stop here if form is invalid
@@ -191,6 +193,9 @@ export class FunctionComponent implements OnInit {
     this.addFunction4Account(userFunctionDTO);
   }
   deleteFunction(uFunction: UserFunction) { 
+    // reset alerts on submit
+    this.alertService.clear();
+
     var userFunctionDTO : UserFunctionDTO = {
       userFunction: uFunction,
     }
@@ -206,8 +211,6 @@ export class FunctionComponent implements OnInit {
           //this.alertService.success('Update successful', { keepAfterRouteChange: true });
           //this.router.navigate(['../../'], { relativeTo: this.route });
           this.dataSource.data = this.userFunctions();
-          // this.dataSource.paginator = this.paginator;
-          // this.dataSource.sort = this.sort;
         },
         error: error => {
           this.alertService.error(error);
