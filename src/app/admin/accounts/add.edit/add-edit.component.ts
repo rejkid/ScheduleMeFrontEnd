@@ -1,4 +1,4 @@
-﻿import { AfterViewInit, Component, OnInit } from '@angular/core';
+﻿import { AfterViewInit, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
@@ -10,6 +10,8 @@ import { UserFunction } from 'src/app/_models/userfunction';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { firstValueFrom } from 'rxjs';
+import { ColorConfig, TestService } from 'src/app/_services/test.service';
+import { USERS_SERVICE_CONFIG_TOKEN, USERS_SERVICE_TOKEN } from 'src/app/app.module';
 
 @Component({ templateUrl: './add-edit.component.html',
 styleUrls: ['./add-edit.component.less'], 
@@ -34,9 +36,17 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        
+        /* @Inject(USERS_SERVICE_TOKEN)  */private usersService: TestService,
+        @Inject(USERS_SERVICE_CONFIG_TOKEN) private config: ColorConfig
     ) {
-        this.roles = Object.values(Role).filter(value => typeof value === 'string') as string[]
+        this.roles = Object.values(Role).filter(value => typeof value === 'string') as string[];
+
+        // TODO JD TEST
+        usersService.getProductInfo();
+        console.log(config.apiUrl);
+        // TODO JD TEST END
 
     }
     ngAfterViewInit(): void {

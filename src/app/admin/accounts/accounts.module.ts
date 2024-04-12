@@ -1,7 +1,5 @@
 import { NgModule } from '@angular/core';
-//import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule, UpperCasePipe } from '@angular/common';
-
 import { NGX_MAT_DATE_FORMATS, NgxMatDateAdapter, NgxMatDateFormats, NgxMatDatetimePickerModule } from '@angular-material-components/datetime-picker';
 import { NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS, NgxMatMomentAdapter, NgxMatMomentModule } from '@angular-material-components/moment-adapter';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +28,7 @@ import { MainSchedulerComponent } from './main-scheduler/main-scheduler.componen
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { OrderByDateOrFunctionPipe } from 'src/app/application-pipes-module/order-by-date-or-function.pipe';
+import { CustomNgxDatetimeAdapter } from './custom-date-time-adapter/CustomNgxDatetimeAdapter';
 
 
 
@@ -47,26 +46,6 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
 };
 
 /* This is an alternative way of displaying Date in the format `${environment.dateFormat}` */
-export class AppDateAdapter extends NativeDateAdapter {
-
-  override format(date: Date, displayFormat: Object): string {
-
-    if (displayFormat === Constants.dateFormat) {
-
-      const day = date.getDate();
-      var dayStr = day.toString().padStart(2, '0')
-      var month = date.getMonth() + 1;
-      var monthStr = month.toString().padStart(2, '0')
-      const year = date.getFullYear();
-      var yearStr = year.toString().padStart(4, '0')
-
-      return `${yearStr}-${monthStr}-${dayStr}`;
-    }
-
-    return date.toDateString();
-  }
-}
-
 @NgModule({
   imports: [
     CommonModule,
@@ -110,7 +89,7 @@ export class AppDateAdapter extends NativeDateAdapter {
     },
     {
       provide: NgxMatDateAdapter,
-      useClass: NgxMatMomentAdapter, //Moment adapter
+      useClass: NgxMatMomentAdapter /* CustomNgxDatetimeAdapter */, /* Moment adapter */
       deps: [MAT_DATE_LOCALE, NGX_MAT_MOMENT_DATE_ADAPTER_OPTIONS]
     },
     // values
@@ -118,9 +97,6 @@ export class AppDateAdapter extends NativeDateAdapter {
       provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS
 
     },
-    // {
-    //   provide: DateAdapter, useClass: AppDateAdapter
-    // },
   ],
   exports: [
     MatPaginatorModule

@@ -1,5 +1,5 @@
 ﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, InjectionToken, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -32,8 +32,14 @@ import { MaterialModule } from './material/material.module';
 
 import { ApplicationPipesModuleModule } from './application-pipes-module/application-pipes-module.module';
 import { OrderByDateOrFunctionPipe } from './application-pipes-module/order-by-date-or-function.pipe';
-//import { AutoGeneratorModule } from './admin/accounts/max-flow-schedules/auto-generator.module';
-//import { AddEditModule } from './admin/accounts/add.edit/add.edit.module';
+import { ColorConfig, TestService } from './_services/test.service';
+
+// TODO JD TEST
+export const USERS_SERVICE_TOKEN = new InjectionToken<TestService>('');
+export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
+  ''
+);
+// TODO JD TEST
 
 @NgModule({
     imports: [
@@ -86,6 +92,15 @@ import { OrderByDateOrFunctionPipe } from './application-pipes-module/order-by-d
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        
+        // TODO JD TEST
+        {provide: USERS_SERVICE_TOKEN, useClass: TestService},
+        {
+        provide: USERS_SERVICE_CONFIG_TOKEN,
+        useValue: { apiUrl: 'http://localhost:3004/users' },
+        },
+        // TODO JD TEST END
+
         
         //{provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}} ,   
         //{provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {floatLabel: 'always'}}    

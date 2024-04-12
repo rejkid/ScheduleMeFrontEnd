@@ -17,6 +17,8 @@ import { MatInputModule } from '@angular/material/input';
 import { RouterModule } from '@angular/router';
 import { AddEditComponent } from './add-edit.component';
 import { AddEditRoutingModule } from './add.edit-routing.module';
+import { USERS_SERVICE_CONFIG_TOKEN, USERS_SERVICE_TOKEN } from 'src/app/app.module';
+import { TestService } from 'src/app/_services/test.service';
 
 
 
@@ -74,7 +76,13 @@ const CUSTOM_MOMENT_FORMATS = {
    
     {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
     {provide: MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS},
-
+    // TODO JD TEST
+    {provide: USERS_SERVICE_TOKEN, useClass: TestService},
+    {
+      provide: USERS_SERVICE_CONFIG_TOKEN,
+      useValue: { apiUrl: 'http://localhost:3004/users' },
+    },
+    // TODO JD TEST END
   ],
 })
 export class AddEditModule { }
