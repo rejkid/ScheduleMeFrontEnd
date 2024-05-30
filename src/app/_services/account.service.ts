@@ -19,6 +19,7 @@ import { UserFunctions } from '../_models/userfunctions';
 import { UserFunction } from '../_models/userfunction';
 import { UserFunctionDTO } from '../_models/userfunctionDTO';
 import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
+import { TimeSlotsTasks } from '../_models/timeslotstasks';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -207,6 +208,12 @@ export class AccountService {
     }
     uploadTimeSlotsFile(formData: FormData) {
         return this.http.post<Account[]>(`${baseUrl}/upload-timeslots`, formData, {
+            reportProgress: true,
+            observe: 'events'
+        });
+    }
+    uploadTimeSlotsTasks() {
+        return this.http.post<TimeSlotsTasks[]>(`${baseUrl}/upload-timeslots-tasks`, "", {
             reportProgress: true,
             observe: 'events'
         });
