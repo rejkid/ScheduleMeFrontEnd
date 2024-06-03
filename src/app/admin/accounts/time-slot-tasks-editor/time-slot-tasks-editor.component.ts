@@ -7,7 +7,6 @@ import * as moment from 'moment';
 
 import { first } from 'rxjs';
 import { TimeHandler } from 'src/app/_helpers/time.handler';
-import { Account } from 'src/app/_models';
 import { TimeSlotsTasks } from 'src/app/_models/timeslotstasks';
 import { TimeSlotsTasksDTO } from 'src/app/_models/timeslotstasksDTO';
 import { AccountService, AlertService } from 'src/app/_services';
@@ -72,9 +71,6 @@ export class TimeSlotTasksEditorComponent implements OnInit {
     this.refreshTimeSlotsTasks(null);
     this.isLoaded = true;
   }
-  // private refreshList() {
-  //   this.refreshTaskCounters();
-  // }
   private refreshTaskCounters() {
     this.accountService.getAllTasks()
       .pipe(first())
@@ -87,8 +83,6 @@ export class TimeSlotTasksEditorComponent implements OnInit {
             this.addFormControl(name, [Validators.required]);
             this.f[name].setValue(0);
           });
-
-          //this.refreshTimeSlotsTasks();
         },
         complete: () => {
         },
