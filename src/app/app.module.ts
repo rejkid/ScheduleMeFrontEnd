@@ -67,7 +67,9 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
         ApplicationPipesModuleModule,
         //AutoGeneratorModule,
         // AddEditModule,
-        OrderByDateOrFunctionPipe
+        OrderByDateOrFunctionPipe,
+        
+        
         
     ],
     exports: [
@@ -76,8 +78,8 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
         MatTableModule,
         MatPaginatorModule,
         MatButtonModule,
-        
-        
+        MatInputModule,
+        MatFormFieldModule
         
     ],
     declarations: [

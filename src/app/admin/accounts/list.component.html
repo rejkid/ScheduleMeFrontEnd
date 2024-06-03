@@ -1,4 +1,12 @@
-﻿<div class="container">
+﻿
+
+<div class="container">
+    @if(uploading) {
+        <div class="loader">
+            <mat-progress-spinner diameter="60" [value]="0" mode="indeterminate">
+            </mat-progress-spinner>
+        </div>
+        }
     <h1>Accounts Auto Email</h1>
     <div class="mb-3">
         <label class="sendEmailClass pe-3" for="send">Send e-mails:</label>
@@ -28,24 +36,32 @@
                         <button routerLink="add-edit/add" class="btn btn-sm btn-primary mb-2" data-placement="top"
                             title="Create Account">Create Account</button>
                     </li>
+                    <li class="nav-item">
+                        <button routerLink="timeslotstasks-edit" type="button" class="btn btn-sm btn-primary mb-2"
+                            data-toggle="tooltip" data-placement="top" title="Create Time Slots">Create Time Slots</button>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class=" dropdown-toggle btn btn-sm btn-primary mb-2" href="#" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" data-placement="top"
-                            title="Import Accounts & Generate Schedules">
-                            Import&Gen.
+                            title="Import Accounts or Time Slots">
+                            Import
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" routerLink="upload" data-placement="top"
+                            <li><a class="dropdown-item" routerLink="import-accounts" data-placement="top"
                                     title="Import Accounts">Import Accounts</a></li>
-                            <li><a class="dropdown-item" routerLink="auto-generate-schedules/generate"
-                                    data-placement="top" title="Generate Schedules">Generate Schedules</a></li>
+                            <li><a class="dropdown-item" routerLink="import-timeslots-tasks/import"
+                                    data-placement="top" title="Import TimeSlots Tasks">TimeSlot Tasks</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <button routerLink="schedule-generate" type="button" class="btn btn-sm btn-primary mb-2"
+                        <button routerLink="." (click)="generateSchedules()" type="button" class="btn btn-sm btn-primary mb-2"
+                            data-toggle="tooltip" data-placement="top" title="Generate Schedules">Gen.
+                            Schedules</button>
+                    </li>
+                    <li class="nav-item">
+                        <button routerLink="schedule-modify" type="button" class="btn btn-sm btn-primary mb-2"
                             data-toggle="tooltip" data-placement="top" title="Create\Modify Schedules">Mod.
                             Schedules</button>
-
                     </li>
 
                     <li class="nav-item">

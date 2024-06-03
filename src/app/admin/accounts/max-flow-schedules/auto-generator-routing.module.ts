@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AutoGeneratorComponent } from './auto-generator.component';
 
 const routes: Routes = [
-  { path: 'generate',  component: AutoGeneratorComponent  },
+  { path: 'import',  component: AutoGeneratorComponent  },
   
 ];
 

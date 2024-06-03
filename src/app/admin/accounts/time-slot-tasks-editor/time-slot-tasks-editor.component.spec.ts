@@ -8,7 +8,7 @@ describe('TimeSlotTasksEditorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TimeSlotTasksEditorComponent]
+      declarations: [TimeSlotTasksEditorComponent]
     })
     .compileComponents();
     

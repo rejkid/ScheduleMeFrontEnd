@@ -231,6 +231,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   //     this.form.get('groupTask').disable();
   //   }
   // }
+  
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 

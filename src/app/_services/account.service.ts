@@ -20,6 +20,7 @@ import { UserFunction } from '../_models/userfunction';
 import { UserFunctionDTO } from '../_models/userfunctionDTO';
 import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
 import { TimeSlotsTasks } from '../_models/timeslotstasks';
+import { TimeSlotsTasksDTO } from '../_models/timeslotstasksDTO';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -119,6 +120,20 @@ export class AccountService {
     getTeamsByFunctionForDate(dateStr: any) {
         return this.http.get<DateFunctionTeams>(`${baseUrl}/teams-for-date/${dateStr}`);
     }
+    
+    generateSchedules() {
+        return this.http.post<Boolean>(`${baseUrl}/generate-schedules`, "");
+    }
+
+    getTimeSlotsTasks() {
+        return this.http.get<TimeSlotsTasksDTO[]>(`${baseUrl}/timeslots-tasks`);
+    }
+    setTimeSlotsTasks(tasks : TimeSlotsTasksDTO) {
+        return this.http.put(`${baseUrl}/timeslots-tasks`, tasks);
+    }
+    deleteTimeSlotsTasks(tasks : TimeSlotsTasksDTO) {
+        return this.http.post(`${baseUrl}/timeslots-tasks`, tasks);
+    }
 
     downloadSchedulesFile() {
         const headers = new HttpHeaders({
@@ -208,12 +223,6 @@ export class AccountService {
     }
     uploadTimeSlotsFile(formData: FormData) {
         return this.http.post<Account[]>(`${baseUrl}/upload-timeslots`, formData, {
-            reportProgress: true,
-            observe: 'events'
-        });
-    }
-    uploadTimeSlotsTasks() {
-        return this.http.post<TimeSlotsTasks[]>(`${baseUrl}/upload-timeslots-tasks`, "", {
             reportProgress: true,
             observe: 'events'
         });

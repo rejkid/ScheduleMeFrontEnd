@@ -29,6 +29,8 @@ import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { OrderByDateOrFunctionPipe } from 'src/app/application-pipes-module/order-by-date-or-function.pipe';
 import { CustomNgxDatetimeAdapter } from './custom-date-time-adapter/CustomNgxDatetimeAdapter';
+import { TimeSlotTasksEditorComponent } from './time-slot-tasks-editor/time-slot-tasks-editor.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 
@@ -69,7 +71,8 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
     DOBModule,
     MatProgressBarModule,
     ApplicationPipesModuleModule,
-    OrderByDateOrFunctionPipe
+    OrderByDateOrFunctionPipe,
+    MatProgressSpinnerModule 
   
   ],
   declarations: [
@@ -81,6 +84,8 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
     GenerateSchedulesComponent,
     FunctionScheduleComponent,
     MainSchedulerComponent,
+    TimeSlotTasksEditorComponent,
+    //TimeSlotTasksEditorComponent
     
   ],
   providers: [

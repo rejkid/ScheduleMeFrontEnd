@@ -3,6 +3,8 @@ import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/co
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { pipe } from 'rxjs';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
@@ -56,9 +58,13 @@ export class ListComponent implements OnInit, AfterViewInit {
     lastSelectedContact : Account = null;
     highlighted: boolean;
 
+    uploading : boolean = false;
+    uploadProgress: number = 0;
+
     constructor(private accountService: AccountService,
         private alertService: AlertService,
-        private scroller: ViewportScroller) {
+        private scroller: ViewportScroller,
+        private router: Router) {
 
     }
     ngAfterViewInit(): void {
@@ -187,6 +193,25 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
     public get Role() {
         return Role;
+    }
+    generateSchedules() {
+        this.alertService.clear();
+        this.uploading = true;
+        this.accountService.generateSchedules()
+            .pipe(first())
+            .subscribe({
+                next: (autoEmail: any) => {
+                    
+                },
+                complete: () => {
+                    this.uploading = false;
+                },
+                error: error => {
+                    this.alertService.error(error);
+                    this.uploading = false;
+                }
+                
+            });
     }
 }
 
