@@ -140,7 +140,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       dateStr: this.dateTimeStr,
       task : this.functionStr
     }
-    this.accountService.getByDate(accountsByDateAndTaskDTO)
+    this.accountService.getByDateAndTask(accountsByDateAndTaskDTO)
       .pipe(first())
       .subscribe({
         next: (accounts: Account[]) => {

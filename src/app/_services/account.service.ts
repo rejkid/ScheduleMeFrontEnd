@@ -106,7 +106,7 @@ export class AccountService {
         return this.http.get<Account[]>(baseUrl);
     }
 
-    getByDate(accountsByDateAndTaskDTO: AccountsByDateAndTaskDTO) {
+    getByDateAndTask(accountsByDateAndTaskDTO: AccountsByDateAndTaskDTO) {
         return this.http.post<Account[]>(`${baseUrl}/accounts-by-date`, accountsByDateAndTaskDTO);
     }
 

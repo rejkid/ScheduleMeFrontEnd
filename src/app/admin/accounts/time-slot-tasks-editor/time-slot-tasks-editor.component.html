@@ -36,7 +36,7 @@
         <div class="mb-3">
             <button type="button" (click)="onAddTask()" class="btn btn-primary"
                 [ngClass]="{ 'disabled': !form.controls['scheduledDate'].valid}">
-                <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span> Add
+                <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span> Add/Update
             </button>
             &nbsp;
         </div>
