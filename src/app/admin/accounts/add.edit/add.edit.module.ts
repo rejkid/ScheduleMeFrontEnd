@@ -73,11 +73,11 @@ const CUSTOM_MOMENT_FORMATS = {
     {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
     {provide: MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS},
     // TODO JD TEST
-    // {provide: USERS_SERVICE_TOKEN, useClass: TestService},
-    // {
-    //   provide: USERS_SERVICE_CONFIG_TOKEN,
-    //   useValue: { apiUrl: 'http://localhost:3004/users' },
-    // },
+    {provide: USERS_SERVICE_TOKEN, useClass: TestService},
+    {
+      provide: USERS_SERVICE_CONFIG_TOKEN,
+      useValue: { apiUrl: 'http://localhost:3004/users' },
+    },
     // TODO JD TEST END
   ],
 })
