@@ -75,33 +75,34 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         });
 
         if (!this.isAddMode) {
-            this.accountService.getById(this.id)
-                .pipe(first())
-                .subscribe({
-                    next: (x) => {
-                        // Edit mode
-                        this.account = x; // initial account
-                        this.form.patchValue(x);
-                        this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
-                    }, complete: () => {
-                        this.isLoaded = true;
-                    },
-                    error: error => {
-                        console.error(error);
-                    }
-                });
+            // this.accountService.getById(this.id)
+            //     .pipe(first())
+            //     .subscribe({
+            //         next: (x) => {
+            //             // Edit mode
+            //             this.account = x; // initial account
+            //             this.form.patchValue(x);
+            //             this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
+            //         }, complete: () => {
+            //             this.isLoaded = true;
+            //         },
+            //         error: error => {
+            //             console.error(error);
+            //         }
+            //     });
 
             /* One way of converting observable into Promise and handling the Promise */
-            // var observable = this.accountService.getById(this.id);
-            // try {
-            //     const value = await firstValueFrom(observable)
-            //     // Edit mode
-            //     this.account = value; // initial account
-            //     this.form.patchValue(value);
-            //     this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
-            // } catch (error) {
-            //     console.error(error);
-            // } 
+            var observable = this.accountService.getById(this.id);
+            try {
+                const value = await firstValueFrom(observable)
+                // Edit mode
+                this.account = value; // initial account
+                this.form.patchValue(value);
+                this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
+                this.isLoaded = true;
+            } catch (error) {
+                console.error(error);
+            } 
 
             /* Second way of converting observable into Promise and handling the Promise*/
             /* firstValueFrom(observable).then((value) => {
@@ -109,6 +110,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                 this.account = value; // initial account
                 this.form.patchValue(value);
                 this.form.get('dob').setValue(moment(this.account.dob).format(Constants.dateFormat));
+                this.isLoaded = true;
             }).catch((error) => {
                 console.error(error);
             });*/
@@ -121,11 +123,10 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     onSubmit() {
         this.submitted = true;
 
-        // reset alerts on submit
+        // Reset alerts on submit
         this.alertService.clear();
 
-        // stop here if form is invalid
-
+        // Stop here if form is invalid
         if (this.form.invalid) {
             return;
         }
@@ -198,4 +199,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     public get Role() {
         return Role;
     }
+    get isAdmin() {
+        return this.account.role == Role.Admin;
+      }
 }

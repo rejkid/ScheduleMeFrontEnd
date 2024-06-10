@@ -110,10 +110,13 @@
                                 <button routerLink="." (click)="generateSchedules()" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
                                     title="Generate Schedules">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-journals" viewBox="0 0 16 16">
-                                        <path d="M5 0h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2 2 2 0 0 1-2 2H3a2 2 0 0 1-2-2h1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1H1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v9a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1H3a2 2 0 0 1 2-2"/>
-                                        <path d="M1 6v-.5a.5.5 0 0 1 1 0V6h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V9h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 2.5v.5H.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H2v-.5a.5.5 0 0 0-1 0"/>
-                                      </svg>&nbsp;Gen. Schedules</button>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                        class="bi bi-journals" viewBox="0 0 16 16">
+                                        <path
+                                            d="M5 0h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2 2 2 0 0 1-2 2H3a2 2 0 0 1-2-2h1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1H1a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v9a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1H3a2 2 0 0 1 2-2" />
+                                        <path
+                                            d="M1 6v-.5a.5.5 0 0 1 1 0V6h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V9h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 2.5v.5H.5a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1H2v-.5a.5.5 0 0 0-1 0" />
+                                    </svg>&nbsp;Gen. Schedules</button>
                             </li>
                             <li class="nav-item">
                                 <button routerLink="schedule-modify" type="button"
@@ -187,13 +190,7 @@
 
                                     <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
                                         class="btn btn-sm btn-primary mr-1 btn3d">Edit</button>
-<!--                                     <button routerLink="function/{{account.id}}"
-                                        class="btn btn-sm btn-primary mr-1 btn3d"
-                                        [disabled]="!account.isVerified || account.role == Role.Admin">Tasks</button>
-                                    <button routerLink="schedule/{{account.id}}"
-                                        class="btn btn-sm btn-primary mr-1 btn3d"
-                                        [disabled]="!account.isVerified  || account.role == Role.Admin">Schedule</button>
- -->                                    <button (click)="deleteAccount(account.id)"
+                                    <button (click)="deleteAccount(account.id)"
                                         class="btn btn-sm btn-danger btn-delete-account btn3d"
                                         [disabled]="account.isDeleting || account.role == Role.Admin">
                                         <span *ngIf="account.isDeleting"
