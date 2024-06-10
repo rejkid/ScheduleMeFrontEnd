@@ -14,9 +14,9 @@ import { Constants } from 'src/app/constants';
 
 const COLUMNS_SCHEMA = [
   {
-      key: "duty",
+      key: "task",
       type: "text",
-      label: "Duty"
+      label: "Task"
   },
   {
       key: "group",

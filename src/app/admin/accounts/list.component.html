@@ -14,23 +14,8 @@
                 [disabled]="false" />
             </fieldset>
         </div> -->
-        <!-- <div class="col-12">
-            <form>
-                <fieldset>
-                    <legend>Generating schedules</legend>
-                    <div class="ms-2">
-                        <button role="button" (click)="generateSchedules()" type="button"
-                            class="btn btn-primary btn-lg btn3d" data-toggle="tooltip" data-placement="top"
-                            title="Generate Schedules"><span class="glyphicon glyphicon-download-alt"></span>Create
-                            Schedules</button>
-                    </div>
-                </fieldset>
-            </form>
-        </div> -->
     </div>
 </div>
-
-
 
 <div class="container">
     <form>
@@ -71,7 +56,7 @@
                                                 <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                                 <path
                                                     d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2v9.255S12 12 8 12s-5 1.755-5 1.755V2a1 1 0 0 1 1-1h5.5z" />
-                                            </svg>Import Accounts</a></li>
+                                            </svg>&nbsp;Import Accounts</a></li>
                                     <li><a class="dropdown-item btn3d btn btn-sm"
                                             routerLink="import-timeslots-tasks/import" data-placement="top"
                                             title="Import TimeSlots Tasks">
@@ -81,7 +66,7 @@
                                                     d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
                                                 <path
                                                     d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
-                                            </svg>Time Slots</a></li>
+                                            </svg>&nbsp;Time Slots</a></li>
                                 </ul>
                             </li>
 
@@ -204,7 +189,7 @@
                                         class="btn btn-sm btn-primary mr-1 btn3d">Edit</button>
                                     <button routerLink="function/{{account.id}}"
                                         class="btn btn-sm btn-primary mr-1 btn3d"
-                                        [disabled]="!account.isVerified || account.role == Role.Admin">Duties</button>
+                                        [disabled]="!account.isVerified || account.role == Role.Admin">Tasks</button>
                                     <button routerLink="schedule/{{account.id}}"
                                         class="btn btn-sm btn-primary mr-1 btn3d"
                                         [disabled]="!account.isVerified  || account.role == Role.Admin">Schedule</button>
