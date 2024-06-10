@@ -5,7 +5,6 @@ import { FloatingSchedulesComponent } from './floating-schedules/floating-schedu
 import { AuthGuard } from './_helpers';
 import { Role } from './_models';
 import { HomeComponent } from './home';
-import { RaportForDateComponent } from './raport-for-date/raport-for-date.component';
 
 const accountModule = () => import('./account/account.module').then(x => x.AccountModule);
 const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule);
@@ -18,7 +17,6 @@ const routes: Routes = [
     { path: 'profile', loadChildren: profileModule, canActivate: [AuthGuard] },
     { path: 'admin', loadChildren: adminModule, canActivate: [AuthGuard], data: { roles: [Role.Admin] } },
     { path: 'schedule', loadChildren: scheduleModule },
-    { path: 'report', component: RaportForDateComponent },
     { path: 'floating', component: FloatingSchedulesComponent },
 
     // otherwise redirect to home

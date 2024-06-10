@@ -15,7 +15,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FloatingSchedulesComponent } from './floating-schedules/floating-schedules.component';
 import { HomeComponent } from './home';
-import { RaportForDateComponent } from './raport-for-date/raport-for-date.component';
 ;
 
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
@@ -86,7 +85,6 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
         AppComponent,
         AlertComponent,
         HomeComponent,
-        RaportForDateComponent,
         FloatingSchedulesComponent,
         
     ],

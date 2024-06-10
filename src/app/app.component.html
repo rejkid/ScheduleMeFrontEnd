@@ -10,8 +10,6 @@
                 class="nav-item nav-link">Admin</a>
             <a *ngIf="account.role === Role.User" routerLink="/schedule" routerLinkActive="active"
                 class="nav-item nav-link">User</a>
-            <a *ngIf="account.role === Role.Admin" routerLink="/report" routerLinkActive="active"
-                class="nav-item nav-link">Report</a>
             <a *ngIf="account.role === Role.Admin" routerLink="/floating" routerLinkActive="active"
                 class="nav-item nav-link">Unattended</a>
             <a routerLink="/logout" (click)="logout()" class="nav-item nav-link">Logout</a>
