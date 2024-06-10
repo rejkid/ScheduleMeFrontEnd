@@ -158,7 +158,9 @@
     </mat-paginator>
 </fieldset>
 
-<div type="button" class="mb-3">
-    <a routerLink="/admin/accounts" class="btn3d btn btn-primary">Back</a>
+@if(isLoaded) {
+<div type="button" class="mb-3 ms-2">
+    <a routerLink="/admin/accounts/add-edit/edit/{{account.id}}" class="btn3d btn btn-primary">Back</a>
 </div>
+}
 <div class="row mt-3"></div>

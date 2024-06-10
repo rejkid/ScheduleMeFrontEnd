@@ -1,153 +1,174 @@
-﻿<h1 *ngIf="isAddMode">Create Account</h1>
-<h1 *ngIf="!isAddMode">Edit Account</h1>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="mb-3 row">
-        <div class="col-4">
-            <label>Title*</label>
-            <select formControlName="title" class="form-select"
-                [ngClass]="{ 'is-invalid': submitted && f['title'].errors }">
-                <option value=""></option>
-                <option value="Mr">Mr</option>
-                <option value="Mrs">Mrs</option>
-                <option value="Miss">Miss</option>
-                <option value="Ms">Ms</option>
-            </select>
-            <div *ngIf="submitted && f['title'].errors" class="invalid-feedback">
-                <div *ngIf="f['title'].errors['required']">Title is required</div>
-            </div>
-        </div>
-        <div class="col-4">
-            <label>First Name*</label>
-            <input type="text" formControlName="firstName" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }" />
-            <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
-                <div *ngIf="f['firstName'].errors['required']">First Name is required</div>
-            </div>
-        </div>
-        <div class="col-4">
-            <label>Last Name*</label>
-            <input type="text" formControlName="lastName" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }" />
-            <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
-                <div *ngIf="f['lastName'].errors['required']">Last Name is required</div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="mb-3 col-12">
-            <label>Email*</label>
-            <input type="text" formControlName="email" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
-            <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
-                <div *ngIf="f['email'].errors['required']">Email is required</div>
-                <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
-            </div>
-        </div>
-    </div>
+﻿<div class="container">
 
-    <div class="mb-2 row col-10">
-        <div class="col">
-            <label>Phone</label>
-            <table class="mb-3 col-10">
-                <tr>
-                    <td>
-                        <div>
-                            <input type="text" formControlName="phoneNumber" class="form-control" autocomplete="off"
-                                autofocus="true" placeholder="Phone number" [maxlength]="10" [minlength]="10"
-                                [ngClass]="{ 'is-invalid': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }">
-                        </div>
-                    </td>
-                </tr>
-
-            </table>
-            <ng-container class="" *ngIf="form.controls['phoneNumber'].hasError('phoneNumberInvalid')">
-                <div class="input-warning text-danger mt-1 error robot_register_invalidPhoneNumberError">
-                    Wrong phone number
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <fieldset>
+            <legend>
+                <h1 *ngIf="isAddMode">Create Account</h1>
+                <h1 *ngIf="!isAddMode">Edit Account</h1>
+            </legend>
+            <div class="mb-3 row">
+                <div class="col-4">
+                    <label>Title*</label>
+                    <select formControlName="title" class="form-select"
+                        [ngClass]="{ 'is-invalid': submitted && f['title'].errors }">
+                        <option value=""></option>
+                        <option value="Mr">Mr</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Miss">Miss</option>
+                        <option value="Ms">Ms</option>
+                    </select>
+                    <div *ngIf="submitted && f['title'].errors" class="invalid-feedback">
+                        <div *ngIf="f['title'].errors['required']">Title is required</div>
+                    </div>
                 </div>
-            </ng-container>
-        </div>
-
-        <div class="col-2">
-            <label for="scheduleGroup">Team Group</label>
-            <input type="text" class="form-control" formControlName="scheduleGroup" ng-value="account.scheduleGroup"
-                placeholder="" readonly />
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="mb-3 col-3">
-            <label>Role*</label>
-            <select formControlName="role" class="form-select"
-                [ngClass]="{ 'is-invalid': submitted && f['role'].errors }">
-                <option *ngFor="let item of roles">
-                    {{ item }}
-                </option>
-            </select>
-
-            <div *ngIf="submitted && f['role'].errors" class="invalid-feedback">
-                <div *ngIf="f['role'].errors['required']">Role is required</div>
+                <div class="col-4">
+                    <label>First Name*</label>
+                    <input type="text" formControlName="firstName" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }" />
+                    <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
+                        <div *ngIf="f['firstName'].errors['required']">First Name is required</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label>Last Name*</label>
+                    <input type="text" formControlName="lastName" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }" />
+                    <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
+                        <div *ngIf="f['lastName'].errors['required']">Last Name is required</div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Insert the component DOB -->
-    <!-- <app-dob></app-dob> -->
-    <mat-card class="mb-3" appearance="outlined">
-        <mat-card-content>
             <div class="row">
-                <div class="col-12">
-                    <mat-form-field appearance="outline">
-                        <mat-label>DOB+</mat-label>
-                        <input formControlName="dob" #ref matInput [matDatepicker]="picker" placeholder="Choose a date"
-                            required>
-                        <mat-hint>{{DATE_FORMAT}}</mat-hint>
-                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                        <mat-error *ngIf="submitted && f['dob'].errors">Invalid DOB</mat-error>
-                    </mat-form-field>
+                <div class="mb-3 col-12">
+                    <label>Email*</label>
+                    <input type="text" formControlName="email" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
+                    <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+                        <div *ngIf="f['email'].errors['required']">Email is required</div>
+                        <div *ngIf="f['email'].errors['email']">Email must be a valid email address</div>
+                    </div>
                 </div>
             </div>
-        </mat-card-content>
-    </mat-card>
 
-    <div *ngIf="!isAddMode">
-        <h3 class="pt-3">Change Password</h3>
-        <p>Leave blank to keep the same password</p>
-    </div>
-    <div class="mb-3 row">
-        <div class="col">
-            <label>Password</label>
-            <input type="password" formControlName="password" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
-            <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
-                <div *ngIf="f['password'].errors['required']">Password is required</div>
-                <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
-            </div>
-        </div>
-        <div class="col">
-            <label>Confirm Password</label>
-            <input type="password" formControlName="confirmPassword" class="form-control"
-                [ngClass]="{ 'is-invalid': submitted && f['confirmPassword'].errors }" />
-            <div *ngIf="submitted && f['confirmPassword'].errors" class="invalid-feedback">
-                <div *ngIf="f['confirmPassword'].errors['required']">Confirm Password is required</div>
-                <div *ngIf="f['confirmPassword'].errors['mustMatch']">Passwords must match</div>
-            </div>
-        </div>
-    </div>
+            <div class="mb-2 row col-10">
+                <div class="col">
+                    <label>Phone</label>
+                    <table class="mb-3 col-10">
+                        <tr>
+                            <td>
+                                <div>
+                                    <input type="text" formControlName="phoneNumber" class="form-control"
+                                        autocomplete="off" autofocus="true" placeholder="Phone number" [maxlength]="10"
+                                        [minlength]="10"
+                                        [ngClass]="{ 'is-invalid': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }">
+                                </div>
+                            </td>
+                        </tr>
 
-    <div class="row">
-        <!-- <button [disabled]="loading || !form.valid" class="btn btn-primary">
-            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-            Update
-        </button> -->
-        <div class="col-1">
-            <button class="btn3d btn btn-primary">
+                    </table>
+                    <ng-container class="" *ngIf="form.controls['phoneNumber'].hasError('phoneNumberInvalid')">
+                        <div class="input-warning text-danger mt-1 error robot_register_invalidPhoneNumberError">
+                            Wrong phone number
+                        </div>
+                    </ng-container>
+                </div>
+
+                <div class="col-2">
+                    <label for="scheduleGroup">Team Group</label>
+                    <input type="text" class="form-control" formControlName="scheduleGroup"
+                        ng-value="account.scheduleGroup" placeholder="" readonly />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="mb-3 col-3">
+                    <label>Role*</label>
+                    <select formControlName="role" class="form-select"
+                        [ngClass]="{ 'is-invalid': submitted && f['role'].errors }">
+                        <option *ngFor="let item of roles">
+                            {{ item }}
+                        </option>
+                    </select>
+
+                    <div *ngIf="submitted && f['role'].errors" class="invalid-feedback">
+                        <div *ngIf="f['role'].errors['required']">Role is required</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insert the component DOB -->
+            <!-- <app-dob></app-dob> -->
+            <mat-card class="mb-3" appearance="outlined">
+                <mat-card-content>
+                    <div class="row">
+                        <div class="col-12">
+                            <mat-form-field appearance="outline">
+                                <mat-label>DOB+</mat-label>
+                                <input formControlName="dob" #ref matInput [matDatepicker]="picker"
+                                    placeholder="Choose a date" required>
+                                <mat-hint>{{DATE_FORMAT}}</mat-hint>
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                                <mat-error *ngIf="submitted && f['dob'].errors">Invalid DOB</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+
+            <div *ngIf="!isAddMode">
+                <h3 class="pt-3">Change Password</h3>
+                <p>Leave blank to keep the same password</p>
+            </div>
+            <div class="mb-3 row">
+                <div class="col">
+                    <label>Password</label>
+                    <input type="password" formControlName="password" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+                    <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+                        <div *ngIf="f['password'].errors['required']">Password is required</div>
+                        <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <label>Confirm Password</label>
+                    <input type="password" formControlName="confirmPassword" class="form-control"
+                        [ngClass]="{ 'is-invalid': submitted && f['confirmPassword'].errors }" />
+                    <div *ngIf="submitted && f['confirmPassword'].errors" class="invalid-feedback">
+                        <div *ngIf="f['confirmPassword'].errors['required']">Confirm Password is required</div>
+                        <div *ngIf="f['confirmPassword'].errors['mustMatch']">Passwords must match</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                @if(isLoaded) {
+                <div class="col-1">
+                    <button routerLink="../../../function/{{account.id}}" class="btn  btn-primary mr-1 btn3d"
+                        [disabled]="!account.isVerified || account.role == Role.Admin">Tasks</button>
+
+                </div>
+
+                <div class="col-1">
+                    <button routerLink="../../../schedule/{{account.id}}" class="btn  btn-primary mr-1 btn3d"
+                        [disabled]="!account.isVerified  || account.role == Role.Admin">Schedule</button>
+                </div>
+                }
+
+            </div>
+        </fieldset>
+        <div class="row  ms-1">
+            <div class="col-1">
+                <!-- <button [disabled]="loading || !form.valid" class="btn btn-primary">
                 <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                 Update
-            </button>
-        </div>
-        <div class="col-1">
-            <a [routerLink]="['/admin/accounts']" class="btn3d btn btn-primary">Back</a>
-        </div>
-    </div>
-</form>
+            </button> -->
+                <button class="btn3d btn btn-primary ">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                    Update
+                </button>
+            </div>
+            <div class="col-1">
+                <a [routerLink]="['/admin/accounts']" class="btn3d btn btn-primary">Back</a>
+            </div>
+        </div>    </form>

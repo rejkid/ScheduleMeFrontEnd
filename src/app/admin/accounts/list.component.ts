@@ -117,19 +117,6 @@ export class ListComponent implements OnInit, AfterViewInit {
                 this.accounts.set(accounts);
 
 
-                this.accounts().sort(function (a, b) {
-                    if (a.role.localeCompare(b.role) == 0) {
-                        if (a.email.localeCompare(b.email) == 0) {
-                            return a.dob.localeCompare(b.dob);
-                        }
-                        else {
-                            return a.email.localeCompare(b.email);
-                        }
-                    }
-                    else {
-                        return (a.role.localeCompare(b.role));
-                    }
-                });
                 this.dataSource = new MatTableDataSource(this.accounts());
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;

@@ -13,8 +13,9 @@ import { firstValueFrom } from 'rxjs';
 import { ColorConfig, TestService } from 'src/app/_services/test.service';
 import { USERS_SERVICE_CONFIG_TOKEN, USERS_SERVICE_TOKEN } from 'src/app/app.module';
 
-@Component({ templateUrl: './add-edit.component.html',
-styleUrls: ['./add-edit.component.less'], 
+@Component({
+    templateUrl: './add-edit.component.html',
+    styleUrls: ['./add-edit.component.less'],
 })
 export class AddEditComponent implements OnInit, AfterViewInit {
 
@@ -37,7 +38,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         private router: Router,
         private accountService: AccountService,
         private alertService: AlertService,
-        
+
         /* @Inject(USERS_SERVICE_TOKEN)  */private usersService: TestService,
         @Inject(USERS_SERVICE_CONFIG_TOKEN) private config: ColorConfig
     ) {
@@ -66,7 +67,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             role: [this.roles[0], Validators.required],
             dob: ['', [Validators.required/* , TimeHandler.dateValidator */]],
             password: ['', [Validators.minLength(6), this.isAddMode ? Validators.required : Validators.nullValidator]],
-            scheduleGroup: ['',[Validators.nullValidator]],
+            scheduleGroup: ['', [Validators.nullValidator]],
             confirmPassword: [''],
             phoneNumber: ["", []],
         }, {
@@ -74,32 +75,34 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         });
 
         if (!this.isAddMode) {
-            // this.accountService.getById(this.id)
-            //     .pipe(first())
-            //     .subscribe({
-            //         next: (x) => {
-            //             // Edit mode
-            //             this.account = x; // initial account
-            //             this.form.patchValue(x);
-            //             this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
-            //         },
-            //         error: error => {
-            //             console.error(error);
-            //         }
-            //     });
+            this.accountService.getById(this.id)
+                .pipe(first())
+                .subscribe({
+                    next: (x) => {
+                        // Edit mode
+                        this.account = x; // initial account
+                        this.form.patchValue(x);
+                        this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
+                    }, complete: () => {
+                        this.isLoaded = true;
+                    },
+                    error: error => {
+                        console.error(error);
+                    }
+                });
 
             /* One way of converting observable into Promise and handling the Promise */
-            var observable = this.accountService.getById(this.id);
-            try {
-                const value = await firstValueFrom(observable)
-                // Edit mode
-                this.account = value; // initial account
-                this.form.patchValue(value);
-                this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
-            } catch (error) {
-                console.error(error);
-            } 
-            
+            // var observable = this.accountService.getById(this.id);
+            // try {
+            //     const value = await firstValueFrom(observable)
+            //     // Edit mode
+            //     this.account = value; // initial account
+            //     this.form.patchValue(value);
+            //     this.form.get('dob').setValue(moment(this.account.dob, Constants.dateFormat));
+            // } catch (error) {
+            //     console.error(error);
+            // } 
+
             /* Second way of converting observable into Promise and handling the Promise*/
             /* firstValueFrom(observable).then((value) => {
                 // Edit mode
@@ -122,7 +125,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
         this.alertService.clear();
 
         // stop here if form is invalid
-        
+
         if (this.form.invalid) {
             return;
         }
@@ -138,15 +141,15 @@ export class AddEditComponent implements OnInit, AfterViewInit {
 
     private createAccount() {
 
-        var account : Account = new Account();
-        account.title = this.f['title'].value; 
+        var account: Account = new Account();
+        account.title = this.f['title'].value;
         account.firstName = this.f['firstName'].value;
         account.lastName = this.f['lastName'].value;
         account.email = this.f['email'].value;
         account.role = this.f['role'].value;
         account.dob = moment(this.f['dob'].value).format(Constants.dateFormat);
-        account.password = this.f['password'].value; 
-        account.confirmPassword = this.f['confirmPassword'].value; 
+        account.password = this.f['password'].value;
+        account.confirmPassword = this.f['confirmPassword'].value;
         account.phoneNumber = this.f['phoneNumber'].value;
 
         this.accountService.create(account)
@@ -165,16 +168,16 @@ export class AddEditComponent implements OnInit, AfterViewInit {
 
     private updateAccount() {
 
-        var account : Account = new Account();
-        
-        account.title = this.f['title'].value; 
+        var account: Account = new Account();
+
+        account.title = this.f['title'].value;
         account.firstName = this.f['firstName'].value;
         account.lastName = this.f['lastName'].value;
         account.email = this.f['email'].value;
         account.role = this.f['role'].value;
         account.dob = moment(this.f['dob'].value).format(Constants.dateFormat);
-        account.password = this.f['password'].value; 
-        account.confirmPassword = this.f['confirmPassword'].value; 
+        account.password = this.f['password'].value;
+        account.confirmPassword = this.f['confirmPassword'].value;
         account.phoneNumber = this.f['phoneNumber'].value;
 
         this.accountService.update(this.id, account)
@@ -191,5 +194,8 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                     this.loading = false;
                 }
             });
+    }
+    public get Role() {
+        return Role;
     }
 }

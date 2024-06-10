@@ -187,13 +187,13 @@
 
                                     <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
                                         class="btn btn-sm btn-primary mr-1 btn3d">Edit</button>
-                                    <button routerLink="function/{{account.id}}"
+<!--                                     <button routerLink="function/{{account.id}}"
                                         class="btn btn-sm btn-primary mr-1 btn3d"
                                         [disabled]="!account.isVerified || account.role == Role.Admin">Tasks</button>
                                     <button routerLink="schedule/{{account.id}}"
                                         class="btn btn-sm btn-primary mr-1 btn3d"
                                         [disabled]="!account.isVerified  || account.role == Role.Admin">Schedule</button>
-                                    <button (click)="deleteAccount(account.id)"
+ -->                                    <button (click)="deleteAccount(account.id)"
                                         class="btn btn-sm btn-danger btn-delete-account btn3d"
                                         [disabled]="account.isDeleting || account.role == Role.Admin">
                                         <span *ngIf="account.isDeleting"

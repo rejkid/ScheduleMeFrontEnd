@@ -137,8 +137,10 @@
     </fieldset>
 </form>
 
+@if(isLoaded) {
 <div class="container">
     <div class="mb-3">
-        <a routerLink="/admin/accounts" class="btn3d btn btn-primary">Back</a>
+        <a routerLink="/admin/accounts/add-edit/edit/{{account.id}}" class="btn3d btn btn-primary">Back</a>
     </div>
 </div>
+}
