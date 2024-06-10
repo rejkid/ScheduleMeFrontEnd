@@ -8,7 +8,6 @@ import { MainSchedulerComponent } from './main-scheduler/main-scheduler.componen
 import { AutoGeneratorComponent } from './max-flow-schedules/auto-generator.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
-import { DownloadSchedulesFileComponent } from './download-schedules-file/download-schedules-file.component';
 import { TimeSlotTasksEditorComponent } from './time-slot-tasks-editor/time-slot-tasks-editor.component';
 
 const routes: Routes = [
@@ -19,9 +18,7 @@ const routes: Routes = [
     { path: 'function/:id', component: FunctionComponent },
     { path: 'schedule/:id', component: ScheduleAllocatorComponent },
     { path: 'schedule-modify', component: MainSchedulerComponent},
-    { path: 'timeslotstasks-edit', component: TimeSlotTasksEditorComponent},
-    { path: 'download-schedules-file', component: DownloadSchedulesFileComponent},
-    
+    { path: 'timeslotstasks-edit', component: TimeSlotTasksEditorComponent},  
 ];
 
 @NgModule({

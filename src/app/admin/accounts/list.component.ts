@@ -54,12 +54,13 @@ export class ListComponent implements OnInit, AfterViewInit {
     isDeleting: boolean = false;
     static HighlightRow: Number = -1;
 
-    currentSelectedContact : Account = null;
-    lastSelectedContact : Account = null;
+    currentSelectedContact: Account = null;
+    lastSelectedContact: Account = null;
     highlighted: boolean;
 
-    uploading : boolean = false;
+    uploading: boolean = false;
     uploadProgress: number = 0;
+    downloadingSchedules: boolean = false;
 
     constructor(private accountService: AccountService,
         private alertService: AlertService,
@@ -188,7 +189,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                     this.alertService.error(error);
                     this.scroller.scrollToAnchor("pageStart");
                 }
-                
+
             });
     }
     public get Role() {
@@ -201,7 +202,7 @@ export class ListComponent implements OnInit, AfterViewInit {
             .pipe(first())
             .subscribe({
                 next: (autoEmail: any) => {
-                    
+
                 },
                 complete: () => {
                     this.uploading = false;
@@ -210,8 +211,36 @@ export class ListComponent implements OnInit, AfterViewInit {
                     this.alertService.error(error);
                     this.uploading = false;
                 }
-                
+
             });
+    }
+    downloadSchedules(event: any) {
+        this.downloadingSchedules = true;
+
+        this.accountService.downloadSchedulesFile().subscribe(
+            {
+                next: (data) => {
+                    var file = new Blob([data], { type: 'application/pdf' })
+                    var fileURL = URL.createObjectURL(file);
+
+                    // if you want to open PDF in new tab
+                    window.open(fileURL);
+                    var a = document.createElement('a');
+                    a.href = fileURL;
+                    a.target = '_blank';
+                    a.download = 'Schedules.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                },
+                complete: () => {
+                    //this.router.navigate(['../'], { relativeTo: this.route });
+                },
+                error: error => {
+                    this.alertService.error(error);
+                    this.downloadingSchedules = false;
+                }
+            }
+        );
     }
 }
 

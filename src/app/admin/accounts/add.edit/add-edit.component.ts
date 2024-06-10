@@ -181,8 +181,9 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             .pipe(first())
             .subscribe({
                 next: (value) => {
+                    this.alertService.clear();
                     this.alertService.success('Update successful', { keepAfterRouteChange: true });
-                    this.router.navigate(['../../../'], { relativeTo: this.route });
+                    //this.router.navigate(['../../../'], { relativeTo: this.route });
                     this.loading = false;
                 },
                 error: error => {
