@@ -13,7 +13,6 @@ export class Account {
     schedules: Schedule[] = [];
     userFunctions: UserFunction[] = [];
     jwtToken?: string;
-    date: Date;
     dob: string;
     availability: boolean;
     password: string;

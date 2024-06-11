@@ -33,8 +33,6 @@ export class UpdateComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        this.account.dob = moment(this.account.dob).format(Constants.dateFormat);
-        var test = moment(this.account.dob, Constants.dateFormat).toDate();
         this.form = this.formBuilder.group({
             title: [this.account.title, Validators.required],
             firstName: [this.account.firstName, Validators.required],

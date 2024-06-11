@@ -50,33 +50,20 @@
                 </div>
             </div>
 
-            <div class="mb-2 row col-10">
-                <div class="col">
+            <div class="row">
+                <div class="mb-2 col-12">
                     <label>Phone</label>
-                    <table class="mb-3 col-10">
-                        <tr>
-                            <td>
-                                <div>
-                                    <input type="text" formControlName="phoneNumber" class="form-control"
-                                        autocomplete="off" autofocus="true" placeholder="Phone number" [maxlength]="10"
-                                        [minlength]="10"
-                                        [ngClass]="{ 'is-invalid': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }">
-                                </div>
-                            </td>
-                        </tr>
-
-                    </table>
+                    <div>
+                        <input type="text" formControlName="phoneNumber" class="form-control"
+                            autocomplete="off" autofocus="true" placeholder="Phone number" [maxlength]="10"
+                            [minlength]="10"
+                            [ngClass]="{ 'is-invalid': form.controls['phoneNumber'].hasError('phoneNumberInvalid') }">
+                    </div>
                     <ng-container class="" *ngIf="form.controls['phoneNumber'].hasError('phoneNumberInvalid')">
                         <div class="input-warning text-danger mt-1 error robot_register_invalidPhoneNumberError">
                             Wrong phone number
                         </div>
                     </ng-container>
-                </div>
-
-                <div class="col-2">
-                    <label for="scheduleGroup">Team Group</label>
-                    <input type="text" class="form-control" formControlName="scheduleGroup"
-                        ng-value="account.scheduleGroup" placeholder="" readonly />
                 </div>
             </div>
 
@@ -171,4 +158,5 @@
             <div class="col-1">
                 <a [routerLink]="['/admin/accounts']" class="btn3d btn btn-primary">Back</a>
             </div>
-        </div>    </form>
+        </div>
+    </form>
