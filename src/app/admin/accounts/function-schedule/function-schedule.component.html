@@ -5,8 +5,8 @@
         <div class="row mb-4">
             <div class="col-5 form-group">
                 <label>{{ functionStr }}</label>
-                <select  #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
-                    @for (str of string2AccountMap.keys();track str; let index = $index) {
+                <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
+                    @for (str of string2UserMap.keys();track str; let index = $index) {
                     <option [value]="str">{{ str }}</option>
                     }
                 </select>
@@ -22,44 +22,44 @@
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="firstName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
-            <mat-cell *matCellDef="let account">
-                <input type="text" matInput [value]="account.firstName" readonly>
+            <mat-cell *matCellDef="let user">
+                <input type="text" matInput [value]="user.firstName" readonly>
             </mat-cell>
 
         </ng-container>
         <ng-container matColumnDef="secondName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Second Name </mat-header-cell>
-            <mat-cell *matCellDef="let account">
-                <input type="text" matInput [value]="account.lastName" readonly>
+            <mat-cell *matCellDef="let user">
+                <input type="text" matInput [value]="user.lastName" readonly>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="email">
             <mat-header-cell *matHeaderCellDef mat-sort-header> E-mail </mat-header-cell>
-            <mat-cell *matCellDef="let account">
-                <input type="text" matInput [value]="account.email" readonly>
+            <mat-cell *matCellDef="let user">
+                <input type="text" matInput [value]="user.email" readonly>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="dob">
             <mat-header-cell *matHeaderCellDef mat-sort-header> DOB </mat-header-cell>
-            <mat-cell *matCellDef="let account">
-                <input type="text" matInput [value]="account.dob" readonly>
+            <mat-cell *matCellDef="let user">
+                <input type="text" matInput [value]="user.dob" readonly>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="group">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
-            <mat-cell *matCellDef="let account">
-                <input type="text" matInput [value]="thisTask.group" readonly>
+            <mat-cell *matCellDef="let user">
+                <input type="text" matInput [value]="user.scheduleGroup" readonly>
             </mat-cell>
         </ng-container>
         <ng-container matColumnDef="action">
             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-            <mat-cell *matCellDef="let i = index; let account">
+            <mat-cell *matCellDef="let i = index; let user">
                 <button class="btn btn-sm btn-danger btn-delete-account" type="button"
-                    (click)="onDeleteSchedule($event, account)" [ngClass]="{ 'disabled': account.isDeleting}">
-                    @if(account.isDeleting) {
-                    <span class="spinner-border spinner-border-sm mr-1"></span> 
+                    (click)="onDeleteSchedule($event, user)" [ngClass]="{ 'disabled': user.isDeleting}">
+                    @if(user.isDeleting) {
+                    <span class="spinner-border spinner-border-sm mr-1"></span>
                     } Delete
-                    
+
                 </button>
             </mat-cell>
         </ng-container>
@@ -76,7 +76,7 @@
     <button #button type="button" [ngClass]="{ 'disabled': accounts4DateAndFunction.length <= 0 }"
         (click)="onAddSchedule($event, button)" class="btn3d btn btn-primary">
         @if(isAdding) {
-        <span  class="spinner-border spinner-border-sm mr-1"></span>
+        <span class="spinner-border spinner-border-sm mr-1"></span>
         }
         Add {{ functionStr }}
     </button>

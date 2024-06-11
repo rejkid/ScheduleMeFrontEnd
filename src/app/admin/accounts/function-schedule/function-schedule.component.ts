@@ -1,19 +1,16 @@
-import { group } from '@angular/animations';
-import { DOCUMENT, ViewportScroller } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as moment from 'moment';
 import { first } from 'rxjs/operators';
-//import { first } from 'rxjs';
 import { Account } from 'src/app/_models';
 import { AccountsByDateAndTaskDTO } from 'src/app/_models/AccountsByDateAndTaskDTO';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { Schedule } from 'src/app/_models/schedule';
-import { UserFunction } from 'src/app/_models/userfunction';
+import { User } from 'src/app/_models/user';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 
@@ -74,17 +71,15 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   isAdding: boolean = false;
   accountsLoaded: boolean = true;
 
-  dataSource: MatTableDataSource<Account> = new MatTableDataSource([]);
-  currentSelectedAccount: Account = null;
-  lastSelectedAccount: Account = null;
-  selectedAccount4Function: Account;
-  accounts: Account[] = [];
-
+  dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
+  currentSelectedUser: User = null;
+  lastSelectedUser: User = null;
+  selectedUser4Function: User;
+  
   titlePrefix: string = "";
-  thisTask: UserFunction = null;
   groupTasks: string[] = [];
   isInitializing: boolean = true;
-  string2AccountMap: Map<string, Account> = new Map<string, Account>();
+  string2UserMap: Map<string, User> = new Map<string, User>();
 
   constructor(private accountService: AccountService,
     private route: ActivatedRoute,
@@ -130,24 +125,22 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.dataSource = new MatTableDataSource();
     this.refreshAccounts();
   }
-  get accounts4DateAndFunction(): Account[] {
-    return Array.from(this.string2AccountMap.values());
+  get accounts4DateAndFunction(): User[] {
+    return Array.from(this.string2UserMap.values());
   }
 
   private refreshAccounts() {
     this.accountsLoaded = false;
     var accountsByDateAndTaskDTO: AccountsByDateAndTaskDTO = {
       dateStr: this.dateTimeStr,
-      task : this.functionStr
+      task: this.functionStr
     }
+    this.string2UserMap.clear();
     this.accountService.getByDateAndTask(accountsByDateAndTaskDTO)
       .pipe(first())
       .subscribe({
         next: (accounts: Account[]) => {
-          this.accounts = accounts;
-          this.accounts.forEach(account => {
-            account.isDeleting = false;
-          });
+          this.createAccountStrings4Function(accounts);
 
           /* Notify parent that we got data from server */
           var funcSchedData: FunctionScheduleData = {
@@ -157,8 +150,6 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
           this.schedulesUpdatedEmitter.emit(funcSchedData);
         },
         complete: () => {
-          this.initTaskScheduleComponent();
-          this.createAccountStrings4Function();
           this.accountsLoaded = true;
         },
         error: error => {
@@ -168,53 +159,33 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       });
   }
 
-  /* Initialize `thisTask` representing this Task/Schedule component */
-  initTaskScheduleComponent(): void {
-    var task: UserFunction = {
-      id: "",
-      group: "",
-      userFunction: this.functionStr,
-      isGroup: this.groupTasks.includes(this.functionStr),
-      isDeleting: false,
-      highlighted: false
-    }
-    this.thisTask = task;
-
-    for (var i = 0; i < this.accounts.length; i++) {
-      var account = this.accounts[i];
-      for (var j = 0; j < account.schedules.length; j++) {
-        var schedule = account.schedules[j];
-        if (schedule.userFunction == this.functionStr
-          && schedule.date == this.dateTimeStr) {
-          /* We have found schedule representing Task, let's find Task */
-          for (var z = 0; z < account.userFunctions.length; z++) {
-            var task = account.userFunctions[z];
-            if (task.userFunction == schedule.userFunction
-              && task.group == schedule.scheduleGroup) {
-              this.thisTask = task;
-              return;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  private createAccountStrings4Function() {
+  private createAccountStrings4Function(accounts: Account[]) {
     var selected: string = undefined;
-    this.string2AccountMap = new Map<string, Account>();
-    this.accounts.forEach(account => {
+    accounts.forEach(account => {
       account.userFunctions.forEach(userFunc => {
         account.schedules.forEach(schedule => {
           if (userFunc.userFunction == this.functionStr
-            && userFunc.group == this.thisTask.group
+            && schedule.date == this.dateTimeStr
           ) {
             var str = account.firstName + '/' + account.lastName + '/' + account.email + '/' + account.dob;
-            if (userFunc.isGroup) {
-              str = str + '/' + userFunc.group
+            if (schedule.scheduleGroup.length != 0) {
+              str = str + '/' + schedule.scheduleGroup
             }
-            if (!this.string2AccountMap.has(str)) {
-              this.string2AccountMap.set(str, account);
+            var user: User = {
+              id: account.id,
+              firstName: account.firstName,
+              lastName: account.lastName,
+              email: account.email,
+              function: this.functionStr,
+              scheduleGroup: schedule.scheduleGroup,
+              date: this.dateTimeStr,
+              dob: account.dob,
+              isDeleting: false,
+              highlighted: false
+            }
+
+            if (!this.string2UserMap.has(str)) {
+              this.string2UserMap.set(str, user);
               if (selected === undefined) {
                 selected = str;
               }
@@ -224,12 +195,11 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       });
     });
 
-    console.log(this.string2AccountMap);
+    console.log(this.string2UserMap);
     this.f['selectedUser'].setValue(selected);
-    this.dataSource.data = [...this.string2AccountMap.values()];//Array.from( this.string2AccountMap.values() );
+    this.dataSource.data = [...this.string2UserMap.values()];
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
   }
 
   setCurrentDate(dateTime: string) {
@@ -246,7 +216,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
 
   onChangeUser(event: Event) {
     var valueSelected = (event.target as HTMLInputElement).value;
-    this.selectedAccount4Function = this.string2AccountMap.get(valueSelected);
+    this.selectedUser4Function = this.string2UserMap.get(valueSelected);
   }
   /* I am not sure if we need 'input' parameter - keep it for now*/
   onApplyFilter(t: any, input: any) {
@@ -259,23 +229,23 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   onAddSchedule(event: MouseEvent, button: any) {
     // Reset alerts on submit
     this.alertService.clear();
-    this.addSchedule(this.selectedAccount4Function);
+    this.addSchedule(this.selectedUser4Function);
   }
-  public addSchedule(account: Account) {
+  public addSchedule(user: User) {
     var schedule2Add: Schedule = {
-      accountId: account.id,
+      accountId: user.id,
       date: this.dateTimeStr,
       newDate: this.dateTimeStr,
-      dob: account.dob,
+      dob: user.dob,
       required: true,
       deleting: false,
       userAvailability: true,
-      scheduleGroup: this.thisTask.group/* account.scheduleGroup */,
+      scheduleGroup: user.scheduleGroup,
       userFunction: this.functionStr,
       newUserFunction: this.functionStr,
     };
     this.isAdding = true;
-    this.accountService.addSchedule(account.id, schedule2Add)
+    this.accountService.addSchedule(user.id, schedule2Add)
       .pipe(first())
       .subscribe({
         next: (account) => {
@@ -285,7 +255,6 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
           this.isAdding = false;
         },
         error: error => {
-          //this.refreshAccounts();
           this.alertService.error(error);
           this.isAdding = false;
           this.scroller.scrollToAnchor("pageStart");
@@ -293,32 +262,32 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
         }
       });
   }
-  onDeleteSchedules(event: MouseEvent) { // rowIndex is table index
+  onDeleteSchedules(event: MouseEvent) { 
     // Reset alerts on submit
     this.alertService.clear();
 
-    Array.from(this.string2AccountMap.values()).forEach(account => {
-      console.log("FunctionScheduleComponent deleting email:" + account.email +  " functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr);
-      this.onDeleteSchedule(event, account);
+    Array.from(this.string2UserMap.values()).forEach(user => {
+      console.log("FunctionScheduleComponent deleting email:" + user.email + " functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr);
+      this.onDeleteSchedule(event, user);
     });
   }
 
-  onDeleteSchedule(event: MouseEvent, account: Account) { // rowIndex is table index
-    account.isDeleting = true;
+  onDeleteSchedule(event: MouseEvent, user: User) { // rowIndex is table index
+    user.isDeleting = true;
 
     var schedule2Delete: Schedule = {
-      accountId: account.id,
+      accountId: user.id,
       date: this.dateTimeStr,
       newDate: this.dateTimeStr,
-      dob: account.dob,
+      dob: user.dob,
       required: true,
       deleting: false,
       userAvailability: true,
-      scheduleGroup: account.scheduleGroup,
+      scheduleGroup: user.scheduleGroup,
       userFunction: this.functionStr,
       newUserFunction: this.functionStr,
     };
-    this.accountService.deleteSchedule(account.id, schedule2Delete)
+    this.accountService.deleteSchedule(user.id, schedule2Delete)
       .pipe(first())
       .subscribe({
         next: (z) => {
@@ -333,19 +302,19 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
         }
       });
   }
-  onRowSelected(account: Account, tr: any, index: number) {
-    account.highlighted = !account.highlighted;
-    this.currentSelectedAccount = account;
+  onRowSelected(user: User, tr: any, index: number) {
+    user.highlighted = !user.highlighted;
+    this.currentSelectedUser = user;
 
-    if (this.lastSelectedAccount != null) {
-      this.lastSelectedAccount.highlighted = false;
+    if (this.lastSelectedUser != null) {
+      this.lastSelectedUser.highlighted = false;
     }
-    this.lastSelectedAccount = this.currentSelectedAccount;
+    this.lastSelectedUser = this.currentSelectedUser;
 
-    if (!account.highlighted) {
+    if (!user.highlighted) {
       // If row is deselected mark both schedules as deselected(null);
-      this.lastSelectedAccount = null;
-      this.currentSelectedAccount = null;
+      this.lastSelectedUser = null;
+      this.currentSelectedUser = null;
     }
   }
 }

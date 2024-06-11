@@ -13,6 +13,7 @@ import { FunctionScheduleComponent } from '../function-schedule/function-schedul
 import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
 import { first } from 'rxjs/operators';
 import { UserFunctions } from 'src/app/_models/userfunctions';
+import { User } from 'src/app/_models/user';
 
 
 
@@ -34,7 +35,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   functions: UserFunction[] = [];
   isLoaded: boolean;
   fComponents: FunctionScheduleComponent[] = [];
-  static functions2SchedulesMap: Map<FunctionScheduleComponent, Account[]> = new Map<FunctionScheduleComponent, Account[]>();
+  static functions2SchedulesMap: Map<FunctionScheduleComponent, User[]> = new Map<FunctionScheduleComponent, User[]>();
 
   functionsLoaded: boolean = true;
   enableCopyButton: boolean = false;
@@ -55,7 +56,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       comps.forEach(element => {
         this.fComponents.push(element);
       });
-      var newMap = new Map<FunctionScheduleComponent, Account[]>(GenerateSchedulesComponent.functions2SchedulesMap);
+      var newMap = new Map<FunctionScheduleComponent, User[]>(GenerateSchedulesComponent.functions2SchedulesMap);
       GenerateSchedulesComponent.functions2SchedulesMap.clear();
 
       Array.from(newMap.keys()).map(key => {
@@ -164,7 +165,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     console.log("Generate changing date: " + dateStr);
   }
 
-  onCopy(event: MouseEvent, button: any): Map<FunctionScheduleComponent, Account[]> {
+  onCopy(event: MouseEvent, button: any): Map<FunctionScheduleComponent, User[]> {
     /* Build an array of accounts schedules to be copied */
     var data = this.copyChildData();
     this.setCopyPasteButtons();
@@ -200,15 +201,15 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private copyChildData(): Map<FunctionScheduleComponent, Account[]> {
+  private copyChildData(): Map<FunctionScheduleComponent, User[]> {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
     this.fComponents.forEach(element => {
       GenerateSchedulesComponent.functions2SchedulesMap.set(element, element.accounts4DateAndFunction);
     });
     return GenerateSchedulesComponent.functions2SchedulesMap;
   }
-  private childrenData(): Map<string, Account[]> {
-    var array: Map<string, Account[]> = new Map<string, Account[]>();
+  private childrenData(): Map<string, User[]> {
+    var array: Map<string, User[]> = new Map<string, User[]>();
     this.fComponents.forEach(element => {
       if (element.accounts4DateAndFunction.length > 0)
         array.set(element.functionStr, element.accounts4DateAndFunction);
