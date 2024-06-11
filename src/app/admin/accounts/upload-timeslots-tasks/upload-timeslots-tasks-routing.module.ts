@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AutoGeneratorComponent } from './auto-generator.component';
+import { UploadTimeslotsTasksComponent } from './upload-timeslots-tasks.component';
 
 const routes: Routes = [
-  { path: 'import',  component: AutoGeneratorComponent  },
+  { path: 'import',  component: UploadTimeslotsTasksComponent  },
   
 ];
 
@@ -11,4 +11,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AutoGeneratorRoutingModule { }
+export class UploadTimeslotsTasksRoutingModule { }

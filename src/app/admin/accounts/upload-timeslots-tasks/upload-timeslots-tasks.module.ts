@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { AutoGeneratorComponent } from './auto-generator.component';
-import { AutoGeneratorRoutingModule } from './auto-generator-routing.module';
+import { UploadTimeslotsTasksComponent } from './upload-timeslots-tasks.component';
+import { UploadTimeslotsTasksRoutingModule } from './upload-timeslots-tasks-routing.module';
 
 
 
@@ -13,14 +13,14 @@ import { AutoGeneratorRoutingModule } from './auto-generator-routing.module';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    AutoGeneratorRoutingModule
+    UploadTimeslotsTasksRoutingModule
   ],
   declarations: [
-    AutoGeneratorComponent
+    UploadTimeslotsTasksComponent
   ],
   exports:[
-    AutoGeneratorComponent,
+    UploadTimeslotsTasksComponent,
   ],
   
 })
-export class AutoGeneratorModule { }
+export class UploadTimeslotsTasksModule { }

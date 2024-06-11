@@ -6,37 +6,36 @@ import { AccountService, AlertService } from 'src/app/_services';
 
 @Component({
   selector: 'app-auto-generator',
-  templateUrl: './auto-generator.component.html',
-  styleUrls: ['./auto-generator.component.less']
+  templateUrl: './upload-timeslots-tasks.component.html',
+  styleUrls: ['./upload-timeslots-tasks.component.less']
 })
-export class AutoGeneratorComponent implements OnInit, AfterViewInit{
+export class UploadTimeslotsTasksComponent implements OnInit, AfterViewInit {
   @ViewChildren("progressFile") progressChildren: QueryList<ElementRef>;
-  
+
   private accountService: AccountService;
   private alertService: AlertService;
   private router: Router;
   private route: ActivatedRoute;
   private renderer: Renderer2;
-fileName: any;
+  fileName: any;
   fileHasBeenSelected: boolean = false;
   submitted: boolean;
   uploadSub: Subscription;
   uploadProgress: number = 0;
 
-	constructor($accountService: AccountService, $alertService: AlertService, $router: Router, $route: ActivatedRoute) {
-		this.accountService = $accountService;
-		this.alertService = $alertService;
-		this.router = $router;
-		this.route = $route;
-	}
+  constructor($accountService: AccountService, $alertService: AlertService, $router: Router, $route: ActivatedRoute) {
+    this.accountService = $accountService;
+    this.alertService = $alertService;
+    this.router = $router;
+    this.route = $route;
+  }
   ngOnInit(): void {
     this.fileName = "";
   }
   ngAfterViewInit(): void {
     /* We need the code below because if ngIf directive in the template file  */
-    this.progressChildren.changes.subscribe((comps: QueryList <ElementRef>) =>
-    {
-      if(comps.first != undefined)
+    this.progressChildren.changes.subscribe((comps: QueryList<ElementRef>) => {
+      if (comps.first != undefined)
         comps.first.nativeElement.removeAttribute("value")
     });
   }

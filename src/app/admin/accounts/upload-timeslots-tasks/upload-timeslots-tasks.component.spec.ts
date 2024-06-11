@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AutoGeneratorComponent } from './auto-generator.component';
+import { UploadTimeslotsTasksComponent } from './upload-timeslots-tasks.component';
 
 describe('AutoGeneratorComponent', () => {
-  let component: AutoGeneratorComponent;
-  let fixture: ComponentFixture<AutoGeneratorComponent>;
+  let component: UploadTimeslotsTasksComponent;
+  let fixture: ComponentFixture<UploadTimeslotsTasksComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AutoGeneratorComponent ]
+      declarations: [ UploadTimeslotsTasksComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AutoGeneratorComponent);
+    fixture = TestBed.createComponent(UploadTimeslotsTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

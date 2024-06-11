@@ -5,7 +5,6 @@ import { AddEditComponent } from './add.edit/add-edit.component';
 import { FunctionComponent } from './function.component';
 import { ListComponent } from './list.component';
 import { MainSchedulerComponent } from './main-scheduler/main-scheduler.component';
-import { AutoGeneratorComponent } from './max-flow-schedules/auto-generator.component';
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { TimeSlotTasksEditorComponent } from './time-slot-tasks-editor/time-slot-tasks-editor.component';
@@ -14,7 +13,7 @@ const routes: Routes = [
     { path: '', component: ListComponent },
     { path: 'add-edit', loadChildren: () => import('./add.edit/add.edit.module').then(x => x.AddEditModule)/* component: AddEditComponent */ },
     { path: 'import-accounts', component: UploadAccountsComponent},
-    { path: 'import-timeslots-tasks', loadChildren: () => import('./max-flow-schedules/auto-generator.module').then(x => x.AutoGeneratorModule)/* component: AutoGeneratorComponent */},
+    { path: 'import-timeslots-tasks', loadChildren: () => import('./upload-timeslots-tasks/upload-timeslots-tasks.module').then(x => x.UploadTimeslotsTasksModule)},
     { path: 'function/:id', component: FunctionComponent },
     { path: 'schedule/:id', component: ScheduleAllocatorComponent },
     { path: 'schedule-modify', component: MainSchedulerComponent},
