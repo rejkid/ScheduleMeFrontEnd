@@ -36,7 +36,7 @@
                         </div> -->
 
                         <ul class="nav nav-pills nav-fill gap-2 p-1 small bg-primary rounded-5 shadow-sm">
-                            <li class="nav-item dropdown">
+                            <li class="nav-item dropdown mt-2">
                                 <a class=" dropdown-toggle btn3d btn btn-sm btn-primary mb-2" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-expanded="false" data-placement="top"
                                     title="Import Accounts or Time Slots">
@@ -70,7 +70,7 @@
                                 </ul>
                             </li>
 
-                            <li class="nav-item mt-2">
+                            <li class="nav-item">
                                 <button routerLink="./" (click)="onDeleteAllUserAccounts($event)" type="button"
                                     class="btn3d btn btn-sm btn-danger mb-2" data-placement="top"
                                     title="Delete Accounts">
@@ -82,7 +82,6 @@
                                     </svg>&nbsp;Delete Accounts
                                     <span *ngIf="isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                                 </button>
-
                             </li>
                             <li class="nav-item">
                                 <button routerLink="add-edit/add" class="btn3d btn btn-sm btn-primary mb-2"
