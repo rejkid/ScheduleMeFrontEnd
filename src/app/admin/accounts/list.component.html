@@ -1,4 +1,4 @@
-﻿@if(uploading) {
+﻿@if(generatingSchedules || downloadingSchedules) {
 <div class="loader">
     <mat-progress-spinner diameter="60" [value]="0" mode="indeterminate">
     </mat-progress-spinner>

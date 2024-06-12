@@ -58,7 +58,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     lastSelectedContact: Account = null;
     highlighted: boolean;
 
-    uploading: boolean = false;
+    generatingSchedules: boolean = false;
     uploadProgress: number = 0;
     downloadingSchedules: boolean = false;
 
@@ -184,7 +184,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
     generateSchedules() {
         this.alertService.clear();
-        this.uploading = true;
+        this.generatingSchedules = true;
         this.accountService.generateSchedules()
             .pipe(first())
             .subscribe({
@@ -192,11 +192,11 @@ export class ListComponent implements OnInit, AfterViewInit {
 
                 },
                 complete: () => {
-                    this.uploading = false;
+                    this.generatingSchedules = false;
                 },
                 error: error => {
                     this.alertService.error(error);
-                    this.uploading = false;
+                    this.generatingSchedules = false;
                 }
 
             });
@@ -221,6 +221,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 },
                 complete: () => {
                     //this.router.navigate(['../'], { relativeTo: this.route });
+                    this.downloadingSchedules = false;
                 },
                 error: error => {
                     this.alertService.error(error);
