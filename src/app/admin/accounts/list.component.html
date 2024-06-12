@@ -48,7 +48,8 @@
                                     </svg>&emsp;Import
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item btn3d btn btn-sm " routerLink="import-accounts"
+                                    <li>
+                                        <a class="dropdown-item btn3d btn btn-sm " routerLink="import-accounts"
                                             data-placement="top" title="Import Accounts">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                                                 fill="currentColor" class="bi bi-file-earmark-person"
@@ -56,7 +57,9 @@
                                                 <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                                                 <path
                                                     d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2v9.255S12 12 8 12s-5 1.755-5 1.755V2a1 1 0 0 1 1-1h5.5z" />
-                                            </svg>&nbsp;Import Accounts</a></li>
+                                            </svg>&nbsp;Import Accounts
+                                        </a>
+                                    </li>
                                     <li><a class="dropdown-item btn3d btn btn-sm"
                                             routerLink="import-timeslots-tasks/import" data-placement="top"
                                             title="Import TimeSlots Tasks">
@@ -66,7 +69,9 @@
                                                     d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z" />
                                                 <path
                                                     d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0" />
-                                            </svg>&nbsp;Time Slots</a></li>
+                                            </svg>&nbsp;Time Slots
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
 
@@ -130,7 +135,7 @@
                                     </svg>&nbsp;Mod. Schedules</button>
                             </li>
 
-                            <li class="nav-item">
+                            <li class="nav-item mb-2">
                                 <button type="button" (click)="downloadSchedules($event)"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-placement="top"
                                     title="View Schedules">
