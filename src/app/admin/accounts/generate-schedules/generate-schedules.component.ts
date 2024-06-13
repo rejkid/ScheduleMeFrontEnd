@@ -2,18 +2,16 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, Que
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { Subscription/* , first */ } from 'rxjs';
-import { Account } from 'src/app/_models';
+import { Subscription /* , first */ } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
-import { ScheduleDateTimes } from 'src/app/_models/scheduledatetimes';
+import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
+import { User } from 'src/app/_models/user';
 import { UserFunction } from 'src/app/_models/userfunction';
+import { UserFunctions } from 'src/app/_models/userfunctions';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { FunctionScheduleComponent } from '../function-schedule/function-schedule.component';
-import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
-import { first } from 'rxjs/operators';
-import { UserFunctions } from 'src/app/_models/userfunctions';
-import { User } from 'src/app/_models/user';
 
 
 
