@@ -39,7 +39,7 @@
                             <li class="nav-item dropdown mt-2">
                                 <a class=" dropdown-toggle btn3d btn btn-sm btn-primary mb-2" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-expanded="false" data-placement="top"
-                                    title="Import Accounts or Time Slots">
+                                    title="Import Accounts or Time Slots" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-floppy" viewBox="0 0 16 16">
                                         <path d="M11 2H9v3h2z" />
@@ -78,7 +78,7 @@
                             <li class="nav-item">
                                 <button routerLink="./" (click)="onDeleteAllUserAccounts($event)" type="button"
                                     class="btn3d btn btn-sm btn-danger mb-2" data-placement="top"
-                                    title="Delete Accounts">
+                                    title="Delete Accounts" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}" >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-file-earmark-person" viewBox="0 0 16 16">
                                         <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -90,7 +90,7 @@
                             </li>
                             <li class="nav-item">
                                 <button routerLink="add-edit/add" class="btn3d btn btn-sm btn-primary mb-2"
-                                    data-placement="top" title="Create Account">
+                                    data-placement="top" title="Create Account" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-file-earmark-person" viewBox="0 0 16 16">
                                         <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -101,7 +101,7 @@
                             <li class="nav-item">
                                 <button routerLink="timeslotstasks-edit" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
-                                    title="Create Time Slots">
+                                    title="Create Time Slots" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-clock" viewBox="0 0 16 16">
                                         <path
@@ -113,7 +113,7 @@
                             <li class="nav-item">
                                 <button routerLink="." (click)="generateSchedules()" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
-                                    title="Generate Schedules">
+                                    title="Generate Schedules" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-journals" viewBox="0 0 16 16">
                                         <path
@@ -125,7 +125,7 @@
                             <li class="nav-item">
                                 <button routerLink="schedule-modify" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
-                                    title="Create\Modify Schedules">
+                                    title="Create\Modify Schedules" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
@@ -138,7 +138,7 @@
                             <li class="nav-item mb-2">
                                 <button type="button" (click)="downloadSchedules($event)"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-placement="top"
-                                    title="View Schedules">
+                                    title="View Schedules" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-download" viewBox="0 0 16 16">
                                         <path
@@ -192,11 +192,11 @@
                                 <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                                 <mat-cell *matCellDef="let account">
 
-                                    <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified"
+                                    <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified || generatingSchedules || downloadingSchedules"
                                         class="btn btn-sm btn-primary mr-1 btn3d">Edit</button>
                                     <button (click)="deleteAccount(account.id)"
                                         class="btn btn-sm btn-danger btn-delete-account btn3d"
-                                        [disabled]="account.isDeleting || account.role == Role.Admin">
+                                        [disabled]="account.isDeleting || account.role == Role.Admin || generatingSchedules || downloadingSchedules">
                                         <span *ngIf="account.isDeleting"
                                             class="spinner-border spinner-border-sm"></span>
                                         <span *ngIf="!account.isDeleting">Delete</span>
@@ -213,7 +213,7 @@
                                 (mouseout)="row.hovered = false"></mat-row>
 
                         </mat-table>
-                        <mat-paginator #paginator [length]="accounts.length" [pageSizeOptions]="[30, 50, 100]"
+                        <mat-paginator #paginator [pageSize]="30" [length]="accounts.length" [pageSizeOptions]="[10, 30, 50, 100]"
                             showFirstLastButtons>
                         </mat-paginator>
                     </form>
