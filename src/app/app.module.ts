@@ -1,4 +1,4 @@
-﻿import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+﻿import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { APP_INITIALIZER, InjectionToken, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -7,7 +7,6 @@ import { BrowserModule } from '@angular/platform-browser';
 //import { fakeBackendProvider } from './_helpers';
 
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { AlertComponent } from './_components';
 import { ErrorInterceptor, JwtInterceptor, appInitializer } from './_helpers';
 import { AccountService } from './_services';
@@ -29,9 +28,10 @@ import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 
+import { RouterModule } from '@angular/router';
+import { ColorConfig, TestService } from './_services/test.service';
 import { ApplicationPipesModuleModule } from './application-pipes-module/application-pipes-module.module';
 import { OrderByDateOrFunctionPipe } from './application-pipes-module/order-by-date-or-function.pipe';
-import { ColorConfig, TestService } from './_services/test.service';
 
 // TODO JD TEST
 export const USERS_SERVICE_TOKEN = new InjectionToken<TestService>('');
@@ -40,16 +40,27 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
 );
 // TODO JD TEST
 
-@NgModule({
-    imports: [
-        CommonModule,
+@NgModule({ exports: [
+        MaterialModule,
+        MatSortModule,
+        MatTableModule,
+        MatPaginatorModule,
+        MatButtonModule,
+        MatInputModule,
+        MatFormFieldModule
+    ],
+    declarations: [
+        AppComponent,
+        AlertComponent,
+        HomeComponent,
+        FloatingSchedulesComponent,
+    ],
+    bootstrap: [AppComponent], imports: [CommonModule,
         BrowserModule,
         FormsModule,
-        HttpClientModule,
+        //HttpClientModule,
         ReactiveFormsModule,
-        HttpClientModule,
         AppRoutingModule,
-        
         RouterModule,
         BrowserAnimationsModule,
         MaterialModule,
@@ -66,39 +77,17 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
         ApplicationPipesModuleModule,
         //AutoGeneratorModule,
         // AddEditModule,
-        OrderByDateOrFunctionPipe,
-        
-        
-        
-    ],
-    exports: [
-        MaterialModule,
-        MatSortModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatButtonModule,
-        MatInputModule,
-        MatFormFieldModule
-        
-    ],
-    declarations: [
-        AppComponent,
-        AlertComponent,
-        HomeComponent,
-        FloatingSchedulesComponent,
-        
-    ],
-    providers: [
+        OrderByDateOrFunctionPipe], providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-        
         // TODO JD TEST
-        {provide: USERS_SERVICE_TOKEN, useClass: TestService},
+        { provide: USERS_SERVICE_TOKEN, useClass: TestService },
         {
-        provide: USERS_SERVICE_CONFIG_TOKEN,
-        useValue: { apiUrl: 'http://localhost:3004/users' },
+            provide: USERS_SERVICE_CONFIG_TOKEN,
+            useValue: { apiUrl: 'http://localhost:3004/users' },
         },
+        provideHttpClient(withInterceptorsFromDi()),
         // TODO JD TEST END
 
         
@@ -115,7 +104,6 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
         // keytool -genkeypair -alias tomcat -keyalg RSA -keysize 4096 -validity 720 -keystore localhost-rsa.jks -storepass changeit -keypass changeit -ext SAN=dns:rejkid.hopto.org,ip:49.187.112.232
         // keytool -exportcert -keystore localhost-rsa.jks -alias tomcat -file localhost.crt
     ],
-    bootstrap: [AppComponent]
 })
 export class AppModule {
     constructor() {
