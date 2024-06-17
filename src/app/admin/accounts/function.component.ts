@@ -1,5 +1,5 @@
 import { ViewportScroller } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, computed, effect, input, signal } from '@angular/core';
+import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild, computed, effect, inject, input, signal } from '@angular/core';
 import { AbstractControl, Form, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -11,26 +11,32 @@ import { UserFunction } from 'src/app/_models/userfunction';
 import { UserFunctionDTO } from 'src/app/_models/userfunctionDTO';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 const COLUMNS_SCHEMA = [
   {
-      key: "task",
-      type: "text",
-      label: "Task"
+    key: "task",
+    type: "text",
+    label: "Task"
   },
   {
-      key: "group",
-      type: "text",
-      label: "Group"
+    key: "group",
+    type: "text",
+    label: "Group"
   },
   {
-      key: "action",
-      type: "text",
-      label: "Action"
+    key: "action",
+    type: "text",
+    label: "Action"
   },
 ]
 
-@Component({ templateUrl: 'function.component.html', styleUrls: ['./function.component.less'] })
+@Component({
+  templateUrl: 'function.component.html', styleUrls: ['./function.component.less'],
+  host: {
+    "(click)": "onToObservable($event)"
+  }
+})
 export class FunctionComponent implements OnInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -45,21 +51,26 @@ export class FunctionComponent implements OnInit {
   labeledColumns: string[] = COLUMNS_SCHEMA.map((col) => col.label);
   columnsSchema: any = COLUMNS_SCHEMA;
 
-  
+
   userFunctions = signal<UserFunction[]>([]);
   possibleTasks: UserFunction[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
   loading = false;
-  accountService : AccountService; 
+  accountService: AccountService;
 
-  currentSelectedContact : UserFunction = null;
-  lastSelectedContact : UserFunction = null;
+  currentSelectedContact: UserFunction = null;
+  lastSelectedContact: UserFunction = null;
   highlighted: boolean;
   static HighlightRow: Number = -1;
 
   isLoaded: boolean = false;
-  constructor( accountService: AccountService,
+
+  // JD Test
+  injector: Injector = inject(Injector);
+  // JD Test    
+
+  constructor(accountService: AccountService,
     private alertService: AlertService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -67,12 +78,27 @@ export class FunctionComponent implements OnInit {
     private scroller: ViewportScroller) {
     this.accountService = accountService;
     this.isLoggedAsAdmin = this.accountService.isAdmin();
-
-    effect(() => 
-    {
-      console.log(this.userFunctions())
-    })
   }
+
+  // JD Test
+  onToObservable(e: any) {
+    const numbers = signal(0);
+    numbers.set(1);
+    numbers.set(2);
+    numbers.set(3);
+
+    var numbers$ = toObservable(numbers, {injector: this.injector});
+    numbers.set(4);
+
+    numbers$.subscribe({
+      next: (value) => {
+        console.log('numbrs$: ', value);
+      },
+      error: (error) => { }
+    });
+    numbers.set(5);
+  }
+  // JD Test
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
@@ -87,15 +113,15 @@ export class FunctionComponent implements OnInit {
                 this.possibleTasks = value.functions;
 
                 this.account = account;
-                this.userFunctions = signal(account.userFunctions.slice());
+                this.userFunctions.set(account.userFunctions.slice()); // = signal(account.userFunctions.slice());
                 this.dataSource = new MatTableDataSource(this.userFunctions());
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
 
                 console.log(this.account + this.id);
                 this.form = this.formBuilder.group({
-                  function: ['',  [Validators.required, this.functionValidator]],
-                  groupTask: ['', [this.groupValidator.bind(this)]] ,
+                  function: ['', [Validators.required, this.functionValidator]],
+                  groupTask: ['', [this.groupValidator.bind(this)]],
                 });//, { validator: this.validate});
 
                 this.form.get('function').setValue(this.possibleTasks[0].userFunction);
@@ -119,7 +145,7 @@ export class FunctionComponent implements OnInit {
   validateForm(control: AbstractControl): ValidationErrors | null {
     var group = (control as FormGroup);
     if (this.isGroupTaskAsString(group.controls['function'].value)) {
-      var retVal : ValidationErrors  = Validators.required(group.controls['groupTask'])
+      var retVal: ValidationErrors = Validators.required(group.controls['groupTask'])
       return retVal;
     }
     return null;
@@ -131,7 +157,7 @@ export class FunctionComponent implements OnInit {
     filterValue = filterValue.trim(); // Remove whitespace
     filterValue = filterValue.toLowerCase(); // Datasource defaults to lowercase matches
     this.dataSource.filter = filterValue;
-}
+  }
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 
@@ -142,13 +168,13 @@ export class FunctionComponent implements OnInit {
     return null;
   }
   groupValidator(control: FormControl): { [s: string]: boolean } {
-    if (this.isGroupTaskSelected &&  control.value === '') {
+    if (this.isGroupTaskSelected && control.value === '') {
       return { invalidGroup: true };
     }
     return null;
   }
   get isValid() {
-    var funcValid = this.f['function'].valid; 
+    var funcValid = this.f['function'].valid;
     var groupValid = this.f['groupTask'].valid;
     var formValid = this.form.valid;
     return this.form.valid;
@@ -164,13 +190,13 @@ export class FunctionComponent implements OnInit {
     var currentGroupTask = this.f['groupTask'].value;
 
     /* Sanity check */
-    var existing : UserFunction[] = this.userFunctions().filter((f) => {
+    var existing: UserFunction[] = this.userFunctions().filter((f) => {
       return (f.userFunction === currentValue && f.group === currentGroupTask)
     });
     if (existing.length > 0) {
       this.alertService.error(currentValue + " already exists");
-        this.scroller.scrollToAnchor("pageStart");
-        return;
+      this.scroller.scrollToAnchor("pageStart");
+      return;
     }
 
     // Stop here if form is invalid
@@ -183,20 +209,20 @@ export class FunctionComponent implements OnInit {
       userFunction: this.f['function'].value,
       group: this.isGroupTaskSelected ? this.f['groupTask'].value : "",
       isGroup: this.isGroupTaskSelected,
-      isDeleting : false,
-      highlighted : false
+      isDeleting: false,
+      highlighted: false
     }
-    var userFunctionDTO : UserFunctionDTO = {
+    var userFunctionDTO: UserFunctionDTO = {
       userFunction: uFunction,
     }
     this.userFunctions().push(uFunction);
     this.addFunction4Account(userFunctionDTO);
   }
-  deleteFunction(uFunction: UserFunction) { 
+  deleteFunction(uFunction: UserFunction) {
     // reset alerts on submit
     this.alertService.clear();
 
-    var userFunctionDTO : UserFunctionDTO = {
+    var userFunctionDTO: UserFunctionDTO = {
       userFunction: uFunction,
     }
     this.deleteFunction4Account(userFunctionDTO);
@@ -238,47 +264,44 @@ export class FunctionComponent implements OnInit {
         }
       });
   }
-   
+
   get isAdmin() {
     return this.account.role == Role.Admin;
   }
-  public isGroupTaskAsString(f : string) : boolean { 
-    if(this.form == undefined)
-     return false;
+  public isGroupTaskAsString(f: string): boolean {
+    if (this.form == undefined)
+      return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
       const possibleTask = this.possibleTasks[index];
-      if(possibleTask.userFunction === f)
-      {
+      if (possibleTask.userFunction === f) {
         return possibleTask.isGroup;
       }
     }
     return false;
   }
-  public isGroupTask(f : UserFunction) : boolean { 
-    if(this.form == undefined)
-     return false;
+  public isGroupTask(f: UserFunction): boolean {
+    if (this.form == undefined)
+      return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
       const possibleTask = this.possibleTasks[index];
-      if(possibleTask.userFunction === f.userFunction)
-      {
+      if (possibleTask.userFunction === f.userFunction) {
         return possibleTask.isGroup;
       }
     }
     return false;
   }
   get isGroupTaskSelected() {
-    if(this.form == undefined)
-     return false;
+    if (this.form == undefined)
+      return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
       const possibleTask = this.possibleTasks[index];
-      if(possibleTask.userFunction === this.form.get('function').value)
-      {
+      if (possibleTask.userFunction === this.form.get('function').value) {
         return possibleTask.isGroup;
       }
     }
     return false;
   }
-  get assignedGroup() : string {
+  get assignedGroup(): string {
     const taskSelected = this.f['function'].value;
     var task = this.account.userFunctions.find((f) => {
       return f.userFunction === taskSelected;
@@ -287,7 +310,7 @@ export class FunctionComponent implements OnInit {
   }
   onTaskChanged(event: Event) {
     var valueSelected = (event.target as HTMLInputElement).value;
-    if(this.isGroupTaskSelected) {
+    if (this.isGroupTaskSelected) {
       this.f["groupTask"].setValue(this.assignedGroup);
     } else {
       this.f["groupTask"].setValue("");
