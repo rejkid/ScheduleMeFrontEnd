@@ -31,7 +31,9 @@ import { OrderByDateOrFunctionPipe } from 'src/app/application-pipes-module/orde
 import { CustomNgxDatetimeAdapter } from './custom-date-time-adapter/CustomNgxDatetimeAdapter';
 import { TimeSlotTasksEditorComponent } from './time-slot-tasks-editor/time-slot-tasks-editor.component';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-
+import { AgentTaskDefinitionComponent } from './agent-task-definition/agent-task-definition.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 
 // If using Moment
@@ -72,7 +74,9 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
     MatProgressBarModule,
     ApplicationPipesModuleModule,
     OrderByDateOrFunctionPipe,
-    MatProgressSpinnerModule 
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
+    TextFieldModule
   
   ],
   declarations: [
@@ -85,6 +89,7 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
     FunctionScheduleComponent,
     MainSchedulerComponent,
     TimeSlotTasksEditorComponent,
+    AgentTaskDefinitionComponent,
     //TimeSlotTasksEditorComponent
     
   ],

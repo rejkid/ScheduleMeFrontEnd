@@ -1,6 +1,6 @@
-import { UserFunction } from "./userfunction";
+import { AgentTask } from "./userfunction";
 
 
 export class UserFunctionDTO {
-    userFunction: UserFunction;
+    userFunction: AgentTask;
 }

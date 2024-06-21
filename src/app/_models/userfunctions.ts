@@ -1,7 +1,7 @@
 import { SchedulePoolElement } from "./schedulepoolelement";
-import { UserFunction } from "./userfunction";
+import { AgentTask } from "./userfunction";
 
 export class UserFunctions {
     id: string;
-    functions: UserFunction[] = [];
+    functions: AgentTask[] = [];
 }

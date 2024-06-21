@@ -1,0 +1,80 @@
+<form [formGroup]="form" *ngIf="isLoaded" (ngSubmit)="onAddUpdateTask()">
+    <fieldset>
+        <legend>Agent Task</legend>
+        <div class="">
+            <div class="row">
+                <div class="col-2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Agent Task Name</mat-label>
+                        <input matInput formControlName="agentTaskName">
+                    </mat-form-field>
+                </div>
+                <div class="col-2">
+                    <section class="section">
+                        <mat-checkbox class="margin" formControlName="isGroupBox" [ngClass]="{ 'disabled': f['agentTaskName'].value.length <= 0}">Is Group Task</mat-checkbox>
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <button type="button" (click)="onAddUpdateTask()" class="btn3d btn btn-primary" [ngClass]="{ 'disabled': f['agentTaskName'].value.length <= 0}">
+                        <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span> Add/Update
+                    </button>
+                </div>
+            </div>
+            &nbsp;
+        </div>
+    </fieldset>
+</form>
+
+<div class="row">
+    <div class="col-12">
+        <fieldset style="overflow:auto">
+            <legend>Agent Task Names</legend>
+            <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+                <ng-container matColumnDef="{{displayedColumns[0]}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[0]}} </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <input type="text" matInput [value]="row.agentTaskStr" [disabled]="true">
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="{{displayedColumns[1]}}">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[1]}} </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox class="margin" [checked]="row.isGroup" [disabled]="true">Is Group
+                            Task</mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="{{displayedColumns[2]}}">
+                    <mat-header-cell *matHeaderCellDef> {{displayedColumns[2]}} </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <button class="btn3d btn btn-sm btn-danger btn-delete-account" type="button" #button
+                            (click)="onDeleteAgentTaskConfig($event, row)" [ngClass]="{ 'disabled': row.isDeleting}">
+                            <span *ngIf="row.isDeleting" class=" spinner-border spinner-border-sm mr-1"></span>
+                            Delete
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
+                    [ngClass]="{'highlighted': i == staticHighlightRow}" #tr (click)="onRowSelected(row, tr, i, $event)"
+                    (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
+                <!-- <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
+                     #tr (click)="onRowSelected(row, tr, i, $event)"
+                    (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row> -->
+                <!-- <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
+                    [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr
+                    (click)="onRowSelected(row, tr, i, $event)" (mouseover)="row.hovered = true"
+                    (mouseout)="row.hovered = false"></mat-row> -->
+            </mat-table>
+            <mat-paginator #paginator [length]="agentTaskConfigs().length" pageSize={{pageSize}} (page)="onChange($event)" [pageSizeOptions]="[5,10, 20, 50, 100]"
+                showFirstLastButtons>
+            </mat-paginator>
+        </fieldset>
+
+    </div>
+</div>
+<div class="col px-md-2">
+    <a routerLink="../" class="btn3d btn btn-primary">Back</a>
+</div>

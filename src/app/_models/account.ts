@@ -1,6 +1,6 @@
 ﻿import { Role } from './role';
 import { Schedule } from './schedule';
-import { UserFunction } from './userfunction';
+import { AgentTask } from './userfunction';
 
 export class Account {
     id: string;
@@ -11,7 +11,7 @@ export class Account {
     phoneNumber:string;
     role: Role;
     schedules: Schedule[] = [];
-    userFunctions: UserFunction[] = [];
+    userFunctions: AgentTask[] = [];
     jwtToken?: string;
     dob: string;
     availability: boolean;

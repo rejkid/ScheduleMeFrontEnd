@@ -7,7 +7,7 @@ import { first } from 'rxjs/operators';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
 import { User } from 'src/app/_models/user';
-import { UserFunction } from 'src/app/_models/userfunction';
+import { AgentTask } from 'src/app/_models/userfunction';
 import { UserFunctions } from 'src/app/_models/userfunctions';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
@@ -30,7 +30,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   dateTimeFormat = Constants.dateTimeFormat;
   form: FormGroup;
   uploadSub: Subscription;
-  functions: UserFunction[] = [];
+  functions: AgentTask[] = [];
   isLoaded: boolean;
   fComponents: FunctionScheduleComponent[] = [];
   static functions2SchedulesMap: Map<FunctionScheduleComponent, User[]> = new Map<FunctionScheduleComponent, User[]>();
@@ -107,7 +107,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
 
           /* Create `UserFunction` component for every function that was returned by server*/
           value.functions.forEach(element => {
-            var f: UserFunction = {
+            var f: AgentTask = {
               id: '',
               userFunction: element.userFunction,
               group: '',

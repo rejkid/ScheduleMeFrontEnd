@@ -1,6 +1,6 @@
 ﻿import { Role } from './role';
 import { Schedule } from './schedule';
-import { UserFunction } from './userfunction';
+import { AgentTask } from './userfunction';
 
 export class SchedulePoolElement {
     id: string;

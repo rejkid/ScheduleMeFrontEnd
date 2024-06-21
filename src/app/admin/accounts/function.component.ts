@@ -7,7 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
-import { UserFunction } from 'src/app/_models/userfunction';
+import { AgentTask } from 'src/app/_models/userfunction';
 import { UserFunctionDTO } from 'src/app/_models/userfunctionDTO';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
@@ -46,21 +46,21 @@ export class FunctionComponent implements OnInit {
   form: FormGroup;
   userFunctionIndexer: number = 0;
 
-  dataSource: MatTableDataSource<UserFunction>;
+  dataSource: MatTableDataSource<AgentTask>;
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
   labeledColumns: string[] = COLUMNS_SCHEMA.map((col) => col.label);
   columnsSchema: any = COLUMNS_SCHEMA;
 
 
-  userFunctions = signal<UserFunction[]>([]);
-  possibleTasks: UserFunction[] = [];
+  userFunctions = signal<AgentTask[]>([]);
+  possibleTasks: AgentTask[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
   loading = false;
   accountService: AccountService;
 
-  currentSelectedContact: UserFunction = null;
-  lastSelectedContact: UserFunction = null;
+  currentSelectedContact: AgentTask = null;
+  lastSelectedContact: AgentTask = null;
   highlighted: boolean;
   static HighlightRow: Number = -1;
 
@@ -190,7 +190,7 @@ export class FunctionComponent implements OnInit {
     var currentGroupTask = this.f['groupTask'].value;
 
     /* Sanity check */
-    var existing: UserFunction[] = this.userFunctions().filter((f) => {
+    var existing: AgentTask[] = this.userFunctions().filter((f) => {
       return (f.userFunction === currentValue && f.group === currentGroupTask)
     });
     if (existing.length > 0) {
@@ -204,7 +204,7 @@ export class FunctionComponent implements OnInit {
       return;
     }
 
-    var uFunction: UserFunction = {
+    var uFunction: AgentTask = {
       id: (++this.userFunctionIndexer).toString(),
       userFunction: this.f['function'].value,
       group: this.isGroupTaskSelected ? this.f['groupTask'].value : "",
@@ -218,7 +218,7 @@ export class FunctionComponent implements OnInit {
     this.userFunctions().push(uFunction);
     this.addFunction4Account(userFunctionDTO);
   }
-  deleteFunction(uFunction: UserFunction) {
+  deleteFunction(uFunction: AgentTask) {
     // reset alerts on submit
     this.alertService.clear();
 
@@ -279,7 +279,7 @@ export class FunctionComponent implements OnInit {
     }
     return false;
   }
-  public isGroupTask(f: UserFunction): boolean {
+  public isGroupTask(f: AgentTask): boolean {
     if (this.form == undefined)
       return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
@@ -316,7 +316,7 @@ export class FunctionComponent implements OnInit {
       this.f["groupTask"].setValue("");
     }
   }
-  onRowSelected(contact: UserFunction, input: any, index: number, event: MouseEvent) {
+  onRowSelected(contact: AgentTask, input: any, index: number, event: MouseEvent) {
 
     if (event.ctrlKey) {
       FunctionComponent.HighlightRow = FunctionComponent.HighlightRow == index ? -1 : index;

@@ -8,6 +8,7 @@ import { MainSchedulerComponent } from './main-scheduler/main-scheduler.componen
 import { ScheduleAllocatorComponent } from './schedule.allocator.component';
 import { UploadAccountsComponent } from './upload-accounts/upload-accounts.component';
 import { TimeSlotTasksEditorComponent } from './time-slot-tasks-editor/time-slot-tasks-editor.component';
+import { AgentTaskDefinitionComponent } from './agent-task-definition/agent-task-definition.component';
 
 const routes: Routes = [
     { path: '', component: ListComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
     { path: 'schedule/:id', component: ScheduleAllocatorComponent },
     { path: 'schedule-modify', component: MainSchedulerComponent},
     { path: 'timeslotstasks-edit', component: TimeSlotTasksEditorComponent},  
+    { path: 'agenttaskdefinition-edit', component: AgentTaskDefinitionComponent},  
 ];
 
 @NgModule({

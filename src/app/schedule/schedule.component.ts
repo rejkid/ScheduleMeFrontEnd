@@ -12,7 +12,7 @@ import { environment } from 'src/environments/environment';
 import { Account, Role } from '../_models';
 import { Schedule } from '../_models/schedule';
 import { SchedulePoolElement } from '../_models/schedulepoolelement';
-import { UserFunction } from '../_models/userfunction';
+import { AgentTask } from '../_models/userfunction';
 import { AccountService, AlertService } from '../_services';
 import { Constants } from '../constants';
 
@@ -60,13 +60,13 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   schedules: Schedule[] = [];
   userFunctionIndexer: number = 0;
-  functions: UserFunction[] = [];
+  functions: AgentTask[] = [];
   submitted = false;
   accountService: AccountService;
   account: Account;
   isLoaded: boolean = false;
   addingSchedule: boolean = false;
-  userFunctions: UserFunction[] = [];
+  userFunctions: AgentTask[] = [];
   isAdding: boolean = false;
 
   isLoggedAsAdmin: boolean = false;

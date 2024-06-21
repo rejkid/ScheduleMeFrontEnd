@@ -16,11 +16,12 @@ import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { SchedulePoolElements } from '../_models/schedulepoolelements';
 import { DateFunctionTeams } from '../_models/teams';
 import { UserFunctions } from '../_models/userfunctions';
-import { UserFunction } from '../_models/userfunction';
+import { AgentTask } from '../_models/userfunction';
 import { UserFunctionDTO } from '../_models/userfunctionDTO';
 import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
 import { TimeSlotsTasks } from '../_models/timeslotstasks';
 import { TimeSlotsTasksDTO } from '../_models/timeslotstasksDTO';
+import { AgentTaskConfig } from '../_models/agenttaskconfig';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -238,6 +239,25 @@ export class AccountService {
     }
 
 
+    getTasks() {
+        return this.http.get<UserFunctions>(`${baseUrl}/tasks`);
+    }
+    getGroupTasks() {
+        return this.http.get<[]>(`${baseUrl}/group-tasks`);
+    }
+    getAllTasks() {
+        return this.http.get<[]>(`${baseUrl}/all-tasks`);
+    }
+    getAllAgentTaskConfigs() {
+        return this.http.get<AgentTaskConfig[]>(`${baseUrl}/get-all-agent-task-configs`);
+    }
+    updateAgentTaskConfig(id: string, config : AgentTaskConfig) {
+        return this.http.put(`${baseUrl}/create-agent-task-config/${id}`, config);
+    }
+    deleteAgentTaskConfig(id: string) {
+        return this.http.delete(`${baseUrl}/delete-agent-task-config/${id}`);
+    }
+
     isAdmin() {
         return this.accountValue && this.accountValue.role === Role.Admin;
     }
@@ -298,13 +318,4 @@ export class AccountService {
         clearTimeout(this.refreshTokenTimeout);
     }
 
-    getTasks() {
-        return this.http.get<UserFunctions>(`${baseUrl}/tasks`);
-    }
-    getGroupTasks() {
-        return this.http.get<[]>(`${baseUrl}/group-tasks`);
-    }
-    getAllTasks() {
-        return this.http.get<[]>(`${baseUrl}/all-tasks`);
-    }
 }

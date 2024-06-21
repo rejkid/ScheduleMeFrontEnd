@@ -7,7 +7,7 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Schedule</mat-label>
                         <input formControlName="scheduledDate" #ref matInput [ngxMatDatetimePicker]="picker"
-                            placeholder="Choose a date" required (dateChange)="onChangeDateTime($event)"/>
+                            placeholder="Choose a date" required (dateChange)="onChangeDateTime($event)" />
                         <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                         <mat-hint>{{dateFormat}}</mat-hint>
                         <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
@@ -20,14 +20,16 @@
             </div>
         </div>
 
-        
-        <div class="container">
+
+        <div class="container-fluid">
             @for (task of newTasksArr;track task; let index = $index) {
-            <div class="row justify-content-start">
+            <div class="row">
                 @for (col of newTasksArr[index];track col; let index = $index) {
-                <div class="mb-3 me-3 col-1">
-                    <label>{{col}}:</label>
-                    <input formControlName={{col}} type="Number" min="0" max="10" step="1" value="6" size="6" />
+                <div class="col-sm-2">
+                    <div class="mb-3 me-1 col-1">
+                        <label>{{col}}:</label>
+                        <input formControlName={{col}} type="Number" min="0" max="10" step="1" value="6" size="6" />
+                    </div>
                 </div>
                 }
             </div>
@@ -79,8 +81,9 @@
 
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
-            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr (click)="onRowSelected(row, tr, i)"
-            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
+                    [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr
+                    (click)="onRowSelected(row, tr, i)" (mouseover)="row.hovered = true"
+                    (mouseout)="row.hovered = false"></mat-row>
             </mat-table>
             <mat-paginator #paginator [length]="timeSlots().length" [pageSizeOptions]="[5,10, 20, 50, 100]"
                 showFirstLastButtons>

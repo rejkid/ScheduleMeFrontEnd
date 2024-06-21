@@ -6,7 +6,7 @@ import { MustMatch } from 'src/app/_helpers';
 
 import * as moment from 'moment';
 import { Account, Role } from 'src/app/_models';
-import { UserFunction } from 'src/app/_models/userfunction';
+import { AgentTask } from 'src/app/_models/userfunction';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { firstValueFrom } from 'rxjs';
@@ -28,7 +28,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
     submitted = false;
     roles: string[] = [];
     account: Account;
-    userFunctions: UserFunction[] = [];
+    userFunctions: AgentTask[] = [];
     isLoaded: boolean = false;
     countryCodes: number[] = [];
 

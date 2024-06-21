@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Account, Role } from '../_models';
-import { UserFunction } from '../_models/userfunction';
+import { AgentTask } from '../_models/userfunction';
 import { AccountService, AlertService } from '../_services';
 import { first } from 'rxjs/operators';
 
@@ -13,7 +13,7 @@ export class ScheduleFunctionComponent implements OnInit {
   form: FormGroup;
   userFunctionIndexer: number = 0;
 
-  userFunctions: UserFunction[] = null;
+  userFunctions: AgentTask[] = null;
   functions: string[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
