@@ -1,7 +1,7 @@
 ﻿import { ViewportScroller } from '@angular/common';
 import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { pipe } from 'rxjs';
@@ -230,6 +230,26 @@ export class ListComponent implements OnInit, AfterViewInit {
             }
         );
     }
+    sortData($event: Sort) {
+        if ($event.active == this.displayedColumns[0]) {
+          this.accounts().sort((a, b) => {
+            if ($event.direction == 'asc' as SortDirection) {
+              return a.firstName.localeCompare(b.firstName);
+            } else {
+              return b.firstName.localeCompare(a.firstName);
+            }
+          });
+        } else if ($event.active == this.displayedColumns[1]) {
+          this.accounts().sort((a, b) => {
+            if ($event.direction == 'asc' as SortDirection) {
+              return Number(a.email) - Number(b.email);
+            } else {
+              return Number(b.email) - Number(a.email);;
+            }
+          });
+        }
+      }
+    
 }
 
 

@@ -131,7 +131,7 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   }
   sortData(sort: Sort) {
     TimeHandler.sortData(this.timeSlots(), sort);
-    this.dataSource = new MatTableDataSource(this.timeSlots());
+    this.dataSource.data = this.timeSlots();
   }
   onDeleteTimeSlotTasks(event: MouseEvent, tasks: TimeSlotsTasks) {
     console.log("MainSchedulerComponent deleting called");

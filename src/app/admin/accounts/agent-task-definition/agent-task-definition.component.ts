@@ -2,7 +2,7 @@ import { ViewportScroller } from '@angular/common';
 import { Component, OnInit, ViewChild, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, Sort } from '@angular/material/sort';
+import { MatSort, MatSortable, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { AccountService, AlertService } from 'src/app/_services';
@@ -176,9 +176,21 @@ export class AgentTaskDefinitionComponent implements OnInit {
   }
   sortData($event: Sort) {
     if ($event.active == this.displayedColumns[0]) {
-      console.log("active is:" + this.displayedColumns[0]);
+      this.agentTaskConfigs().sort((a, b) => {
+        if ($event.direction == 'asc' as SortDirection) {
+          return a.agentTaskStr.localeCompare(b.agentTaskStr);
+        } else {
+          return b.agentTaskStr.localeCompare(a.agentTaskStr);
+        }
+      });
     } else if ($event.active == this.displayedColumns[1]) {
-      console.log("active is:" + this.displayedColumns[1]);
+      this.agentTaskConfigs().sort((a, b) => {
+        if ($event.direction == 'asc' as SortDirection) {
+          return Number(a.isGroup) - Number(b.isGroup);
+        } else {
+          return Number(b.isGroup) - Number(a.isGroup);;
+        }
+      });
     }
   }
   onRowSelected(task: AgentTaskConfig, tr: any, index: number, event: any) {

@@ -45,9 +45,6 @@
     </fieldset>
 </form>
 
-
-
-
 <div class="row">
     <div class="col-12">
         <fieldset style="overflow:auto">
@@ -60,13 +57,13 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="{{displayedColumns[1]}}">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[1]}} </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> {{displayedColumns[1]}} </mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <input type="text" matInput [value]="row.tasks" readonly>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="delete">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> Delete </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <button class="btn btn-sm btn-danger btn-delete-account" type="button" #button
                             (click)="onDeleteTimeSlotTasks($event, row)" [ngClass]="{ 'disabled': row.isDeleting}">

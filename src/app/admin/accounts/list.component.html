@@ -174,12 +174,12 @@
                             <input matInput (keyup)="applyFilter($event.target, input)" placeholder="Search columns"
                                 #input>
                         </mat-form-field>
-                        <mat-table matSort class="lessons-table mat-elevation-z8" [dataSource]="dataSource">
+                        <mat-table matSort class="lessons-table mat-elevation-z8" [dataSource]="dataSource" (matSortChange)="sortData($event)">
                             <ng-container matColumnDef="{{displayedColumns[0]}}">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                                 <mat-cell *matCellDef="let account">
                                     <input type="text" matInput
-                                        [value]="account.title+' '+account.firstName+' '+account.lastName" readonly />
+                                        [value]="account.firstName+' '+account.lastName" readonly />
                                 </mat-cell>
                             </ng-container>
 
@@ -191,14 +191,14 @@
                             </ng-container>
 
                             <ng-container matColumnDef="{{displayedColumns[2]}}">
-                                <mat-header-cell *matHeaderCellDef mat-sort-header> DOB </mat-header-cell>
+                                <mat-header-cell *matHeaderCellDef> DOB </mat-header-cell>
                                 <mat-cell *matCellDef="let contact">
                                     <input type="text" matInput [value]="contact.dob" readonly />
                                 </mat-cell>
                             </ng-container>
 
                             <ng-container matColumnDef="{{displayedColumns[3]}}">
-                                <mat-header-cell *matHeaderCellDef mat-sort-header> Role </mat-header-cell>
+                                <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
                                 <mat-cell *matCellDef="let account">
                                     <input type="text" matInput [value]="account.role" readonly />
                                 </mat-cell>
