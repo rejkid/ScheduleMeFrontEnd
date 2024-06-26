@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { Account } from 'src/app/_models';
 import { AccountsByDateAndTaskDTO } from 'src/app/_models/AccountsByDateAndTaskDTO';
+import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { Schedule } from 'src/app/_models/schedule';
 import { User } from 'src/app/_models/user';
@@ -77,7 +78,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   selectedUser4Function: User;
   
   titlePrefix: string = "";
-  groupTasks: string[] = [];
+  groupTasks: AgentTaskConfig[] = [];
   isInitializing: boolean = true;
   string2UserMap: Map<string, User> = new Map<string, User>();
 
@@ -100,12 +101,14 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       console.log(value);
     });
 
-    this.accountService.getGroupTasks()
+    this.accountService.getAllAgentTaskConfigs()
       .pipe(first())
       .subscribe({
-        next: (groupTasks: string[]) => {
+        next: (groupTasks: AgentTaskConfig[]) => {
           this.groupTasks = groupTasks;
-          if (groupTasks.includes(this.functionStr)) {
+          var atc : AgentTaskConfig = this.groupTasks.find((tcs) => { return tcs.agentTaskStr == this.functionStr});
+          console.assert(atc != undefined, "TaskConfig not found for task:"+ this.functionStr);
+          if (atc.isGroup) {
             this.titlePrefix = "Group "
           }
           this.isInitializing = false;

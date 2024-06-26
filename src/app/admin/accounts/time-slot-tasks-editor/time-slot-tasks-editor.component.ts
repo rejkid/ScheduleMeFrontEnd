@@ -7,6 +7,7 @@ import * as moment from 'moment';
 
 import { first } from 'rxjs';
 import { TimeHandler } from 'src/app/_helpers/time.handler';
+import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { TimeSlotsTasks } from 'src/app/_models/timeslotstasks';
 import { TimeSlotsTasksDTO } from 'src/app/_models/timeslotstasksDTO';
 import { AccountService, AlertService } from 'src/app/_services';
@@ -54,9 +55,9 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   columnsSchema: any = COLUMNS_SCHEMA;
 
   timeSlots = signal<TimeSlotsTasks[]>([]);
-  tasks: string[] = [];
+  agentTaskConfigs: AgentTaskConfig[] = [];
   submitted: boolean = false;
-  newTasksArr: (string | any[])[];
+  newTasksArr: (AgentTaskConfig[])[];
   constructor(private accountService: AccountService, private alertService: AlertService,
     private formBuilder: FormBuilder
   ) {
@@ -72,16 +73,16 @@ export class TimeSlotTasksEditorComponent implements OnInit {
     this.isLoaded = true;
   }
   private refreshTaskCounters() {
-    this.accountService.getAllTasks()
+    this.accountService.getAllAgentTaskConfigs()
       .pipe(first())
       .subscribe({
-        next: (groupTasks: string[]) => {
-          this.tasks = groupTasks;
-          this.newTasksArr = this.splitArr(this.tasks, 3)
+        next: (groupTasks: AgentTaskConfig[]) => {
+          this.agentTaskConfigs = groupTasks;
+          this.newTasksArr = this.splitArr(this.agentTaskConfigs, 3)
 
-          this.tasks.forEach(name => {
-            this.addFormControl(name, [Validators.required]);
-            this.f[name].setValue(0);
+          this.agentTaskConfigs.forEach(cfg => {
+            this.addFormControl(cfg.agentTaskStr, [Validators.required]);
+            this.f[cfg.agentTaskStr].setValue(0);
           });
         },
         complete: () => {
@@ -102,7 +103,7 @@ export class TimeSlotTasksEditorComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (value: TimeSlotsTasksDTO[]) => {
-          value.forEach(element => {
+          value.forEach((element : TimeSlotsTasksDTO) => {
             var slot : TimeSlotsTasks = {
               date: element.date,
               tasks: element.tasks.split(" "),
@@ -203,16 +204,16 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   private getTasksStr(date: string) {
     var tasks: string = "";
     console.log(date);
-    for (let item of this.tasks) {
-      const control = this.form.get(item); // 'control' is a FormControl
+    for (let cfg of this.agentTaskConfigs) {
+      const control = this.form.get(cfg.agentTaskStr); // 'control' is a FormControl
       for (var i = 0; i < control.value; i++) {
         if (i > 0 || tasks.length > 0)
-          tasks = tasks.concat(" ").concat(item);
+          tasks = tasks.concat(" ").concat(cfg.agentTaskStr);
 
         else
-          tasks = tasks.concat(item);
+          tasks = tasks.concat(cfg.agentTaskStr);
       }
-      console.log(item);
+      console.log(cfg);
     };
     return tasks;
   }
@@ -232,8 +233,8 @@ export class TimeSlotTasksEditorComponent implements OnInit {
         }
       });
   }
-  splitArr(arr: string | any[], size: number) {
-    let newArr = [];
+  splitArr(arr: AgentTaskConfig[], size: number) : AgentTaskConfig[][] {
+    let newArr:AgentTaskConfig[][] = [];
     for (let i = 0; i < arr.length; i += size) {
       newArr.push(arr.slice(i, i + size));
     }
@@ -265,12 +266,12 @@ export class TimeSlotTasksEditorComponent implements OnInit {
     dateControl.setValue(moment(slot.date, Constants.dateTimeFormat).toDate());
 
     var map = this.getWordCount(slot.tasks);
-    this.tasks.forEach(task => {
-      var control = this.f[task];
-      if(map.get(task) == undefined)
+    this.agentTaskConfigs.forEach(task => {
+      var control = this.f[task.agentTaskStr];
+      if(map.get(task.agentTaskStr) == undefined)
         control.setValue(0);
       else
-        control.setValue(map.get(task));
+        control.setValue(map.get(task.agentTaskStr));
     });
   }
 

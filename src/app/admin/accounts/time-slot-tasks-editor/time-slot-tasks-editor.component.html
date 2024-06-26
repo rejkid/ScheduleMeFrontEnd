@@ -27,8 +27,8 @@
                 @for (col of newTasksArr[index];track col; let index = $index) {
                 <div class="col-sm-2">
                     <div class="mb-3 me-1 col-1">
-                        <label>{{col}}:</label>
-                        <input formControlName={{col}} type="Number" min="0" max="10" step="1" value="6" size="6" />
+                        <label>{{col.agentTaskStr}}:</label>
+                        <input formControlName={{col.agentTaskStr}} type="Number" min="0" max="10" step="1" value="6" size="6" />
                     </div>
                 </div>
                 }

@@ -12,6 +12,7 @@ import { UserFunctionDTO } from 'src/app/_models/userfunctionDTO';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 
 const COLUMNS_SCHEMA = [
   {
@@ -53,7 +54,7 @@ export class FunctionComponent implements OnInit {
 
 
   userFunctions = signal<AgentTask[]>([]);
-  possibleTasks: AgentTask[] = [];
+  possibleTasks: AgentTaskConfig[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
   loading = false;
@@ -106,11 +107,11 @@ export class FunctionComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.accountService.getTasks()
+          this.accountService.getAllAgentTaskConfigs()
             .pipe(first())
             .subscribe({
               next: (value) => {
-                this.possibleTasks = value.functions;
+                this.possibleTasks = value;
 
                 this.account = account;
                 this.userFunctions.set(account.userFunctions.slice()); // = signal(account.userFunctions.slice());
@@ -124,7 +125,7 @@ export class FunctionComponent implements OnInit {
                   groupTask: ['', [this.groupValidator.bind(this)]],
                 });//, { validator: this.validate});
 
-                this.form.get('function').setValue(this.possibleTasks[0].userFunction);
+                this.form.get('function').setValue(this.possibleTasks[0].agentTaskStr);
                 this.form.setValidators(this.validateForm.bind(this));
 
                 this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
@@ -273,7 +274,7 @@ export class FunctionComponent implements OnInit {
       return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
       const possibleTask = this.possibleTasks[index];
-      if (possibleTask.userFunction === f) {
+      if (possibleTask.agentTaskStr === f) {
         return possibleTask.isGroup;
       }
     }
@@ -284,7 +285,7 @@ export class FunctionComponent implements OnInit {
       return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
       const possibleTask = this.possibleTasks[index];
-      if (possibleTask.userFunction === f.userFunction) {
+      if (possibleTask.agentTaskStr === f.userFunction) {
         return possibleTask.isGroup;
       }
     }
@@ -295,7 +296,7 @@ export class FunctionComponent implements OnInit {
       return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
       const possibleTask = this.possibleTasks[index];
-      if (possibleTask.userFunction === this.form.get('function').value) {
+      if (possibleTask.agentTaskStr === this.form.get('function').value) {
         return possibleTask.isGroup;
       }
     }

@@ -20,7 +20,7 @@
             </div>
         </div>
         <br>
-        <button type="button" (click)="onAddAvailableSchedule()" class="btn btn-primary"
+        <button type="button" (click)="onAddAvailableSchedule()" class="btn3d btn btn-primary"
             [ngClass]="{ 'disabled': !form.controls['availableSchedule4Function'].valid || poolElements.length <= 0 || isAdding}">
             <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span> Add
         </button>
@@ -42,14 +42,14 @@
 
 <div class="color-sample mat-elevation-z3 mb-2" [style.background-color]="color">
     <div class="border">
-        <mat-table #table [dataSource]="dataSource" matSort>
-            <ng-container matColumnDef="date">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Date/Time </mat-header-cell>
+        <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+            <ng-container matColumnDef="{{displayedColumns[0]}}">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[0]}} </mat-header-cell>
                 <mat-cell *matCellDef="let schedule">{{schedule.date}}
                 </mat-cell>
             </ng-container>
             <ng-container matColumnDef="userFunction">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> Duty </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header> Task </mat-header-cell>
                 <mat-cell *matCellDef="let schedule">{{schedule.userFunction}}
                 </mat-cell>
             </ng-container>
@@ -61,7 +61,7 @@
             <ng-container matColumnDef="action">
                 <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                 <mat-cell *matCellDef="let i = index; let schedule; let row">
-                    <button class="btn btn-sm btn-danger btn-delete-account" type="button"
+                    <button class="btn3d btn btn-sm btn-danger btn-delete-account" type="button"
                         (click)="onDeleteSchedule($event, row, i, schedule)"
                         [ngClass]="{ 'disabled': isScheduleFromPast(row) || row.deleting}">
                         <span *ngIf="row.deleting" class="spinner-border spinner-border-sm mr-1"></span> Delete
@@ -80,6 +80,6 @@
 </div>
 
 <div class="mb-3">
-    <a routerLink="/schedule" disabled="false" class="btn btn-primary">Back</a>
+    <a routerLink="/schedule" disabled="false" class="btn3d btn btn-primary">Back</a>
 </div>
 <div class="row mt-3"></div>

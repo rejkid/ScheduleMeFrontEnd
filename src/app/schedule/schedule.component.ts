@@ -2,8 +2,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatSort, MatSortable, Sort } from '@angular/material/sort';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as signalR from '@microsoft/signalr';
 import * as moment from 'moment';
@@ -15,11 +15,14 @@ import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { AgentTask } from '../_models/userfunction';
 import { AccountService, AlertService } from '../_services';
 import { Constants } from '../constants';
+import { AgentTaskConfig } from '../_models/agenttaskconfig';
+import { TimeHandler } from '../_helpers/time.handler';
+import { ScheduleDateTime } from '../_models/scheduledatetime';
 
 const COLUMNS_SCHEMA = [
   {
-    key: "date",
-    type: "Date",
+    key: "Date",
+    type: "text",
     label: "DateTime"
   },
   {
@@ -49,6 +52,7 @@ const VALID_TO_SERVICE_TIMEOUT = 1000 * 60 * 60 * 24; // 1 DAY
 export class ScheduleComponent implements OnInit, AfterViewInit {
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatTable) table: MatTable<any>;
 
   readonly CLEANER_STR = Constants.CLEANER_STR;
   // dateFormat = `${environment.dateTimeFormat}`;
@@ -60,7 +64,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   schedules: Schedule[] = [];
   userFunctionIndexer: number = 0;
-  functions: AgentTask[] = [];
+  functions: AgentTaskConfig[] = [];
   submitted = false;
   accountService: AccountService;
   account: Account;
@@ -113,22 +117,42 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
       }
       /* TODO This used to cause a call to `GetById(int id)` with the id different then this.id 
       Currently I am testing if this is still a problem after fix has been applied*/
-      this.updateSchedulesAndPoolFromServer(); 
+      this.updateSchedulesAndPoolFromServer();
     });
+    this.dataSource = new MatTableDataSource([]);
   }
 
   ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource([]);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+  //   this.dataSource.sortData = (data: Schedule [], sort: MatSort) => {
+  //     const factor =
+  //      sort.direction == "asc" ? 1 : sort.direction == "desc" ? -1 : 0;
+
+  //     switch(sort.active)
+  //     {
+  //         case "date":
+  //              //..here your function sort...
+  //              //return data.sort((a,b)=>....)
+  //              break;
+  //     }
+  //     return data.sort((a : any,b : any)=>a[sort.active]>b[sort.active] ? factor : -1*factor:0)
+  //  }
+//}
+
     // Get the account for this id 
     this.accountService.getById(this.id)
       .pipe(first())
       .subscribe({
         next: (account) => {
 
-          this.accountService.getTasks()
+          this.accountService.getAllAgentTaskConfigs()
             .pipe(first())
             .subscribe({
-              next: (value) => {
-                this.functions = value.functions;
+              next: (value: AgentTaskConfig[]) => {
+                this.functions = value;
 
                 this.initSchedules(account);
 
@@ -149,7 +173,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
                   .subscribe({
                     next: (pollElements) => {
                       this.poolElements = pollElements.schedulePoolElements;
-                      this.fixUpPoolDateStrings();
                       if (this.poolElements.length != 0) {
                         this.form.get('availableSchedule4Function').setValue(this.getConcatPoolElement(this.poolElements[0]));
                       }
@@ -164,13 +187,11 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
                 this.alertService.error(error);
               }
             });
-
         },
         error: (error: any) => {
           this.alertService.error(error);
         }
       })
-
   }
 
   ngOnInit(): void {
@@ -181,6 +202,10 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
       availableSchedule4Function: ['',],
       allDates: [false, '',]
     });
+  }
+  sortData(sort: Sort) {
+    TimeHandler.sortData(this.schedules, sort);
+    this.dataSource.data = this.schedules;
   }
 
   private getConcatPoolElement(poolElement: SchedulePoolElement): string {
@@ -207,6 +232,7 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   onCheckboxChange(event: any) {
     this.updateSchedulesAndPoolFromServer();
+
   }
 
   functionValidator(control: FormControl): { [s: string]: boolean } {
@@ -288,7 +314,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
 
   }
 
-
   updateSchedulesAndPoolFromServer() {
     this.accountService.getById(this.id)
       .pipe(first())
@@ -302,8 +327,6 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
               next: (pollElements) => {
                 console.log("Pool Elements:" + pollElements);
                 this.poolElements = pollElements.schedulePoolElements;
-                
-                this.fixUpPoolDateStrings();
 
                 if (this.poolElements.length != 0) {
                   this.form.get('availableSchedule4Function').setValue(this.getConcatPoolElement(this.poolElements[0]));
@@ -313,6 +336,9 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
                 this.alertService.error(error);
               }
             });
+        },
+        complete: () => {
+          this.sort.sort(({ id: 'date', start: 'desc' }) as MatSortable);
         },
         error: error => {
           this.alertService.error(error);
@@ -331,44 +357,20 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
       var serverDate = schedule.date;
       var serverDateStr = serverDate.toString();
 
-      var scheduleLocalDate = moment(moment.utc(schedule.date)).local().toDate(); // NEW CODE
-      var scheduleLocalDateMs = scheduleLocalDate.getTime(); // NEW CODE
+      var scheduleLocalDate = moment(schedule.date, Constants.dateTimeFormat).toDate();
+      var scheduleLocalDateMs = scheduleLocalDate.getTime();
 
       // Check the schedule is at least 1 day before now
       if (this.f['allDates'].value || (scheduleLocalDateMs - localNowMs) > VALID_TO_SERVICE_TIMEOUT) {
         schedules.push(schedule);
       }
     }
-    this.schedules = schedules.slice();
+    this.schedules = schedules;//.slice();
 
-
-    // Fix up the date string for the schedules
-    this.fixUpScheduleDateStrings();
-
-
-    this.dataSource = new MatTableDataSource(this.schedules);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.data = this.schedules;
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
   }
-
-  // Fix up the date string for the pools
-  private fixUpPoolDateStrings() {
-    this.poolElements.forEach(element => {
-      var date = new Date(element.date);
-      var dateTimeStr = moment(date).format(Constants.dateTimeFormat);
-      element.date = dateTimeStr;
-    });
-  }
-
-  // Fix up the date string for the schedules
-  private fixUpScheduleDateStrings() {
-    this.schedules.forEach(element => {
-      var date = new Date(element.date);
-      var dateTimeStr = moment(date).format(Constants.dateTimeFormat);
-      element.date = dateTimeStr;
-    });
-  }
-
 
   createScheduleFromAvailableDateString(dateFormControlName: string): Schedule {
     var dateAndFuncStr = this.form.controls[dateFormControlName].value;
@@ -404,8 +406,8 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
   }
 
   isScheduleFromPast(schedule: Schedule) {
-    var scheduleLocalDate = moment(moment.utc(schedule.date)).local().toDate(); // NEW CODE
-    var scheduleLocalDateMs = scheduleLocalDate.getTime(); // NEW CODE 
+    var scheduleLocalDate = moment(schedule.date, Constants.dateTimeFormat).toDate();
+    var scheduleLocalDateMs = scheduleLocalDate.getTime();
 
     var localNowMs = Date.now();
     if ((scheduleLocalDateMs - localNowMs) < VALID_TO_SERVICE_TIMEOUT) {

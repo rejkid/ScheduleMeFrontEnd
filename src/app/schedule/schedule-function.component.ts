@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { first } from 'rxjs/operators';
 import { Account, Role } from '../_models';
+import { AgentTaskConfig } from '../_models/agenttaskconfig';
 import { AgentTask } from '../_models/userfunction';
 import { AccountService, AlertService } from '../_services';
-import { first } from 'rxjs/operators';
 
 @Component({ templateUrl: 'schedule-function.component.html' })
 export class ScheduleFunctionComponent implements OnInit {
@@ -14,7 +15,7 @@ export class ScheduleFunctionComponent implements OnInit {
   userFunctionIndexer: number = 0;
 
   userFunctions: AgentTask[] = null;
-  functions: string[] = [];
+  functions: AgentTaskConfig[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
 
@@ -41,10 +42,10 @@ export class ScheduleFunctionComponent implements OnInit {
           next: (account) => {
             this.account = account;
             this.isLoaded = true;
-            this.accountService.getTasks()
+            this.accountService.getAllAgentTaskConfigs()
             .pipe(first())
             .subscribe({
-              next: (value: any) => {
+              next: (value: AgentTaskConfig[]) => {
                 this.functions = value;
 
                 this.userFunctions = account.userFunctions.slice();

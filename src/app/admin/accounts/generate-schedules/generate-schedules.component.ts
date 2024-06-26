@@ -12,6 +12,7 @@ import { UserFunctions } from 'src/app/_models/userfunctions';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { FunctionScheduleComponent } from '../function-schedule/function-schedule.component';
+import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 
 
 
@@ -30,7 +31,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   dateTimeFormat = Constants.dateTimeFormat;
   form: FormGroup;
   uploadSub: Subscription;
-  functions: AgentTask[] = [];
+  functions: AgentTaskConfig[] = [];
   isLoaded: boolean;
   fComponents: FunctionScheduleComponent[] = [];
   static functions2SchedulesMap: Map<FunctionScheduleComponent, User[]> = new Map<FunctionScheduleComponent, User[]>();
@@ -88,10 +89,10 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     });
     //this.getAllDates();
     this.functionsLoaded = false;
-    this.accountService.getTasks()
+    this.accountService.getAllAgentTaskConfigs()
       .pipe(first())
       .subscribe({
-        next: (value: UserFunctions) => {
+        next: (value: AgentTaskConfig[]) => {
           /* Test case */
           /*
           var fakeFunction: UserFunction = {
@@ -106,11 +107,9 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
           */
 
           /* Create `UserFunction` component for every function that was returned by server*/
-          value.functions.forEach(element => {
-            var f: AgentTask = {
-              id: '',
-              userFunction: element.userFunction,
-              group: '',
+          value.forEach(element => {
+            var f: AgentTaskConfig = {
+              agentTaskStr: element.agentTaskStr,
               isGroup : element.isGroup,
               isDeleting : false,
               highlighted : false

@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -17,14 +17,14 @@ import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortable, Sort } from '@angular/material/sort';
 import * as signalR from '@microsoft/signalr';
-import { Constants } from '../../constants';
-import { MatSelectChange } from '@angular/material/select';
 import { TimeHandler } from 'src/app/_helpers/time.handler';
+import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
+import { Constants } from '../../constants';
 
 const COLUMNS_SCHEMA = [
   {
-    key: "date",
-    type: "Date",
+    key: "Date",
+    type: "text",
     label: "Date"
   },
   {
@@ -56,8 +56,6 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   readonly CLEANER_STR = Constants.CLEANER_STR;
 
-  static HighlightRow: Number = -1;
-
   dateFormat = Constants.dateTimeFormat;
   dateTimeFormat = Constants.dateTimeFormat;
 
@@ -69,7 +67,9 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   schedules: Schedule[] = [];
   userFunctionIndexer: number = 0;
-  possibleTasks: AgentTask[] = [];
+
+
+  agentTaskConfigs = signal<AgentTaskConfig[]>([]);
   submitted = false;
   accountService: AccountService;
   account: Account;
@@ -84,8 +84,6 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
   isLoggedAsAdmin: boolean = false;
 
-  currentSelectedSchedule: Schedule = null;
-  lastSelectedSchedule: Schedule = null;
   idx: number;
 
   poolElements: SchedulePoolElement[] = [];
@@ -104,7 +102,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
     private uppercasePipe: UpperCasePipe,
-    private scroller: ViewportScroller) {
+    private scroller: ViewportScroller,
+  ) {
 
     this.accountService = accountService;
     this.onScheduledAdded = new EventEmitter();
@@ -129,7 +128,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     /* This form relates to upper part of the template*/
     this.form = this.formBuilder.group({
       scheduledDate: ['', Validators.required],
-      groupTask: ['K',],
+      groupTask: ["", Validators.required],
       function: ['', [Validators.required, this.functionValidator]],
     });
   }
@@ -140,64 +139,108 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    
     this.accountService.getById(this.id)
       .pipe(first())
       .subscribe(account => {
 
         this.account = account;
 
-        this.accountService.getTasks()
+        this.accountService.getAllAgentTaskConfigs()
           .pipe(first())
           .subscribe({
             next: (value) => {
-              this.possibleTasks = value.functions;
+              this.agentTaskConfigs.set(value);
+
+              this.dataSource = new MatTableDataSource([]);
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+
               this.initSchedules(account);
 
               // Initial sorting by date
-              this.sort.sort(({ id: 'date', start: 'asc' }) as MatSortable);
+              this.sortInAscDateOrder();
 
               this.uniqueTasks = [... new Set(account.userFunctions.slice().map((f) => {
                 return f.userFunction
               }))]
-              if(this.uniqueTasks.length > 0) {
+              if (this.uniqueTasks.length > 0) {
                 this.form.get('function').setValue(this.uniqueTasks[0]);
               }
 
-              this.uniqueGroups = [... new Set(account.userFunctions.slice().map((f) => {
-                return f.group
-              }))]
-              if(this.uniqueGroups.length > 0) {
-                this.form.get('groupTask').setValue(this.uniqueGroups[0]);
-              }
+              this.setupGroupTaskCtrl();
 
               this.form.get('scheduledDate').setValue(new Date());
               if (this.userFunctions.length > 0) {
                 this.form.get('function').setValue(this.userFunctions[0].userFunction);
               }
 
-              // if (!this.isGroupTaskSelected) {
-              //   this.form.get('groupTask').disable();
-              // } else {
-              //   this.form.get('groupTask').addValidators(Validators.required);
-              //   this.form.get('groupTask').addValidators(Validators.minLength(1));
-              //   this.form.get('groupTask').setValue(account.scheduleGroup);
-              // }
-
               this.account = account;
               this.onScheduledAdded.emit(this.schedules);
               this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
 
               this.isLoaded = true;
-
-              //this.f["groupTask"].setValue(this.assignedGroup);
-
+            },
+            complete: () => {
             },
             error: error => {
               this.alertService.error(error);
             }
           });
       });
+  }
+  initSchedules(account: Account) {
+    var schedules = [];
+
+    for (let index0 = 0; index0 < account.schedules.slice().length; index0++) {
+      const dbSchedule = account.schedules[index0];
+      var existingGuiSchedules = this.schedules.filter((s) => { return this.isSameSchedule(s, dbSchedule) });
+      console.assert(existingGuiSchedules.length <= 1, "Error - we can't have more than one schedule date per agent");
+      if (existingGuiSchedules.length == 1) {
+        existingGuiSchedules[0].accountId = account.id,
+          existingGuiSchedules[0].userFunction = dbSchedule.userFunction;
+        existingGuiSchedules[0].scheduleGroup = dbSchedule.scheduleGroup;
+        existingGuiSchedules[0].newDate = dbSchedule.newDate,
+          existingGuiSchedules[0].dob = dbSchedule.dob,
+          existingGuiSchedules[0].required = dbSchedule.required,
+          existingGuiSchedules[0].userAvailability = dbSchedule.userAvailability,
+          existingGuiSchedules[0].scheduleGroup = dbSchedule.scheduleGroup,
+          existingGuiSchedules[0].userFunction = dbSchedule.userFunction,
+          existingGuiSchedules[0].newUserFunction = dbSchedule.userFunction,
+          schedules.push(existingGuiSchedules[0]);
+        if (existingGuiSchedules[0].highlighted) {
+          console.log("We have found highlighted item: " + existingGuiSchedules[0]);
+        }
+      } else {
+        var guiSchedule: Schedule = {
+          accountId: account.id,
+          scheduleId: dbSchedule.scheduleId,
+          date: dbSchedule.date,
+          newDate: dbSchedule.date,
+          dob: dbSchedule.dob,
+          required: true,
+          userAvailability: true,
+          scheduleGroup: dbSchedule.scheduleGroup,
+          userFunction: dbSchedule.userFunction,
+          newUserFunction: dbSchedule.userFunction,
+          deleting: false,
+          highlighted: false,
+          hovered: false
+        }
+        schedules.push(guiSchedule);
+      }
+    }
+    this.schedules = schedules;
+    this.dataSource.data = this.schedules;
+
+    this.sortInAscDateOrder();
+
+  }
+
+  private sortInAscDateOrder() {
+    const sortState: Sort = { active: 'Date', direction: 'asc' };
+    this.sort.active = sortState.active;
+    this.sort.direction = sortState.direction;
+    this.sort.sortChange.emit(sortState);
   }
 
   ngOnDestroy() {
@@ -223,15 +266,6 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  // onDutyChanged(event: any) {
-  //   if (event.value == this.CLEANER_STR) {
-  //     this.form.get('groupTask').enable();
-  //     this.f["groupTask"].setValue(this.assignedGroup);
-  //   } else {
-  //     this.form.get('groupTask').disable();
-  //   }
-  // }
-  
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 
@@ -244,28 +278,36 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
     // stop here if form is invalid
     if (this.form.invalid) {
+      var scheduledDateCtrl = this.f['scheduledDate'].valid;
+      var groupTaskCtrl = this.f['groupTask'].valid;
+      var functionCtrl = this.f['function'].valid;
+
       this.form.markAsTouched(); //markAllAsTouched();
       this.f['groupTask'].markAsTouched();
       return;
     }
 
-    var schedule = this.createSchedule('scheduledDate', 'function', 'groupTask');
-    if (schedule == null)
+    var newSchedule = this.createSchedule();
+    if (newSchedule == null) {
       return; // Already exists
+    }
 
     this.isAdding = true;
-    this.accountService.addSchedule(this.account.id, schedule)
+    this.accountService.addSchedule(this.account.id, newSchedule)
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.updateSchedulesFromServer();
+          this.account = account;
           this.initSchedules(account);
         },
         complete: () => {
           this.isAdding = false;
+          // We have just succesfuly added a new schedule
+          var schedules = this.schedules.filter(s => this.isSameSchedule(s, newSchedule));
+          console.assert(schedules.length == 1, "Schedule  just created not found");
+          this.selectRow(schedules[0]);
         },
         error: error => {
-          this.updateSchedulesFromServer();
           this.alertService.error(error);
           this.scroller.scrollToAnchor("pageStart");
           this.isAdding = false;
@@ -273,19 +315,13 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onInputFunc(date: HTMLInputElement, event: any) {
-    var k = event.key;
-
-    var retVal = this.uppercasePipe.transform(event.key);
-    return retVal;
-  }
-  createSchedule(dateStr: string, functionStr: string, groupStr : string): Schedule {
-    var formDate = new Date(this.form.controls[dateStr].value);
+  createSchedule(): Schedule {
+    var formDate = new Date(this.form.controls['scheduledDate'].value);
     formDate.setSeconds(0); // Re-set seconds to zero
 
     var formTimeStr = moment(formDate).format(Constants.dateTimeFormat);
-    var formFunctionStr = this.form.controls[functionStr].value;
-    var formGroup = this.form.controls[groupStr].value;
+    var formFunctionStr = this.form.controls['function'].value;
+    var formGroup = this.form.controls['groupTask'].value;
 
     for (let index = 0; index < this.schedules.length; index++) {
       var scheduleTimeStr = this.schedules[index].date;
@@ -294,9 +330,11 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
       if (scheduleTimeStr == formTimeStr && scheduleFunction == formFunctionStr && scheduleGroup == formGroup) {
         var GroupStr = scheduleGroup.length > 0 ? "/" + formGroup : "";
-        this.alertService.error("The user is already " + scheduleFunction + GroupStr + " for that date/time");
+        this.alertService.info("The user is already " + scheduleFunction + GroupStr + " for that date/time");
         this.scroller.scrollToAnchor("pageStart");
 
+        // Select the existing one
+        this.selectRow(this.schedules[index]);
         return null;
       }
     }
@@ -309,7 +347,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       required: true,
       deleting: false,
       userAvailability: true,
-      scheduleGroup: formGroup,
+      scheduleGroup: this.isGroupTaskSelected ? formGroup : "",
       userFunction: formFunctionStr,
       newUserFunction: formFunctionStr
     }
@@ -329,21 +367,20 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
         error: error => {
           this.alertService.error(error);
           schedule2Delete.deleting = false;
-          this.updateSchedulesFromServer();
         }
       });
   }
 
-  updateSchedulesFromServer() {
+  private updateSchedulesFromServer() {
     this.accountService.getById(this.id)
       .pipe(first())
       .subscribe(account => {
 
-        this.accountService.getTasks()
+        this.accountService.getAllAgentTaskConfigs()
           .pipe(first())
           .subscribe({
             next: (value) => {
-              this.possibleTasks = value.functions;
+              this.agentTaskConfigs.set(value);
               this.initSchedules(account);
             },
             error: error => {
@@ -353,137 +390,88 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       });
   }
 
-  onDateChanged(event: any, schedule: Schedule) {
+  onDateChanged(event: any) {
     var dateTime = event.value;
     var t = typeof (dateTime === 'Date');
-
-    var newDate: Date = event.value.toDate(); // Convert moment to Date
-    schedule.newDate = newDate.setSeconds(0).toString();
-    //schedule.newDate.setSeconds(0); // Little trick which does what mat angular should have done - reset seconds
-    schedule.newUserFunction = schedule.userFunction;
-
-    this.updateSchedules(schedule);
   }
-  onUserFunctionChanged(event: any, schedule: Schedule) {
-    var funcName = event.value;
-    var t = typeof (funcName === 'string');
-
-    schedule.newUserFunction = event.value;
-    schedule.newDate = schedule.date;
-
-    this.updateSchedules(schedule);
+  onUserFunctionChanged(event: any) {
+    this.setupGroupTaskCtrl();
   }
 
-  onCleanerGroupPressed(event: any) {
+  private setupGroupTaskCtrl() {
+    this.isGroupTaskSelected ? this.f['groupTask'].enable() : this.f['groupTask'].disable();
+    this.uniqueGroups = [...new Set(this.account.userFunctions.slice().filter((f) => { return f.isGroup && f.userFunction == this.form.get('function').value; }).map((f) => {
+      return f.group;
+    }))];
+    if (this.uniqueGroups.length > 0) {
+      this.form.get('groupTask').setValue(this.uniqueGroups[0]);
+    }
+  }
+
+  onGroupButtonEntered(event: any) {
     console.log("You entered: ", event.target.value);
   }
 
-  updateSchedules(schedule: Schedule) {
-    this.isUpdating = true;
-    // reset alerts on submit
-    this.alertService.clear();
-
-    this.accountService.updateSchedule(this.account.id, schedule)
-      .pipe(first())
-      .subscribe({
-        next: (account) => {
-          console.log(account);
-          this.initSchedules(account);
-        },
-        complete: () => {
-          this.isUpdating = false;
-        },
-        error: error => {
-          this.alertService.error(error);
-          this.isUpdating = false;
-        }
-      });
+  onRowSelected(schedule: Schedule, tr: any, index: number, event: any) {
+    if (event.ctrlKey) {
+      if (schedule.highlighted) {
+        schedule.highlighted = false;
+        return;
+      }
+    }
+    this.selectRow(schedule);
   }
 
-  onRowSelected(schedule: Schedule, tr: any, index: number, event: any) {
-    schedule.highlighted = !schedule.highlighted;
-    this.currentSelectedSchedule = schedule;
+  private selectRow(schedule: Schedule) {
+    for (let index = 0; index < this.schedules.length; index++) {
+      const element = this.schedules[index];
+      if (element.highlighted)
+        element.highlighted = false;
 
-    if (event.ctrlKey) {
-      ScheduleAllocatorComponent.HighlightRow = ScheduleAllocatorComponent.HighlightRow == index ? -1 : index;
-    } else {
-      ScheduleAllocatorComponent.HighlightRow = index;//this.HighlightRow == index ? -1 : index;
+      if (this.isSameSchedule(schedule, element)) {
+        var pageNumber = Math.floor(index / this.paginator.pageSize);
+        this.paginator.pageIndex = pageNumber;
+
+        this.paginator.page.next({
+          pageIndex: pageNumber,
+          pageSize: this.paginator.pageSize,
+          length: this.paginator.length
+        });
+      }
     }
-
+    schedule.highlighted = true;
     if (!schedule.deleting) {
       var date = moment(schedule.date, Constants.dateTimeFormat).toDate();
       this.form.get('scheduledDate').setValue(date);
       this.form.get('function').setValue(schedule.userFunction);
+      this.setupGroupTaskCtrl();
       this.form.get('groupTask').setValue(schedule.scheduleGroup);
     }
-    if (this.lastSelectedSchedule != null) {
-      this.lastSelectedSchedule.highlighted = false;
-    }
-    this.lastSelectedSchedule = this.currentSelectedSchedule;
-
-    if (!schedule.highlighted) {
-      // If row is deselected mark both schedules as deselected(null);
-      this.lastSelectedSchedule = null;
-      this.currentSelectedSchedule = null;
-    }
   }
 
-  initSchedules(account: Account) {
-    var date =
-      this.schedules = account.schedules.slice();
-
-    this.dataSource = new MatTableDataSource(this.schedules);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-
+  private isSameSchedule(s1: Schedule, s2: Schedule) {
+    console.assert(s1 != null && s2 != null, "One of schedules is null");
+    return s1.date == s2.date && s1.userFunction == s2.userFunction && s1.scheduleGroup == s2.scheduleGroup;
   }
+
   sortData(sort: Sort) {
     TimeHandler.sortData(this.schedules, sort);
-    this.dataSource = new MatTableDataSource(this.schedules);
+    this.dataSource.data = this.schedules.slice();
   }
 
   get isAdmin() {
     return this.account.role == Role.Admin;
   }
   get isGroupTaskSelected() {
-    if(this.form == undefined)
-     return false;
-    for (let index = 0; index < this.possibleTasks.length; index++) {
-      const possibleTask = this.possibleTasks[index];
-      if(possibleTask.userFunction === this.form.get('function').value)
-      {
+    if (this.form == undefined)
+      return false;
+    for (let index = 0; index < this.agentTaskConfigs().length; index++) {
+      const possibleTask = this.agentTaskConfigs()[index];
+      if (possibleTask.agentTaskStr === this.form.get('function').value) {
+        console.log("task" + possibleTask.isGroup)
         return possibleTask.isGroup;
       }
     }
     return false;
   }
-  // get assignedGroup(): string {
-  //   const taskSelected = this.form.controls['function'].value;
-  //   var task = this.account.userFunctions.find((f) => {
-  //     return f.userFunction === taskSelected;
-  //   });
-  //   return (task != null && task != undefined) ? task.group : "";
-  // }
-  // onTaskChanged(event: MatSelectChange) {
-  //   var valueSelected = event.value;
-  //   if(this.isGroupTaskSelected) {
-  //     this.f["groupTask"].setValue(this.assignedGroup);
-  //   } else {
-  //     this.f["groupTask"].setValue("");
-  //   }
-  // }
-  // onGroupChanged(event: MatSelectChange) {
-  //   var valueSelected = event.value;
-  //   if(this.isGroupTaskSelected) {
-  //     this.f["groupTask"].setValue(this.assignedGroup);
-  //   } else {
-  //     this.f["groupTask"].setValue("");
-  //   }
-  // }
-  // get isReadOnly(): boolean {
-  //   return this.assignedGroup.length > 0;
-  // }
-  get staticHighlightRow() {
-    return ScheduleAllocatorComponent.HighlightRow;
-}
 }

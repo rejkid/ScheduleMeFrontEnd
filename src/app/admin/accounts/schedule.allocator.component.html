@@ -1,22 +1,19 @@
-
-
-    <form [formGroup]="form" *ngIf="isLoaded && !isAdmin">
+<form [formGroup]="form" *ngIf="isLoaded && !isAdmin">
     <div class="row">
         <div class="mb-3 col-5">
             <label>Define schedules for {{account.firstName}} {{account.lastName}}</label>
         </div>
     </div>
 
-    
     <fieldset>
-        <legend>Date & Duty:</legend>
+        <legend>Date & Tasks:</legend>
         <div class="container">
             <div class="row">
                 <div class="mb-3 col-6">
                     <mat-form-field appearance="outline">
                         <mat-label>Schedule</mat-label>
                         <input formControlName="scheduledDate" #ref matInput [ngxMatDatetimePicker]="picker"
-                            placeholder="Choose a date" required />
+                            placeholder="Choose a date" required (dateChange)="onDateChanged($event)"/>
                         <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                         <mat-hint>{{dateFormat}}</mat-hint>
                         <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
@@ -33,33 +30,35 @@
             <div class="row equal">
                 <div class="mb-3 col-3">
                     <mat-form-field appearance="outline">
-                        <mat-label>Duty</mat-label>
+                        <mat-label>Task</mat-label>
                         <mat-select formControlName="function"
-                            [ngClass]="{ 'is-invalid': submitted && f['function'].errors }"
-                            required>
+                            [ngClass]="{ 'is-invalid': submitted && f['function'].errors }" required
+                            (selectionChange)="onUserFunctionChanged($event)">
                             <mat-option *ngFor="let item of uniqueTasks" [value]=item>
                                 {{ item }}
                             </mat-option>
                         </mat-select>
                         <mat-error *ngIf="submitted && form.controls['function'].hasError('invalidFunction')"
                             class="alert alert-danger">
-                            Duty can't be empty
+                            Task can't be empty
                         </mat-error>
                     </mat-form-field>
                 </div>
-                <div class="mb-3 col-3" *ngIf=isGroupTaskSelected>
+                @if (isGroupTaskSelected) {
+                <div class="mb-3 col-3">
                     <mat-form-field appearance="outline">
-                        <!-- <mat-label>Team</mat-label> -->
+                        <mat-label>Group</mat-label>
                         <mat-select formControlName="groupTask"
-                            [ngClass]="{ 'is-invalid': submitted && f['groupTask'].errors }"
-                            required >
+                            [ngClass]="{ 'is-invalid': submitted && f['groupTask'].errors }" [disabled]="true" required>
                             <mat-option *ngFor="let item of uniqueGroups" [value]=item #groupDataCtrl>
                                 {{ item }}
                             </mat-option>
                         </mat-select>
-                        <mat-error *ngIf="f['groupTask'].enabled && f['groupTask'].hasError('required')">The field is required</mat-error>
+                        <mat-error *ngIf="f['groupTask'].enabled && f['groupTask'].hasError('required')">The field is
+                            required</mat-error>
                     </mat-form-field>
                 </div>
+                }
             </div>
         </div>
 
@@ -84,56 +83,31 @@
         </mat-form-field>
     </div>
 
-    <mat-table matSort #table [dataSource]="dataSource"  
-        class="user-table mat-elevation-z8" (matSortChange)="sortData($event)" >
+    <mat-table matSort #table [dataSource]="dataSource" class="user-table mat-elevation-z8"
+        (matSortChange)="sortData($event)">
 
-        <ng-container matColumnDef="date">
+        <ng-container matColumnDef="{{displayedColumns[0]}}">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
             <mat-cell *matCellDef="let schedule">
-                <!--mat-form-field appearance="outline"-->
-                <input type="text" matInput (dateChange)="onDateChanged($event, schedule)"
-                    [value]="schedule.date" readonly>
-
-                <!-- The code below adds date/time picker - which right now I don't want -->
-                <!-- <input matInput [ngxMatDatetimePicker]="picker" (dateChange)="onDateChanged($event, schedule)"
-                        [value]="schedule.date" [readonly]="true">
-                    <mat-datepicker-toggle matIconSuffix [for]="$any(picker)"></mat-datepicker-toggle>
-                    <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
-                        [stepMinute]="1" [stepSecond]="1" [touchUi]="true" [color]="color" [enableMeridian]="false"
-                        [disableMinute]="false" [hideTime]="false">
-                    </ngx-mat-datetime-picker> -->
-                <!--/mat-form-field-->
+                <input type="text" matInput  [value]="schedule.date"
+                    readonly>
             </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="userFunction">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Duty </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Task </mat-header-cell>
             <mat-cell *matCellDef="let schedule">
-                <!--mat-form-field appearance="outline"-->
-                <input type="text" #data matInput placeholder="None" [value]="schedule.userFunction"
-                    (selectionChange)="onUserFunctionChanged($event, schedule)" readonly />
-                <!-- <mat-select placeholder={{schedule.userFunction}} (selectionChange)="onUserFunctionChanged($event, schedule)">
-                        <mat-option *ngFor="let f of userFunctions" [value]="f.userFunction">
-                            {{ f.userFunction }}
-                        </mat-option>
-                    </mat-select> -->
-                <!--/mat-form-field-->
+                <input type="text" #data matInput placeholder="None" [value]="schedule.userFunction" readonly />
             </mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="scheduleGroup">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Team </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Group </mat-header-cell>
             <mat-cell *matCellDef="let i = index;let schedule">
-                <!--mat-form-field appearance="outline"-->
-                <span *ngIf="schedule.scheduleGroup == undefined">
-                    <input type="text" #data matInput placeholder="None" [value]=""
-                        (keydown.enter)="onCleanerGroupPressed($event)" readonly />
-                </span>
                 <span *ngIf="schedule.scheduleGroup != undefined">
                     <input type="text" #data matInput placeholder="None" [value]="schedule.scheduleGroup"
-                        (keydown.enter)="onCleanerGroupPressed($event)" readonly />
+                        (keydown.enter)="onGroupButtonEntered($event)" readonly />
                 </span>
-                <!--/mat-form-field-->
             </mat-cell>
         </ng-container>
 
@@ -148,9 +122,9 @@
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
-                    [ngClass]="{'highlighted': i == staticHighlightRow}" #tr (click)="onRowSelected(row, tr, i, $event)"
-                    (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
-        
+            [ngClass]="{'highlighted': row.highlighted}" #tr (click)="onRowSelected(row, tr, i, $event)"
+            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
+
 
     </mat-table>
 

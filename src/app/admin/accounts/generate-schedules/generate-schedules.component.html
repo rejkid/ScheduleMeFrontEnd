@@ -53,10 +53,10 @@
     </div>
     <div class=" mb-3 mx-0">
         @if(functionsLoaded) {
-        @for(item of functions | orderByDateOrFunction: 'userFunction': 'asc'; track item.userFunction; let index = $index) {
+        @for(item of functions | orderByDateOrFunction: 'userFunction': 'asc'; track item.agentTaskStr; let index = $index) {
         <div>
             <app-function-schedule (schedulesUpdatedEmitter)="onSchedulesUpdated($event)" #functionSchedule
-                [functionStr]=item.userFunction [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
+                [functionStr]=item.agentTaskStr [dateTimeStr]="getDateTimeStr()"></app-function-schedule>
         </div>
         }
     }
