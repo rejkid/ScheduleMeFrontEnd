@@ -53,7 +53,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     autoEmail: Boolean;
     isDeleting: boolean = false;
 
-    static pageSize: number = 30;
+    static pageSize: number;
 
     generatingSchedules: boolean = false;
     uploadProgress: number = 0;
@@ -65,7 +65,13 @@ export class ListComponent implements OnInit, AfterViewInit {
         private router: Router) {
 
     }
+    ngOnInit() {
+    }
     ngAfterViewInit(): void {
+        this.dataSource = new MatTableDataSource(this.accounts());
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+
         this.refreshList();
     }
 
@@ -78,32 +84,36 @@ export class ListComponent implements OnInit, AfterViewInit {
         }
         this.selectRow(contact, index);
     }
+    private sortInAscNameOrder() {
+        const sortState: Sort = { active: 'name', direction: 'asc' };
+        this.sort.active = sortState.active;
+        this.sort.direction = sortState.direction;
+        this.sort.sortChange.emit(sortState);
+    }
     private selectRow(contact: Account, index: number) {
         for (let index = 0; index < this.accounts().length; index++) {
             const element = this.accounts()[index];
             if (element.highlighted)
-              element.highlighted = false;
-      
+                element.highlighted = false;
+
             if (this.isSameAccount(contact, element)) {
-              var pageNumber = Math.floor(index / this.paginator.pageSize);
-              this.paginator.pageIndex = pageNumber;
-      
-              this.paginator.page.next({
-                pageIndex: pageNumber,
-                pageSize: this.paginator.pageSize,
-                length: this.paginator.length
-              });
+                var pageNumber = Math.floor(index / this.paginator.pageSize);
+                this.paginator.pageIndex = pageNumber;
+
+                this.paginator.page.next({
+                    pageIndex: pageNumber,
+                    pageSize: this.paginator.pageSize,
+                    length: this.paginator.length
+                });
             }
-          }
-          contact.highlighted = true;
+        }
+        contact.highlighted = true;
     }
-    isSameAccount(a1: Account, a2: any) : boolean {
+    isSameAccount(a1: Account, a2: any): boolean {
         console.assert(a1 != null && a2 != null, "One of the accounts is null");
         return a1.email == a2.email && a1.dob == a2.dob;
-        }
-
-    ngOnInit() {
     }
+
     /* I am not sure if we need 'input' parameter - keep it for now*/
     applyFilter(t: any, input: any) {
         const target = t as HTMLTextAreaElement;
@@ -117,11 +127,9 @@ export class ListComponent implements OnInit, AfterViewInit {
             .pipe(first())
             .subscribe(accounts => {
                 this.accounts.set(accounts);
-
-
-                this.dataSource = new MatTableDataSource(this.accounts());
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
+                this.dataSource.data = this.accounts();
+                // Initial sort by 'name' is asc order
+                this.sortInAscNameOrder();
 
             });
         this.accountService.getAutoEmail()
@@ -234,8 +242,8 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
     onChange(event: any) {
         ListComponent.pageSize = event.pageSize;
-      }
-    
+    }
+
     sortData($event: Sort) {
         if ($event.active == this.displayedColumns[0]) {
             this.accounts().sort((a, b) => {
@@ -257,7 +265,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
     get pageSize() {
         return ListComponent.pageSize;
-      }
     }
+}
 
 

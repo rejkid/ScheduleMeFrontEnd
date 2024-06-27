@@ -39,8 +39,6 @@ export class TimeHandler {
     }
     
     static sortData(dateSort : SortableDate[], sort: Sort) {
-        
-
         if (!sort.active || sort.direction == '') {
           return;
         }
@@ -56,7 +54,7 @@ export class TimeHandler {
             return isAsc ? -1 : 1;
           } else if (date1 > date2) {
             console.log("date1 is later than date2");
-            return isAsc ? 1 : -1;;
+            return isAsc ? 1 : -1;
           } else {
             console.log("date1 and date2 are the same");
             return 0;

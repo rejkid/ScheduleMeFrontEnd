@@ -23,7 +23,7 @@ import { Constants } from '../../constants';
 
 const COLUMNS_SCHEMA = [
   {
-    key: "Date",
+    key: "date",
     type: "text",
     label: "Date"
   },
