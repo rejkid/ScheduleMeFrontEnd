@@ -163,7 +163,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 }
             });
     }
-    public onChangeHandler(event: any, tr: any) {
+    public onChangeAutoEmail(event: any, tr: any) {
         this.accountService.setAutoEmail(new Boolean(event.target.checked))
             .pipe(first())
             .subscribe({
