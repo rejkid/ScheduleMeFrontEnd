@@ -46,10 +46,6 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   isLoaded: boolean = false;
   isAdding: boolean = false;
 
-  currentSelectedAccount: TimeSlotsTasks = null;
-  lastSelectedAccount: TimeSlotsTasks = null;
-
-
   dataSource: MatTableDataSource<TimeSlotsTasks>;
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
   columnsSchema: any = COLUMNS_SCHEMA;
@@ -240,25 +236,42 @@ export class TimeSlotTasksEditorComponent implements OnInit {
     }
     return newArr;
   }
-  onRowSelected(slot: TimeSlotsTasks, tr: any, index: number) {
+  onRowSelected(slot: TimeSlotsTasks, tr: any, index: number, event: any) {
+    if (event.ctrlKey) {
+      if (slot.highlighted) {
+        slot.highlighted = false;
+        return;
+      }
+    }
     this.selectRow(slot);
   }
 
   private selectRow(slot: TimeSlotsTasks) {
-    this.setTasksCounters(slot);
-    slot.highlighted = !slot.highlighted;
-    this.currentSelectedAccount = slot;
+    for (let index = 0; index < this.timeSlots().length; index++) {
+      const element = this.timeSlots()[index];
+      if (element.highlighted)
+        element.highlighted = false;
 
-    if (this.lastSelectedAccount != null) {
-      this.lastSelectedAccount.highlighted = false;
-    }
-    this.lastSelectedAccount = this.currentSelectedAccount;
+      if (this.isSameTimeSlot(slot, element)) {
+        var pageNumber = Math.floor(index / this.paginator.pageSize);
+        this.paginator.pageIndex = pageNumber;
 
-    if (!slot.highlighted) {
-      // If row is deselected mark both schedules as deselected(null);
-      this.lastSelectedAccount = null;
-      this.currentSelectedAccount = null;
+        this.paginator.page.next({
+          pageIndex: pageNumber,
+          pageSize: this.paginator.pageSize,
+          length: this.paginator.length
+        });
+      }
     }
+
+    slot.highlighted = true;
+    if (!slot.isDeleting) {
+      this.setTasksCounters(slot);
+    }
+  }
+  isSameTimeSlot(s1: TimeSlotsTasks, s2: TimeSlotsTasks) : boolean {
+    console.assert(s1 != null && s2 != null, "One or both of the time slots is null");
+    return s1.date == s2.date;
   }
 
   setTasksCounters(slot: TimeSlotsTasks) {

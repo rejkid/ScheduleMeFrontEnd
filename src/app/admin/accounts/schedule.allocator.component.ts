@@ -449,7 +449,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private isSameSchedule(s1: Schedule, s2: Schedule) {
+  private isSameSchedule(s1: Schedule, s2: Schedule) : boolean {
     console.assert(s1 != null && s2 != null, "One of schedules is null");
     return s1.date == s2.date && s1.userFunction == s2.userFunction && s1.scheduleGroup == s2.scheduleGroup;
   }

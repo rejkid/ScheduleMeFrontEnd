@@ -52,11 +52,8 @@ export class ListComponent implements OnInit, AfterViewInit {
     accounts = signal<Account[]>([]);
     autoEmail: Boolean;
     isDeleting: boolean = false;
-    static HighlightRow: Number = -1;
 
-    currentSelectedContact: Account = null;
-    lastSelectedContact: Account = null;
-    highlighted: boolean;
+    static pageSize: number = 30;
 
     generatingSchedules: boolean = false;
     uploadProgress: number = 0;
@@ -72,35 +69,40 @@ export class ListComponent implements OnInit, AfterViewInit {
         this.refreshList();
     }
 
-    clickedRow(contact: Account, input: any, index: number, event: MouseEvent) {
-
+    onRowSelected(contact: Account, input: any, index: number, event: MouseEvent) {
         if (event.ctrlKey) {
-            ListComponent.HighlightRow = ListComponent.HighlightRow == index ? -1 : index;
-        } else {
-            ListComponent.HighlightRow = index;//this.HighlightRow == index ? -1 : index;
+            if (contact.highlighted) {
+                contact.highlighted = false;
+                return;
+            }
         }
-
-        contact.highlighted = !contact.highlighted;
-        this.currentSelectedContact = contact;
-
-        if (this.lastSelectedContact != null) {
-            this.lastSelectedContact.highlighted = false;
-        }
-        this.lastSelectedContact = this.currentSelectedContact;
-
-        if (!contact.highlighted) {
-            // If row is deselected mark both contacts as deselected(null);
-            this.lastSelectedContact = null;
-            this.currentSelectedContact = null;
-        }
-        console.log("clickedRow: row == this.staticHighlightRow: " + (index == this.staticHighlightRow));
+        this.selectRow(contact, index);
     }
-    get staticHighlightRow() {
-        return ListComponent.HighlightRow;
+    private selectRow(contact: Account, index: number) {
+        for (let index = 0; index < this.accounts().length; index++) {
+            const element = this.accounts()[index];
+            if (element.highlighted)
+              element.highlighted = false;
+      
+            if (this.isSameAccount(contact, element)) {
+              var pageNumber = Math.floor(index / this.paginator.pageSize);
+              this.paginator.pageIndex = pageNumber;
+      
+              this.paginator.page.next({
+                pageIndex: pageNumber,
+                pageSize: this.paginator.pageSize,
+                length: this.paginator.length
+              });
+            }
+          }
+          contact.highlighted = true;
     }
+    isSameAccount(a1: Account, a2: any) : boolean {
+        console.assert(a1 != null && a2 != null, "One of the accounts is null");
+        return a1.email == a2.email && a1.dob == a2.dob;
+        }
+
     ngOnInit() {
-        //this.refreshList();
-
     }
     /* I am not sure if we need 'input' parameter - keep it for now*/
     applyFilter(t: any, input: any) {
@@ -230,26 +232,32 @@ export class ListComponent implements OnInit, AfterViewInit {
             }
         );
     }
-    sortData($event: Sort) {
-        if ($event.active == this.displayedColumns[0]) {
-          this.accounts().sort((a, b) => {
-            if ($event.direction == 'asc' as SortDirection) {
-              return a.firstName.localeCompare(b.firstName);
-            } else {
-              return b.firstName.localeCompare(a.firstName);
-            }
-          });
-        } else if ($event.active == this.displayedColumns[1]) {
-          this.accounts().sort((a, b) => {
-            if ($event.direction == 'asc' as SortDirection) {
-              return Number(a.email) - Number(b.email);
-            } else {
-              return Number(b.email) - Number(a.email);;
-            }
-          });
-        }
+    onChange(event: any) {
+        ListComponent.pageSize = event.pageSize;
       }
     
-}
+    sortData($event: Sort) {
+        if ($event.active == this.displayedColumns[0]) {
+            this.accounts().sort((a, b) => {
+                if ($event.direction == 'asc' as SortDirection) {
+                    return a.firstName.localeCompare(b.firstName);
+                } else {
+                    return b.firstName.localeCompare(a.firstName);
+                }
+            });
+        } else if ($event.active == this.displayedColumns[1]) {
+            this.accounts().sort((a, b) => {
+                if ($event.direction == 'asc' as SortDirection) {
+                    return Number(a.email) - Number(b.email);
+                } else {
+                    return Number(b.email) - Number(a.email);;
+                }
+            });
+        }
+    }
+    get pageSize() {
+        return ListComponent.pageSize;
+      }
+    }
 
 
