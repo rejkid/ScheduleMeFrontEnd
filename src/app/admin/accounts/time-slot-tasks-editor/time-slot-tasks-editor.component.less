@@ -1,18 +1,13 @@
-.highlighted {
-    background: var(--bg-color);
-}
-
-.mat-mdc-table .mat-mdc-row:hover,
-.mat-mdc-table .mat-mdc-footer-row:hover {
-    background: var(--bg-color);
-}
-:host {
-    --bg-color: rgba(100, 100, 100, .5);
-}
-
 fieldset {
     margin: 8px;
     border: 4px solid silver;
     padding: 8px;
     border-radius: 4px;
+  }
+  // Defs for highlight selected row in material table
+:host {
+    --bg-color: rgba(100, 100, 100, .5);
+  }
+  .highlighted {
+    background: var(--bg-color);
   }

@@ -31,7 +31,7 @@
     <div class="col-12">
         <fieldset style="overflow:auto">
             <legend>Agent Task Names</legend>
-            <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+            <mat-table #table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
                 <ng-container matColumnDef="{{displayedColumns[0]}}">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[0]}} </mat-header-cell>
                     <mat-cell *matCellDef="let row">
@@ -61,7 +61,7 @@
                     [ngClass]="{'highlighted': i == staticHighlightRow}" #tr (click)="onRowSelected(row, tr, i, $event)"
                     (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
             </mat-table>
-            <mat-paginator #paginator [length]="agentTaskConfigs().length" pageSize={{pageSize}} (page)="onChange($event)" [pageSizeOptions]="[5,10, 20, 50, 100]"
+            <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="agentTaskConfigs().length" pageSize={{pageSize}} (page)="onChange($event)" [pageSizeOptions]="[5,10, 20, 50, 100]"
                 showFirstLastButtons>
             </mat-paginator>
         </fieldset>

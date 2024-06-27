@@ -49,7 +49,7 @@
     <div class="col-12">
         <fieldset style="overflow:auto">
             <legend>Schedule Dates</legend>
-            <mat-table #table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+            <mat-table #table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
                 <ng-container matColumnDef="{{displayedColumns[0]}}">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[0]}} </mat-header-cell>
                     <mat-cell *matCellDef="let row">
@@ -73,16 +73,13 @@
                     </mat-cell>
                 </ng-container>
 
-
-
-
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
                     [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr
                     (click)="onRowSelected(row, tr, i, $event)" (mouseover)="row.hovered = true"
                     (mouseout)="row.hovered = false"></mat-row>
             </mat-table>
-            <mat-paginator #paginator [length]="timeSlots().length" [pageSizeOptions]="[5,10, 20, 50, 100]"
+            <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="timeSlots().length" [pageSizeOptions]="[5,10, 20, 50, 100]"
                 showFirstLastButtons>
             </mat-paginator>
         </fieldset>

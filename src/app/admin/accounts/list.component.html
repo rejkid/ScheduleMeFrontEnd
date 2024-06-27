@@ -39,28 +39,44 @@
                             <li class="nav-item mt-2">
                                 <button routerLink="agenttaskdefinition-edit" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
-                                    title="Define Agent Tasks" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list-task" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5zM3 3H2v1h1z"/>
-                                        <path d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1z"/>
-                                        <path fill-rule="evenodd" d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5zM2 7h1v1H2zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm1 .5H2v1h1z"/>
-                                      </svg>&nbsp;Define Tasks</button>
+                                    title="Define Agent Tasks"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                                        class="bi bi-list-task" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M2 2.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5V3a.5.5 0 0 0-.5-.5zM3 3H2v1h1z" />
+                                        <path
+                                            d="M5 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M5.5 7a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1zm0 4a.5.5 0 0 0 0 1h9a.5.5 0 0 0 0-1z" />
+                                        <path fill-rule="evenodd"
+                                            d="M1.5 7a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5zM2 7h1v1H2zm0 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm1 .5H2v1h1z" />
+                                    </svg>&nbsp;Define Tasks</button>
                             </li>
 
                             <li class="nav-item dropdown">
                                 <a class=" dropdown-toggle btn3d btn btn-sm btn-primary mb-2" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-expanded="false" data-placement="top"
-                                    title="Import Accounts or Time Slots" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" 
-                                    viewBox="0 0 20 25" version="1.1" x="0px" y="0px"><title>Import</title><desc>Created with Sketch.</desc>
-                                    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-50.000000, -50.000000)" 
-                                        fill="#000000"><g transform="translate(20.000000, 50.000000)">
-                                            <path d="M32,17.0024554 C32,17.553384 32.4446309,18 33.0008717,18 L46.9991283,18 C47.5518945,18 
+                                    title="Import Accounts or Time Slots"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                        width="32" height="32" viewBox="0 0 20 25" version="1.1" x="0px" y="0px">
+                                        <title>Import</title>
+                                        <desc>Created with Sketch.</desc>
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <g transform="translate(-50.000000, -50.000000)" fill="#000000">
+                                                <g transform="translate(20.000000, 50.000000)">
+                                                    <path
+                                                        d="M32,17.0024554 C32,17.553384 32.4446309,18 33.0008717,18 L46.9991283,18 C47.5518945,18 
                                             48,17.5536886 48,17.0024554 L48,9.99754465 C48,9.44661595 47.5561352,9 47,9 C46.4477153,9 46,9.43788135 
                                             46,10.0029293 L46,16 L34,16 L34,10.0029293 C34,9.44902676 33.5561352,9 33,9 C32.4477153,9 32,9.4463114 
-                                            32,9.99754465 L32,17.0024554 Z M40,2 C39.4477153,2 39,2.43788135 39,3.00292933 L39,9 L36.9989566,9 C36.4472481,9 36.3138733,9.31387329 36.7059121,9.70591205 L40,13 L43.2940879,9.70591205 C43.6839524,9.31604759 43.5573397,9 43.0010434,9 L41,9 L41,3.00292933 C41,2.44902676 40.5561352,2 40,2 Z"/>
-                                        </g></g></g><text x="0" y="35" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created by Keller</text>
-                                        <text x="0" y="40" fill="#000000" font-size="5px" font-weight="bold" font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from the Noun Project</text>
+                                            32,9.99754465 L32,17.0024554 Z M40,2 C39.4477153,2 39,2.43788135 39,3.00292933 L39,9 L36.9989566,9 C36.4472481,9 36.3138733,9.31387329 36.7059121,9.70591205 L40,13 L43.2940879,9.70591205 C43.6839524,9.31604759 43.5573397,9 43.0010434,9 L41,9 L41,3.00292933 C41,2.44902676 40.5561352,2 40,2 Z" />
+                                                </g>
+                                            </g>
+                                        </g><text x="0" y="35" fill="#000000" font-size="5px" font-weight="bold"
+                                            font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">Created
+                                            by Keller</text>
+                                        <text x="0" y="40" fill="#000000" font-size="5px" font-weight="bold"
+                                            font-family="'Helvetica Neue', Helvetica, Arial-Unicode, Arial, Sans-serif">from
+                                            the Noun Project</text>
                                     </svg>&emsp;Import
                                 </a>
                                 <ul class="dropdown-menu">
@@ -94,7 +110,8 @@
                             <li class="nav-item">
                                 <button routerLink="./" (click)="onDeleteAllUserAccounts($event)" type="button"
                                     class="btn3d btn btn-sm btn-danger mb-2" data-placement="top"
-                                    title="Delete Accounts" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}" >
+                                    title="Delete Accounts"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-file-earmark-person" viewBox="0 0 16 16">
                                         <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -106,7 +123,8 @@
                             </li>
                             <li class="nav-item">
                                 <button routerLink="add-edit/add" class="btn3d btn btn-sm btn-primary mb-2"
-                                    data-placement="top" title="Create Account" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
+                                    data-placement="top" title="Create Account"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-file-earmark-person" viewBox="0 0 16 16">
                                         <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -117,7 +135,8 @@
                             <li class="nav-item">
                                 <button routerLink="timeslotstasks-edit" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
-                                    title="Create Time Slots" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
+                                    title="Create Time Slots"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-clock" viewBox="0 0 16 16">
                                         <path
@@ -129,7 +148,8 @@
                             <li class="nav-item">
                                 <button routerLink="." (click)="generateSchedules()" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
-                                    title="Generate Schedules" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
+                                    title="Generate Schedules"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-journals" viewBox="0 0 16 16">
                                         <path
@@ -141,7 +161,8 @@
                             <li class="nav-item">
                                 <button routerLink="schedule-modify" type="button"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-toggle="tooltip" data-placement="top"
-                                    title="View\Edit Schedules" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
+                                    title="View\Edit Schedules"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd"
@@ -154,7 +175,8 @@
                             <li class="nav-item mb-2">
                                 <button type="button" (click)="downloadSchedules($event)"
                                     class="btn3d btn btn-sm btn-primary mb-2" data-placement="top"
-                                    title="View Schedules in .pdf format" [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
+                                    title="View Schedules in .pdf format"
+                                    [ngClass]="{'disabled' : generatingSchedules || downloadingSchedules}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
                                         class="bi bi-download" viewBox="0 0 16 16">
                                         <path
@@ -174,12 +196,13 @@
                             <input matInput (keyup)="applyFilter($event.target, input)" placeholder="Search columns"
                                 #input>
                         </mat-form-field>
-                        <mat-table matSort class="lessons-table mat-elevation-z8" [dataSource]="dataSource" (matSortChange)="sortData($event)">
+                        <mat-table matSort class="lessons-table mat-elevation-z8" [dataSource]="dataSource"
+                            (matSortChange)="sortData($event)" >
                             <ng-container matColumnDef="{{displayedColumns[0]}}">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                                 <mat-cell *matCellDef="let account">
-                                    <input type="text" matInput
-                                        [value]="account.firstName+' '+account.lastName" readonly />
+                                    <input type="text" matInput [value]="account.firstName+' '+account.lastName"
+                                        readonly />
                                 </mat-cell>
                             </ng-container>
 
@@ -208,7 +231,8 @@
                                 <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                                 <mat-cell *matCellDef="let account">
 
-                                    <button routerLink="add-edit/edit/{{account.id}}" [disabled]="!account.isVerified || generatingSchedules || downloadingSchedules"
+                                    <button routerLink="add-edit/edit/{{account.id}}"
+                                        [disabled]="!account.isVerified || generatingSchedules || downloadingSchedules"
                                         class="btn btn-sm btn-primary mr-1 btn3d">Edit</button>
                                     <button (click)="deleteAccount(account.id)"
                                         class="btn btn-sm btn-danger btn-delete-account btn3d"
@@ -229,8 +253,9 @@
                                 (mouseout)="row.hovered = false"></mat-row>
 
                         </mat-table>
-                        <mat-paginator #paginator pageSize={{pageSize}} [length]="accounts().length" [pageSizeOptions]="[10, 30, 50, 100]"
-                            showFirstLastButtons (page)="onChange($event)">
+                        <mat-paginator #paginator class="lessons-table mat-elevation-z8" pageSize={{pageSize}}
+                            [length]="accounts().length" [pageSizeOptions]="[10, 30, 50, 100]" showFirstLastButtons
+                            (page)="onChange($event)">
                         </mat-paginator>
                     </form>
                 </div>

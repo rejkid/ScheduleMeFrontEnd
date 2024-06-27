@@ -45,7 +45,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     @ViewChild('paginator') paginator!: MatPaginator;
     @ViewChild(MatSort) sort!: MatSort;
 
-    dataSource: MatTableDataSource<Account>;
+    dataSource: MatTableDataSource<Account> = new MatTableDataSource();
     displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
     columnsSchema: any = COLUMNS_SCHEMA;
 
@@ -68,7 +68,6 @@ export class ListComponent implements OnInit, AfterViewInit {
     ngOnInit() {
     }
     ngAfterViewInit(): void {
-        this.dataSource = new MatTableDataSource(this.accounts());
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 

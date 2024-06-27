@@ -83,7 +83,7 @@
         </mat-form-field>
     </div>
 
-    <mat-table matSort #table [dataSource]="dataSource" class="user-table mat-elevation-z8"
+    <mat-table matSort #table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" 
         (matSortChange)="sortData($event)">
 
         <ng-container matColumnDef="{{displayedColumns[0]}}">
@@ -128,7 +128,7 @@
 
     </mat-table>
 
-    <mat-paginator #paginator [length]="schedules.length" [pageSizeOptions]="[5, 30, 50, 100]" showFirstLastButtons>
+    <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="schedules.length" [pageSizeOptions]="[5, 30, 50, 100]" showFirstLastButtons>
     </mat-paginator>
 </fieldset>
 

@@ -5,17 +5,6 @@
   display: -webkit-flex; /* Safari */     
   display: flex; /* Standard syntax */
 }
-:host {
-  --bg-color: rgba(100, 100, 100, .5);
-
-}
-.highlighted {
-  background: var(--bg-color);
-}
-.mat-mdc-table .mat-mdc-row:hover,
-.mat-mdc-table .mat-mdc-footer-row:hover {
-    background: var(--bg-color);
-}
 
 // Defs for fieldset & legend
 fieldset {
@@ -29,4 +18,12 @@ legend {
   background-color: #000;
   color: #fff;
   padding: 3px 6px;
+}
+
+// Defs for highlight selected row in material table
+:host {
+  --bg-color: rgba(100, 100, 100, .5);
+}
+.highlighted {
+  background: var(--bg-color);
 }

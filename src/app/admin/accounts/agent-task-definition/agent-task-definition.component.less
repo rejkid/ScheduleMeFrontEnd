@@ -28,16 +28,10 @@ fieldset {
     margin-top: 4px;
   }
 
-  /* Row selection setup*/
-  :host {
-    --bg-color: rgba(100, 100, 100, .5);
+// Defs for highlight selected row in material table
+:host {
+  --bg-color: rgba(100, 100, 100, .5);
 }
-
 .highlighted {
-    background: var(--bg-color);
-}
-
-.mat-mdc-table .mat-mdc-row:hover,
-.mat-mdc-table .mat-mdc-footer-row:hover {
-    background: var(--bg-color);
+  background: var(--bg-color);
 }

@@ -2,9 +2,38 @@
 //@import '~@angular/material/prebuilt-themes/indigo-pink.css';
 /* @import "../node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css"; */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+	height: 100%;
+}
 
+body {
+	margin: 0;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Defs for Material Table setup */
+.mat-mdc-row .mat-mdc-cell {
+	border-bottom: 1px solid transparent;
+	border-top: 1px solid transparent;
+	cursor: pointer;
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+	border-color: currentColor;
+}
+
+.demo-row-is-clicked {
+	font-weight: bold;
+}
+
+// Defs for highlight selected row in material table
+// :host {
+//     --bg-color: rgba(100, 100, 100, .5);
+// }
+.selected {
+    background:  rgba(100, 100, 100, .5);
+}
 
 // Defs for buttons
 .btn3d {
