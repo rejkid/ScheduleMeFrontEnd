@@ -23,7 +23,7 @@ import { Constants } from '../../constants';
 
 const COLUMNS_SCHEMA = [
   {
-    key: "date",
+    key: "scheduleDate",
     type: "text",
     label: "Date"
   },
@@ -237,7 +237,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   }
 
   private sortInAscDateOrder() {
-    const sortState: Sort = { active: 'Date', direction: 'asc' };
+    const sortState: Sort = { active: 'scheduleDate', direction: 'asc' };
     this.sort.active = sortState.active;
     this.sort.direction = sortState.direction;
     this.sort.sortChange.emit(sortState);
