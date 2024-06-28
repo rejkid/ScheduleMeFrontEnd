@@ -2,19 +2,17 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable, Sort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { first } from 'rxjs/operators';
+import { TimeHandler } from 'src/app/_helpers/time.handler';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
 import { ScheduleDateTimes } from 'src/app/_models/scheduledatetimes';
-import { Team } from 'src/app/_models/team';
-import { DateFunctionTeams } from 'src/app/_models/teams';
 import { AccountService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { GenerateSchedulesComponent } from '../generate-schedules/generate-schedules.component';
-import { TimeHandler } from 'src/app/_helpers/time.handler';
 const COLUMNS_SCHEMA = [
   {
     key: "date",
@@ -59,6 +57,8 @@ export class MainSchedulerComponent {
   lastSelectedAccount: ScheduleDateTime = null;
   highlighted: boolean;
   futureScheduleDates: ScheduleDateTime[] = [];
+
+  static pageSize: number;
 
   constructor(private accountService: AccountService,
     private formBuilder: FormBuilder) {
@@ -106,7 +106,7 @@ export class MainSchedulerComponent {
             var aDate = moment(a.date, Constants.dateTimeFormat).toDate();
             var bDate = moment(b.date, Constants.dateTimeFormat).toDate();
             if (aDate > bDate) return 1;
-              else if (aDate < bDate) return -1;
+            else if (aDate < bDate) return -1;
             else
               return 0
           });
@@ -137,11 +137,11 @@ export class MainSchedulerComponent {
           this.isLoaded = true;
 
           /* Set up selected row if still exists*/
-          if(this.currentSelectedAccount != null) {
-            var id = this.currentSelectedAccount.id ;
-            var selected = this.futureScheduleDates.filter(function(item) { return item.id == id});
+          if (this.currentSelectedAccount != null) {
+            var id = this.currentSelectedAccount.id;
+            var selected = this.futureScheduleDates.filter(function (item) { return item.id == id });
             /* selected.length == 0 if user selected and deleted row in Schedules - top screen table */
-            if(selected != null && selected.length == 1) {
+            if (selected != null && selected.length == 1) {
               selected[0].highlighted = this.currentSelectedAccount.highlighted;
             }
           }
@@ -171,6 +171,10 @@ export class MainSchedulerComponent {
   onSchedulesUpdated(data: FunctionScheduleData) {
     this.getAllDates();
   }
+  onChangePageProperties(event: any) {
+    MainSchedulerComponent.pageSize = event.pageSize;
+  }
+
   onRowSelected(scheduleDateTime: ScheduleDateTime) {
     console.log("MainSchedulerComponent row selected");
 
@@ -225,5 +229,8 @@ export class MainSchedulerComponent {
     console.log("MainSchedulerComponent deleting called");
     data.isDeleting = true;
     this.generateScheduleComponent.onDeleteSchedules(event, data);
+  }
+  get pageSize() {
+    return MainSchedulerComponent.pageSize;
   }
 }

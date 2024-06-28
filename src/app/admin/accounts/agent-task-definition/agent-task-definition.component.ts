@@ -171,7 +171,7 @@ export class AgentTaskDefinitionComponent implements OnInit {
       }
     });
   }
-  onChange(event: any) {
+  onChangePageProperties(event: any) {
     AgentTaskDefinitionComponent.pageSize = event.pageSize;
   }
   sortData($event: Sort) {

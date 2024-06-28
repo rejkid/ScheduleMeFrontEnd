@@ -82,6 +82,8 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
   isInitializing: boolean = true;
   string2UserMap: Map<string, User> = new Map<string, User>();
 
+  static pageSize: number;
+
   constructor(private accountService: AccountService,
     private route: ActivatedRoute,
     private router: Router,
@@ -319,5 +321,11 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
       this.lastSelectedUser = null;
       this.currentSelectedUser = null;
     }
+  }
+  onChangePageProperties(event: any) {
+    FunctionScheduleComponent.pageSize = event.pageSize;
+  }
+  get pageSize() {
+    return FunctionScheduleComponent.pageSize;
   }
 }

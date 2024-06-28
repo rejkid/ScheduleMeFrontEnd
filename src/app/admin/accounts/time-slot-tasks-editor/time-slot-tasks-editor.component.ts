@@ -46,6 +46,8 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   isLoaded: boolean = false;
   isAdding: boolean = false;
 
+  static pageSize: number;
+  
   dataSource: MatTableDataSource<TimeSlotsTasks>;
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
   columnsSchema: any = COLUMNS_SCHEMA;
@@ -303,4 +305,11 @@ export class TimeSlotTasksEditorComponent implements OnInit {
     var date = moment(event.value).format(this.dateTimeFormat)
     console.log(date);
   }
+  onChangePageProperties(event: any) {
+    TimeSlotTasksEditorComponent.pageSize = event.pageSize;
+  }
+  get pageSize() {
+    return TimeSlotTasksEditorComponent.pageSize;
+  }
+
 }

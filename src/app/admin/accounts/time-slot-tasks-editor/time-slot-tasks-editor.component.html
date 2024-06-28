@@ -80,7 +80,7 @@
                     (mouseout)="row.hovered = false"></mat-row>
             </mat-table>
             <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="timeSlots().length" [pageSizeOptions]="[5,10, 20, 50, 100]"
-                showFirstLastButtons>
+            pageSize={{pageSize}} (page)="onChangePageProperties($event)" showFirstLastButtons>
             </mat-paginator>
         </fieldset>
 

@@ -34,6 +34,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   functions: AgentTaskConfig[] = [];
   isLoaded: boolean;
   fComponents: FunctionScheduleComponent[] = [];
+
   static functions2SchedulesMap: Map<FunctionScheduleComponent, User[]> = new Map<FunctionScheduleComponent, User[]>();
 
   functionsLoaded: boolean = true;

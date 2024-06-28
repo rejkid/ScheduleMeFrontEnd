@@ -19,7 +19,7 @@
             <input matInput (keyup)="onApplyFilter($event.target, input)" placeholder="Search columns" #input>
         </mat-form-field>
     </div> -->
-    <mat-table #table [dataSource]="dataSource" matSort>
+    <mat-table #table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="firstName">
             <mat-header-cell *matHeaderCellDef mat-sort-header> First Name </mat-header-cell>
             <mat-cell *matCellDef="let user">
@@ -69,8 +69,8 @@
             (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
     </mat-table>
 
-    <mat-paginator #paginator [length]="accounts4DateAndFunction.length" [pageSizeOptions]="[5, 10, 30, 50]"
-        showFirstLastButtons>
+    <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="accounts4DateAndFunction.length" [pageSizeOptions]="[5, 10, 30, 50]"
+        showFirstLastButtons pageSize={{pageSize}} (page)="onChangePageProperties($event)">
     </mat-paginator>
 
     <button #button type="button" [ngClass]="{ 'disabled': accounts4DateAndFunction.length <= 0 }"

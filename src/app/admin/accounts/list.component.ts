@@ -1,6 +1,6 @@
 ﻿import { ViewportScroller } from '@angular/common';
 import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -45,7 +45,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     @ViewChild('paginator') paginator!: MatPaginator;
     @ViewChild(MatSort) sort!: MatSort;
 
-    dataSource: MatTableDataSource<Account> = new MatTableDataSource();
+    dataSource: MatTableDataSource<Account>;
     displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
     columnsSchema: any = COLUMNS_SCHEMA;
 
@@ -54,6 +54,7 @@ export class ListComponent implements OnInit, AfterViewInit {
     isDeleting: boolean = false;
 
     static pageSize: number;
+    static pageIndex: number;
 
     generatingSchedules: boolean = false;
     uploadProgress: number = 0;
@@ -68,10 +69,13 @@ export class ListComponent implements OnInit, AfterViewInit {
     ngOnInit() {
     }
     ngAfterViewInit(): void {
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-
-        this.refreshList();
+        setTimeout(() => {
+            this.dataSource = new MatTableDataSource();
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+    
+            this.refreshList();
+           }, 0);
     }
 
     onRowSelected(contact: Account, input: any, index: number, event: MouseEvent) {
@@ -103,7 +107,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                     pageIndex: pageNumber,
                     pageSize: this.paginator.pageSize,
                     length: this.paginator.length
-                });
+                } as PageEvent);
             }
         }
         contact.highlighted = true;
@@ -127,6 +131,9 @@ export class ListComponent implements OnInit, AfterViewInit {
             .subscribe(accounts => {
                 this.accounts.set(accounts);
                 this.dataSource.data = this.accounts();
+                this.paginator.pageIndex = ListComponent.pageIndex;
+                this.paginator.pageSize = ListComponent.pageSize;
+    
                 // Initial sort by 'name' is asc order
                 this.sortInAscNameOrder();
 
@@ -239,8 +246,9 @@ export class ListComponent implements OnInit, AfterViewInit {
             }
         );
     }
-    onChange(event: any) {
+    onChangePageSettings(event: PageEvent ) {
         ListComponent.pageSize = event.pageSize;
+        ListComponent.pageIndex = event.pageIndex;
     }
 
     sortData($event: Sort) {
@@ -264,6 +272,9 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
     get pageSize() {
         return ListComponent.pageSize;
+    }
+    get pageIndex() {
+        return ListComponent.pageIndex;
     }
 }
 

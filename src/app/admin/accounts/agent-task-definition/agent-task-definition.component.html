@@ -61,7 +61,7 @@
                     [ngClass]="{'highlighted': i == staticHighlightRow}" #tr (click)="onRowSelected(row, tr, i, $event)"
                     (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
             </mat-table>
-            <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="agentTaskConfigs().length" pageSize={{pageSize}} (page)="onChange($event)" [pageSizeOptions]="[5,10, 20, 50, 100]"
+            <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="agentTaskConfigs().length" pageSize={{pageSize}} (page)="onChangePageProperties($event)" [pageSizeOptions]="[5,10, 20, 50, 100]"
                 showFirstLastButtons>
             </mat-paginator>
         </fieldset>

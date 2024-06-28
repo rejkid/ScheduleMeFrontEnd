@@ -253,9 +253,9 @@
                                 (mouseout)="row.hovered = false"></mat-row>
 
                         </mat-table>
-                        <mat-paginator #paginator class="lessons-table mat-elevation-z8" pageSize={{pageSize}}
+                        <mat-paginator #paginator class="lessons-table mat-elevation-z8" pageSize={{pageSize}} pageIndex={{pageIndex}}
                             [length]="accounts().length" [pageSizeOptions]="[10, 30, 50, 100]" showFirstLastButtons
-                            (page)="onChange($event)">
+                            (page)="onChangePageSettings($event)">
                         </mat-paginator>
                     </form>
                 </div>
