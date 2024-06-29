@@ -1,5 +1,5 @@
 
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -15,7 +15,7 @@ import { Constants } from 'src/app/constants';
 import { GenerateSchedulesComponent } from '../generate-schedules/generate-schedules.component';
 const COLUMNS_SCHEMA = [
   {
-    key: "date",
+    key: "scheduleDate",
     type: "text",
     label: "Date"
   }, {
@@ -47,16 +47,12 @@ export class MainSchedulerComponent {
   isLoaded: boolean = false;
 
   isUsersLoaded: boolean = false;
-  scheduleDateTime: ScheduleDateTime[] = [];
 
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
   columnsSchema: any = COLUMNS_SCHEMA;
   dataSource: MatTableDataSource<ScheduleDateTime> = new MatTableDataSource();
 
-  currentSelectedAccount: ScheduleDateTime = null;
-  lastSelectedAccount: ScheduleDateTime = null;
-  highlighted: boolean;
-  futureScheduleDates: ScheduleDateTime[] = [];
+  futureScheduleDates = signal<ScheduleDateTime[]>([]);
 
   static pageSize: number;
 
@@ -91,10 +87,10 @@ export class MainSchedulerComponent {
       .pipe(first())
       .subscribe({
         next: (value: ScheduleDateTimes) => {
+          var oldSelected = this.futureScheduleDates().find(function (item) { return item.highlighted });
           this.futureScheduleDateStrings = [];
           this.list = [];
-          this.futureScheduleDates = [];
-          this.scheduleDateTime = value.scheduleDateTimes;
+          this.futureScheduleDates.set([]);
           console.assert(this.list.length <= 0, "list not empty");
 
 
@@ -102,16 +98,7 @@ export class MainSchedulerComponent {
             // Add server side dates
             this.list.push(value.scheduleDateTimes[index])
           }
-          this.list.sort(function (a, b) {
-            var aDate = moment(a.date, Constants.dateTimeFormat).toDate();
-            var bDate = moment(b.date, Constants.dateTimeFormat).toDate();
-            if (aDate > bDate) return 1;
-            else if (aDate < bDate) return -1;
-            else
-              return 0
-          });
-
-          // Convert dates to date strings and optionally filter out past date strings
+          // Optionally filter out past date strings
           for (let index = 0; index < this.list.length; index++) {
             var nowMs = Date.now();
             const scheduleServerDate = moment(this.list[index].date, Constants.dateTimeFormat).toDate();
@@ -128,22 +115,20 @@ export class MainSchedulerComponent {
                 isDeleting: false,
                 day: this.getDayStrFromDate(scheduleLocalDateStr),
               }
-              this.futureScheduleDates.push(futureScheduleDate);
+              this.futureScheduleDates().push(futureScheduleDate);
             }
           }
-          this.dataSource.data = this.futureScheduleDates;
+          this.dataSource.data = this.futureScheduleDates();
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
           this.isLoaded = true;
+          this.sortInAscDateOrder();
 
           /* Set up selected row if still exists*/
-          if (this.currentSelectedAccount != null) {
-            var id = this.currentSelectedAccount.id;
-            var selected = this.futureScheduleDates.filter(function (item) { return item.id == id });
-            /* selected.length == 0 if user selected and deleted row in Schedules - top screen table */
-            if (selected != null && selected.length == 1) {
-              selected[0].highlighted = this.currentSelectedAccount.highlighted;
-            }
+          /* selected == undefined if user selected and deleted row in Schedules - top screen table */
+          if (oldSelected != undefined) {
+            var selected = this.futureScheduleDates().find(function (item) { return item.id == oldSelected.id });
+            selected.highlighted = oldSelected.highlighted;
           }
         },
         error: error => {
@@ -151,9 +136,16 @@ export class MainSchedulerComponent {
         }
       });
   }
+  private sortInAscDateOrder() {
+    const sortState: Sort = { active: 'scheduleDate', direction: 'asc' };
+    this.sort.active = sortState.active;
+    this.sort.direction = sortState.direction;
+    this.sort.sortChange.emit(sortState);
+  }
+
   sortData(sort: Sort) {
-    TimeHandler.sortData(this.futureScheduleDates, sort);
-    this.dataSource = new MatTableDataSource(this.futureScheduleDates);
+    TimeHandler.sortData(this.futureScheduleDates(), sort);
+    this.dataSource.data = this.futureScheduleDates();
   }
 
   getDayStrFromDate(dateStr: string): string {
@@ -175,55 +167,61 @@ export class MainSchedulerComponent {
     MainSchedulerComponent.pageSize = event.pageSize;
   }
 
-  onRowSelected(scheduleDateTime: ScheduleDateTime) {
-    console.log("MainSchedulerComponent row selected");
-
-    /* Find out if element is from  `this.futureScheduleDates` */
-    var found = false;
-    for (let index = 0; index < this.futureScheduleDates.length; index++) {
-      const element = this.futureScheduleDates[index];
-      if (scheduleDateTime.date === element.date) {
-        found = true;
-        this.currentSelectedAccount = element;
-        break;
+  onRowSelected(schedule: ScheduleDateTime, tr: any, index: number, event: any) {
+    if (event.ctrlKey) {
+      if (schedule.highlighted) {
+        schedule.highlighted = false;
+        return;
       }
     }
-    if (this.currentSelectedAccount) {
-      this.currentSelectedAccount.highlighted = !this.currentSelectedAccount.highlighted;
+    this.selectRow(schedule);
+  }
 
-      if (!found) {
-        /* Deselect it */
-        this.currentSelectedAccount.highlighted = false;
+  selectRow(scheduleDateTime: ScheduleDateTime) {
+    for (let index = 0; index < this.futureScheduleDates().length; index++) {
+      const element = this.futureScheduleDates()[index];
+      if (element.highlighted)
+        element.highlighted = false;
+
+      if (this.isSameScheduleDateTime(scheduleDateTime, element)) {
+        var pageNumber = Math.floor(index / this.paginator.pageSize);
+        this.paginator.pageIndex = pageNumber;
+
+        this.paginator.page.next({
+          pageIndex: pageNumber,
+          pageSize: this.paginator.pageSize,
+          length: this.paginator.length
+        });
       }
-
-      if (found) {
-        /* Trigger `dateTimeChanged` on every `FunctionScheduleComponent` component (via `GenerateSchedulesComponent`) */
-        this.generateScheduleComponent.setCurrentDate(this.currentSelectedAccount.date);
-      }
     }
-    if (this.lastSelectedAccount != null) {
-      this.lastSelectedAccount.highlighted = false;
+    scheduleDateTime.highlighted = true;
+    if (!scheduleDateTime.isDeleting) {
+      var date = moment(scheduleDateTime.date, Constants.dateTimeFormat).toDate();
+      /* Trigger `dateTimeChanged` on every `FunctionScheduleComponent` component (via `GenerateSchedulesComponent`) */
+      this.generateScheduleComponent.setCurrentDate(scheduleDateTime.date);
     }
-    this.lastSelectedAccount = this.currentSelectedAccount;
-
-    if (this.currentSelectedAccount && !this.currentSelectedAccount.highlighted) {
-      // If row is deselected mark both schedules as deselected(null);
-      this.lastSelectedAccount = null;
-      this.currentSelectedAccount = null;
-    }
+  }
+  isSameScheduleDateTime(s1: ScheduleDateTime, s2: ScheduleDateTime): boolean {
+    console.assert(s1 != null && s2 != null, "One or both of the schedule date-time slots is null");
+    return s1.date == s2.date;
   }
   dateTimeChanged(date: string) {
+    var futureScheduleDate = this.futureScheduleDates().find((d) => { return d.date == date });
 
-    var futureScheduleDate: ScheduleDateTime = {
-      id: '',
-      date: date,
-      highlighted: false,
-      isDeleting: false,
-      day: this.getDayStrFromDate(date),
+    if (futureScheduleDate != undefined) {
+      this.selectRow(futureScheduleDate);
     }
-    this.onRowSelected(futureScheduleDate);
+    // else {
+    //   var newSchedule: ScheduleDateTime = {
+    //     id: '',
+    //     date: date,
+    //     highlighted: false,
+    //     isDeleting: false,
+    //     day: this.getDayStrFromDate(date),
+    //   }
+    //   futureScheduleDate = newSchedule;
+    // }
   }
-
 
   onDeleteSchedules(event: MouseEvent, data: ScheduleDateTime) {
     console.log("MainSchedulerComponent deleting called");

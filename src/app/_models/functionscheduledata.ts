@@ -7,6 +7,6 @@ import { Users } from "./users";
 
 export class FunctionScheduleData {
     userFunction: string;
-
+    date : string;
     accounts: User[] = [];
 }

@@ -1,5 +1,5 @@
 import { ViewportScroller } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -53,7 +53,7 @@ const COLUMNS_SCHEMA = [
   templateUrl: './function-schedule.component.html',
   styleUrls: ['./function-schedule.component.less']
 })
-export class FunctionScheduleComponent implements OnInit, AfterViewInit {
+export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -130,6 +130,11 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
     this.dataSource = new MatTableDataSource();
     this.refreshAccounts();
   }
+  ngOnDestroy() {
+    console.log("Called");
+    
+  }
+
   get accounts4DateAndFunction(): User[] {
     return Array.from(this.string2UserMap.values());
   }
@@ -150,9 +155,9 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit {
           /* Notify parent that we got data from server */
           var funcSchedData: FunctionScheduleData = {
             userFunction: this.functionStr,
+            date: this.dateTimeStr,
             accounts: this.accounts4DateAndFunction
           }
-          this.schedulesUpdatedEmitter.emit(funcSchedData);
         },
         complete: () => {
           this.accountsLoaded = true;

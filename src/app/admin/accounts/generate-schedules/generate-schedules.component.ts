@@ -68,17 +68,6 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
         });
       });
       /* All FunctionScheduleComponent are loaded */
-
-      // for (let entry of newMap.entries()) {
-      //   console.log("Key:" + entry[0].dateTimeStr);
-
-      //   this.fComponents.forEach(element => {
-      //     if (element.functionStr === entry[0].functionStr) {
-      //       GenerateSchedulesComponent.functions2SchedulesMap.set(element, entry[1]);
-      //     }
-      //   });
-      // }
-      /* All FunctionScheduleComponent are loaded */
     });
   }
 
@@ -88,7 +77,6 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       information: [, Validators.required],
 
     });
-    //this.getAllDates();
     this.functionsLoaded = false;
     this.accountService.getAllAgentTaskConfigs()
       .pipe(first())
@@ -140,7 +128,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       element.setCurrentDate(this.getDateTimeStr());
     });
     this.setCopyPasteButtons();
-    this.dateTimeChangedEmitter.emit(moment(event.value).format(this.dateTimeFormat));
+    this.dateTimeChangedEmitter.emit(this.getDateTimeStr());
   }
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }

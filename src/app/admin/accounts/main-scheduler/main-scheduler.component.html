@@ -17,7 +17,7 @@
                         <label for="allDates" class="ps-2">All</label><br>
                     </div>
                     <mat-table #table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
-                        <ng-container matColumnDef="date">
+                        <ng-container matColumnDef="scheduleDate">
                             <mat-header-cell *matHeaderCellDef mat-sort-header> Date </mat-header-cell>
                             <mat-cell *matCellDef="let row">
                                 <input type="text" matInput [value]="row.date" readonly>
@@ -30,7 +30,7 @@
                             </mat-cell>
                         </ng-container>
                         <ng-container matColumnDef="delete">
-                            <mat-header-cell *matHeaderCellDef mat-sort-header> Delete </mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
                             <mat-cell *matCellDef="let row">
                                 <button class="btn btn-sm btn-danger btn-delete-account" type="button" #button
                                     (click)="onDeleteSchedules($event, row)" [ngClass]="{ 'disabled': row.isDeleting}">
@@ -42,7 +42,7 @@
                         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                         <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
                             [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr
-                            (click)="onRowSelected(row)" (mouseover)="row.hovered = true"
+                            (click)="onRowSelected(row, tr, i, $event)" (mouseover)="row.hovered = true"
                             (mouseout)="row.hovered = false"></mat-row>
                     </mat-table>
                     <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="futureScheduleDateStrings.length"
