@@ -6,7 +6,7 @@
             <div class="col-5 form-group">
                 <label>{{ functionStr }}</label>
                 <select #element formControlName="selectedUser" class="form-select" (change)="onChangeUser($event)">
-                    @for (str of string2UserMap.keys();track str; let index = $index) {
+                    @for (str of possibleUsers.keys();track str; let index = $index) {
                     <option [value]="str">{{ str }}</option>
                     }
                 </select>
@@ -65,7 +65,7 @@
         </ng-container>
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
-            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr (click)="onRowSelected(row, tr, i)"
+            [ngClass]="{hovered: row.hovered, highlighted: row.highlighted}" #tr (click)="onRowSelected(row, tr, i, $event)"
             (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
     </mat-table>
 
@@ -73,7 +73,7 @@
         showFirstLastButtons pageSize={{pageSize}} (page)="onChangePageProperties($event)">
     </mat-paginator>
 
-    <button #button type="button" [ngClass]="{ 'disabled': accounts4DateAndFunction.length <= 0 }"
+    <button #button type="button" [ngClass]="{ 'disabled': possibleUsers.length <= 0 || selectedUser4Function == undefined }"
         (click)="onAddSchedule($event, button)" class="btn3d btn btn-primary">
         @if(isAdding) {
         <span class="spinner-border spinner-border-sm mr-1"></span>

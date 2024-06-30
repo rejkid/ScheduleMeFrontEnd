@@ -1,5 +1,5 @@
 import { ViewportScroller } from '@angular/common';
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -12,6 +12,7 @@ import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { Schedule } from 'src/app/_models/schedule';
 import { User } from 'src/app/_models/user';
+import { AgentTask } from 'src/app/_models/userfunction';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 
@@ -73,17 +74,17 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   accountsLoaded: boolean = true;
 
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
-  currentSelectedUser: User = null;
-  lastSelectedUser: User = null;
+  users = signal<User[]>([]);
   selectedUser4Function: User;
   
   titlePrefix: string = "";
   groupTasks: AgentTaskConfig[] = [];
   isInitializing: boolean = true;
   string2UserMap: Map<string, User> = new Map<string, User>();
+  possibleUsersMap: Map<string, User> = new Map<string, User>();
 
   static pageSize: number;
-
+  
   constructor(private accountService: AccountService,
     private route: ActivatedRoute,
     private router: Router,
@@ -98,9 +99,6 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
 
     this.form = this.formBuilder.group({
       selectedUser: ['', [Validators.required]],
-    });
-    this.f["selectedUser"].valueChanges.subscribe((value) => {
-      console.log(value);
     });
 
     this.accountService.getAllAgentTaskConfigs()
@@ -138,6 +136,9 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   get accounts4DateAndFunction(): User[] {
     return Array.from(this.string2UserMap.values());
   }
+  get possibleUsers(): User[] {
+    return Array.from(this.possibleUsersMap.values());
+  }
 
   private refreshAccounts() {
     this.accountsLoaded = false;
@@ -145,73 +146,103 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
       dateStr: this.dateTimeStr,
       task: this.functionStr
     }
-    this.string2UserMap.clear();
     this.accountService.getByDateAndTask(accountsByDateAndTaskDTO)
       .pipe(first())
       .subscribe({
         next: (accounts: Account[]) => {
-          this.createAccountStrings4Function(accounts);
+          this.createString2UserMap(accounts);
+          this.accountService.getAll()
+            .pipe(first())
+            .subscribe({
+              next: (accounts: Account[]) => {
+                this.createPossibleUsersMap(accounts);
+              },
+              complete: () => {
+                this.accountsLoaded = true;
+                /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
+                var funcSchedData: FunctionScheduleData = {
+                  userFunction: this.functionStr,
+                  date: this.dateTimeStr,
+                  accounts: this.accounts4DateAndFunction
+                }
+                this.schedulesUpdatedEmitter.emit(funcSchedData);
 
-          /* Notify parent that we got data from server */
-          var funcSchedData: FunctionScheduleData = {
-            userFunction: this.functionStr,
-            date: this.dateTimeStr,
-            accounts: this.accounts4DateAndFunction
-          }
+              },
+              error: (error) => {
+                this.alertService.error(error);
+                this.accountsLoaded = true;
+              }
+        });
         },
         complete: () => {
-          this.accountsLoaded = true;
         },
         error: error => {
-          this.alertService.error(error);
-          this.accountsLoaded = true;
         }
       });
   }
 
-  private createAccountStrings4Function(accounts: Account[]) {
+  private createString2UserMap(accounts: Account[]) {
+    this.string2UserMap.clear();
+
     var selected: string = undefined;
-    accounts.forEach(account => {
-      account.userFunctions.forEach(userFunc => {
-        account.schedules.forEach(schedule => {
-          if (userFunc.userFunction == this.functionStr
-            && schedule.date == this.dateTimeStr
-          ) {
-            var str = account.firstName + '/' + account.lastName + '/' + account.email + '/' + account.dob;
-            if (schedule.scheduleGroup.length != 0) {
-              str = str + '/' + schedule.scheduleGroup
-            }
-            var user: User = {
-              id: account.id,
-              firstName: account.firstName,
-              lastName: account.lastName,
-              email: account.email,
-              function: this.functionStr,
-              scheduleGroup: schedule.scheduleGroup,
-              date: this.dateTimeStr,
-              dob: account.dob,
-              isDeleting: false,
-              highlighted: false
-            }
+    accounts.map((a) => a.schedules.filter((s) => s.userFunction == this.functionStr && s.date == this.dateTimeStr).map((s) => {
+      var str = a.firstName + '/' + a.lastName + '/' + a.email + '/' + a.dob;
+      if (s.scheduleGroup.length != 0) {
+        str = str + '/' + s.scheduleGroup
+      }
+      var user: User = {
+        id: a.id,
+        firstName: a.firstName,
+        lastName: a.lastName,
+        email: a.email,
+        function: this.functionStr,
+        scheduleGroup: s.scheduleGroup,
+        date: this.dateTimeStr,
+        dob: a.dob,
+        isDeleting: false,
+        highlighted: false
+      }
 
-            if (!this.string2UserMap.has(str)) {
-              this.string2UserMap.set(str, user);
-              if (selected === undefined) {
-                selected = str;
-              }
-            }
-          }
-        });
-      });
-    });
+      if (!this.string2UserMap.has(str)) {
+        this.string2UserMap.set(str, user);
+        if (selected === undefined) {
+          selected = str;
+        }
+      }
+    }))
 
-    console.log(this.string2UserMap);
+    console.log("createAccountStrings4Function: " + this.string2UserMap);
     this.f['selectedUser'].setValue(selected);
-    this.dataSource.data = [...this.string2UserMap.values()];
+    this.users.set([...this.string2UserMap.values()]);
+    this.dataSource.data = this.users();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
+  private createPossibleUsersMap(accounts: Account[]) {
+    this.possibleUsersMap.clear();
+    accounts.map((a) => a.userFunctions.filter((f) => f.userFunction == this.functionStr).map(f => {
+      var user: User = {
+        id: a.id,
+        firstName: a.firstName,
+        lastName: a.lastName,
+        email: a.email,
+        function: this.functionStr,
+        scheduleGroup: f.group,
+        date: this.dateTimeStr,
+        dob: a.dob,
+        isDeleting: false,
+        highlighted: false
+      }
+      let str = user.firstName + '/' + user.lastName + '/' + user.email + '/' + user.dob;
+      if (f.isGroup) {
+        str = str + '/' + user.scheduleGroup
+      }
+      this.possibleUsersMap.set(str, user);
+    }
+    )
+    );
+}
   setCurrentDate(dateTime: string) {
     this.dateTimeStr = dateTime;
     this.refreshAccounts();
@@ -226,7 +257,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
 
   onChangeUser(event: Event) {
     var valueSelected = (event.target as HTMLInputElement).value;
-    this.selectedUser4Function = this.string2UserMap.get(valueSelected);
+    this.selectedUser4Function = this.possibleUsersMap.get(valueSelected);
   }
   /* I am not sure if we need 'input' parameter - keep it for now*/
   onApplyFilter(t: any, input: any) {
@@ -312,21 +343,39 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
         }
       });
   }
-  onRowSelected(user: User, tr: any, index: number) {
-    user.highlighted = !user.highlighted;
-    this.currentSelectedUser = user;
-
-    if (this.lastSelectedUser != null) {
-      this.lastSelectedUser.highlighted = false;
+  onRowSelected(user: User, tr: any, index: number, event: any) {
+    if (event.ctrlKey) {
+      if (user.highlighted) {
+        user.highlighted = false;
+        return;
+      }
     }
-    this.lastSelectedUser = this.currentSelectedUser;
-
-    if (!user.highlighted) {
-      // If row is deselected mark both schedules as deselected(null);
-      this.lastSelectedUser = null;
-      this.currentSelectedUser = null;
-    }
+    this.selectRow(user);
   }
+  private selectRow(user: User) {
+    for (let index = 0; index < this.users().length; index++) {
+      const element = this.users()[index];
+      if (element.highlighted)
+        element.highlighted = false;
+
+      if (this.isSameUser(user, element)) {
+        var pageNumber = Math.floor(index / this.paginator.pageSize);
+        this.paginator.pageIndex = pageNumber;
+
+        this.paginator.page.next({
+          pageIndex: pageNumber,
+          pageSize: this.paginator.pageSize,
+          length: this.paginator.length
+        });
+      }
+    }
+    user.highlighted = true;
+  }
+  isSameUser(u1: User, u2: User) : boolean {
+    console.assert(u1 != null && u2 != null, "One or both of the user slots is/are null");
+    return u1.date == u2.date && u1.function == u2.function && u1.scheduleGroup == u2.scheduleGroup && u1.email == u2.email;
+  }
+
   onChangePageProperties(event: any) {
     FunctionScheduleComponent.pageSize = event.pageSize;
   }

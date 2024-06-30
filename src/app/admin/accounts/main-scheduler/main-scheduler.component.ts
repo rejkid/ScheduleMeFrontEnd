@@ -65,6 +65,7 @@ export class MainSchedulerComponent {
     this.dataSource = new MatTableDataSource();
 
     this.getAllDates();
+    console.log("Sorting ngAfterViewInit");
   }
 
   ngOnInit(): void {
@@ -83,6 +84,7 @@ export class MainSchedulerComponent {
 
 
   getAllDates() {
+    console.log("getAllDates");
     this.accountService.getAllDates()
       .pipe(first())
       .subscribe({
@@ -141,6 +143,7 @@ export class MainSchedulerComponent {
     this.sort.active = sortState.active;
     this.sort.direction = sortState.direction;
     this.sort.sortChange.emit(sortState);
+    console.log("main-scheduler sorting");
   }
 
   sortData(sort: Sort) {
@@ -202,7 +205,7 @@ export class MainSchedulerComponent {
     }
   }
   isSameScheduleDateTime(s1: ScheduleDateTime, s2: ScheduleDateTime): boolean {
-    console.assert(s1 != null && s2 != null, "One or both of the schedule date-time slots is null");
+    console.assert(s1 != null && s2 != null, "One or both of the schedule date-time slots is/are null");
     return s1.date == s2.date;
   }
   dateTimeChanged(date: string) {
