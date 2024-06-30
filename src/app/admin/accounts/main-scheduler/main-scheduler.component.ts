@@ -84,6 +84,7 @@ export class MainSchedulerComponent {
 
 
   getAllDates() {
+    this.isLoaded = false;
     console.log("getAllDates");
     this.accountService.getAllDates()
       .pipe(first())
@@ -123,7 +124,6 @@ export class MainSchedulerComponent {
           this.dataSource.data = this.futureScheduleDates();
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-          this.isLoaded = true;
           this.sortInAscDateOrder();
 
           /* Set up selected row if still exists*/
@@ -132,9 +132,11 @@ export class MainSchedulerComponent {
             var selected = this.futureScheduleDates().find(function (item) { return item.id == oldSelected.id });
             selected.highlighted = oldSelected.highlighted;
           }
+          this.isLoaded = true;
         },
         error: error => {
           console.log();
+          this.isLoaded = true;
         }
       });
   }

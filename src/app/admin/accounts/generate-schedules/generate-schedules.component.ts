@@ -181,7 +181,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
 
       /* Make sure the row is selected first so the ``dateTimeStr`` is set up properly 
       `functionStr` is set on creation time by this class*/
-      this.setCurrentDate(data.date)
+      element.setCurrentDate(this.getDateTimeStr());
       element.onDeleteSchedules(event);
       console.log("GenerateSchedulesComponent deleting functionStr:" + element.functionStr + " dateStr:" + element.dateTimeStr);
     });

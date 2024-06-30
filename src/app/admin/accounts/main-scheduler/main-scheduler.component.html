@@ -32,7 +32,7 @@
                         <ng-container matColumnDef="delete">
                             <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
                             <mat-cell *matCellDef="let row">
-                                <button class="btn btn-sm btn-danger btn-delete-account" type="button" #button
+                                <button class="btn3d btn btn-sm btn-danger btn-delete-account" type="button" #button
                                     (click)="onDeleteSchedules($event, row)" [ngClass]="{ 'disabled': row.isDeleting}">
                                     <span *ngIf="row.isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                                     Delete
