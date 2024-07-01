@@ -71,12 +71,12 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
 
   /* Busy cursor flags */
   isAdding: boolean = false;
-  accountsLoaded: boolean = true;
+  accountsLoaded: boolean = false;
 
   dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
   users = signal<User[]>([]);
   selectedUser4Function: User;
-  
+
   titlePrefix: string = "";
   groupTasks: AgentTaskConfig[] = [];
   isInitializing: boolean = true;
@@ -84,7 +84,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   possibleUsersMap: Map<string, User> = new Map<string, User>();
 
   static pageSize: number;
-  
+
   constructor(private accountService: AccountService,
     private route: ActivatedRoute,
     private router: Router,
@@ -106,8 +106,8 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
       .subscribe({
         next: (groupTasks: AgentTaskConfig[]) => {
           this.groupTasks = groupTasks;
-          var atc : AgentTaskConfig = this.groupTasks.find((tcs) => { return tcs.agentTaskStr == this.functionStr});
-          console.assert(atc != undefined, "TaskConfig not found for task:"+ this.functionStr);
+          var atc: AgentTaskConfig = this.groupTasks.find((tcs) => { return tcs.agentTaskStr == this.functionStr });
+          console.assert(atc != undefined, "TaskConfig not found for task:" + this.functionStr);
           if (atc.isGroup) {
             this.titlePrefix = "Group "
           }
@@ -130,7 +130,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   }
   ngOnDestroy() {
     console.log("Called");
-    
+
   }
 
   get accounts4DateAndFunction(): User[] {
@@ -140,43 +140,32 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     return Array.from(this.possibleUsersMap.values());
   }
 
+  get possibleUserStrings(): string[] {
+    return Array.from(this.possibleUsersMap.keys());
+  }
   private refreshAccounts() {
     this.accountsLoaded = false;
-    var accountsByDateAndTaskDTO: AccountsByDateAndTaskDTO = {
-      dateStr: this.dateTimeStr,
-      task: this.functionStr
-    }
-    this.accountService.getByDateAndTask(accountsByDateAndTaskDTO)
+    this.accountService.getAll()
       .pipe(first())
       .subscribe({
         next: (accounts: Account[]) => {
           this.createString2UserMap(accounts);
-          this.accountService.getAll()
-            .pipe(first())
-            .subscribe({
-              next: (accounts: Account[]) => {
-                this.createPossibleUsersMap(accounts);
-              },
-              complete: () => {
-                this.accountsLoaded = true;
-                /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
-                var funcSchedData: FunctionScheduleData = {
-                  userFunction: this.functionStr,
-                  date: this.dateTimeStr,
-                  accounts: this.accounts4DateAndFunction
-                }
-                this.schedulesUpdatedEmitter.emit(funcSchedData);
-
-              },
-              error: (error) => {
-                this.alertService.error(error);
-                this.accountsLoaded = true;
-              }
-        });
+          this.createPossibleUsersMap(accounts);
         },
         complete: () => {
+          this.accountsLoaded = true;
+          /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
+          var funcSchedData: FunctionScheduleData = {
+            userFunction: this.functionStr,
+            date: this.dateTimeStr,
+            accounts: this.accounts4DateAndFunction
+          }
+          //this.schedulesUpdatedEmitter.emit(funcSchedData);
+          this.accountsLoaded = true;
         },
-        error: error => {
+        error: (error) => {
+          this.alertService.error(error);
+          this.accountsLoaded = true;
         }
       });
   }
@@ -242,7 +231,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     }
     )
     );
-}
+  }
   setCurrentDate(dateTime: string) {
     this.dateTimeStr = dateTime;
     this.refreshAccounts();
@@ -291,6 +280,9 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
       .subscribe({
         next: (account) => {
           this.refreshAccounts();
+
+          /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
+          this.notifyParentOnChange();
         },
         complete: () => {
           this.isAdding = false;
@@ -303,7 +295,16 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
         }
       });
   }
-  onDeleteSchedules(event: MouseEvent) { 
+  private notifyParentOnChange() {
+    var funcSchedData: FunctionScheduleData = {
+      userFunction: this.functionStr,
+      date: this.dateTimeStr,
+      accounts: this.accounts4DateAndFunction
+    };
+    this.schedulesUpdatedEmitter.emit(funcSchedData);
+  }
+
+  onDeleteSchedules(event: MouseEvent) {
     // Reset alerts on submit
     this.alertService.clear();
 
@@ -334,12 +335,13 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
         next: (z) => {
           console.log("FunctionScheduleComponent functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr + " deleted");
           this.refreshAccounts();
+          /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
+          this.notifyParentOnChange();
         },
         complete: () => {
         },
         error: error => {
           this.alertService.error(error);
-          this.refreshAccounts();
         }
       });
   }
@@ -371,7 +373,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     }
     user.highlighted = true;
   }
-  isSameUser(u1: User, u2: User) : boolean {
+  isSameUser(u1: User, u2: User): boolean {
     console.assert(u1 != null && u2 != null, "One or both of the user slots is/are null");
     return u1.date == u2.date && u1.function == u2.function && u1.scheduleGroup == u2.scheduleGroup && u1.email == u2.email;
   }
@@ -381,5 +383,9 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   }
   get pageSize() {
     return FunctionScheduleComponent.pageSize;
+  }
+  unselect() {
+    this.f['selectedUser'].setValue(null);
+    this.dataSource.data = [];
   }
 }

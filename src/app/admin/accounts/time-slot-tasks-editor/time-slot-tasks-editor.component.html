@@ -51,13 +51,13 @@
             <legend>Schedule Dates</legend>
             <mat-table #table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
                 <ng-container matColumnDef="{{displayedColumns[0]}}">
-                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[0]}} </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedLabels[0]}} </mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <input type="text" matInput [value]="row.date" readonly>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="{{displayedColumns[1]}}">
-                    <mat-header-cell *matHeaderCellDef> {{displayedColumns[1]}} </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef> {{displayedLabels[1]}} </mat-header-cell>
                     <mat-cell *matCellDef="let row">
                         <input type="text" matInput [value]="row.tasks" readonly>
                     </mat-cell>
@@ -65,7 +65,7 @@
                 <ng-container matColumnDef="delete">
                     <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <button class="btn btn-sm btn-danger btn-delete-account" type="button" #button
+                        <button class="btn3d btn btn-sm btn-danger btn-delete-account" type="button" #button
                             (click)="onDeleteTimeSlotTasks($event, row)" [ngClass]="{ 'disabled': row.isDeleting}">
                             <span *ngIf="row.isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                             Delete

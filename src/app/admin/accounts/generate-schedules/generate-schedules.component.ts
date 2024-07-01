@@ -222,4 +222,9 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
       this.enablePasteButton = false;
     }
   }
+  unselect() {
+    this.fComponents.forEach(element => {
+      element.unselect();
+    });
+  }
 }

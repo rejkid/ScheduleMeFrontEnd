@@ -1,4 +1,4 @@
-import { signal, Component, OnInit, ViewChild } from '@angular/core';
+import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -16,7 +16,7 @@ import { Constants } from 'src/app/constants';
 
 const COLUMNS_SCHEMA = [
   {
-    key: "Date",
+    key: "timeSlotDate",
     type: "text",
     label: "Date"
   },
@@ -35,7 +35,7 @@ const COLUMNS_SCHEMA = [
   templateUrl: './time-slot-tasks-editor.component.html',
   styleUrl: './time-slot-tasks-editor.component.less'
 })
-export class TimeSlotTasksEditorComponent implements OnInit {
+export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -47,9 +47,10 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   isAdding: boolean = false;
 
   static pageSize: number;
-  
+
   dataSource: MatTableDataSource<TimeSlotsTasks>;
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
+  displayedLabels: string[] = COLUMNS_SCHEMA.map((col) => col.label);
   columnsSchema: any = COLUMNS_SCHEMA;
 
   timeSlots = signal<TimeSlotsTasks[]>([]);
@@ -64,12 +65,19 @@ export class TimeSlotTasksEditorComponent implements OnInit {
       scheduledDate: [new Date(), Validators.required],
     });
   }
-
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource();
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
     this.refreshTaskCounters();
     this.refreshTimeSlotsTasks(null);
     this.isLoaded = true;
   }
+
   private refreshTaskCounters() {
     this.accountService.getAllAgentTaskConfigs()
       .pipe(first())
@@ -94,40 +102,44 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   addFormControl(fieldName: string, validators: any[] = []) {
     this.form.addControl(fieldName, this.formBuilder.control(fieldName, validators));
   }
-  private refreshTimeSlotsTasks(selectRow : TimeSlotsTasks) {
+  private refreshTimeSlotsTasks(selectRow: TimeSlotsTasks) {
     this.timeSlots.set([]);
-    var selectedRow : TimeSlotsTasks;
+    var selectedRow: TimeSlotsTasks;
     this.accountService.getTimeSlotsTasks()
       .pipe(first())
       .subscribe({
         next: (value: TimeSlotsTasksDTO[]) => {
-          value.forEach((element : TimeSlotsTasksDTO) => {
-            var slot : TimeSlotsTasks = {
+          value.forEach((element: TimeSlotsTasksDTO) => {
+            var slot: TimeSlotsTasks = {
               date: element.date,
               tasks: element.tasks.split(" "),
               isDeleting: false,
               highlighted: false
             }
             this.timeSlots().push(slot);
-            if(selectRow != null && selectRow.date == slot.date)
+            if (selectRow != null && selectRow.date == slot.date)
               selectedRow = slot;
           });
 
-          this.dataSource = new MatTableDataSource(this.timeSlots());
-          this.dataSource.paginator = this.paginator;
-          this.dataSource.sort = this.sort;
+          this.dataSource.data = this.timeSlots();
         },
         complete: () => {
-          if(selectRow != null)
-              this.selectRow(selectedRow);
-
+          this.sortInDescDateOrder();
+          if (selectRow != null)
+            this.selectRow(selectedRow);
         },
         error: error => {
           this.alertService.error(error);
-
         }
       });
   }
+  private sortInDescDateOrder() {
+    const sortState: Sort = { active: 'timeSlotDate', direction: 'desc' };
+    this.sort.active = sortState.active;
+    this.sort.direction = sortState.direction;
+    this.sort.sortChange.emit(sortState);
+  }
+
   sortData(sort: Sort) {
     TimeHandler.sortData(this.timeSlots(), sort);
     this.dataSource.data = this.timeSlots();
@@ -135,11 +147,11 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   onDeleteTimeSlotTasks(event: MouseEvent, tasks: TimeSlotsTasks) {
     console.log("MainSchedulerComponent deleting called");
     tasks.isDeleting = true;
-    var timeslotsTasks : TimeSlotsTasksDTO = {
-      date : tasks.date,
-      tasks : tasks.tasks.join(" "),
-      isDeleting : false,
-      highlighted : false
+    var timeslotsTasks: TimeSlotsTasksDTO = {
+      date: tasks.date,
+      tasks: tasks.tasks.join(" "),
+      isDeleting: false,
+      highlighted: false
     }
     this.accountService.deleteTimeSlotsTasks(timeslotsTasks)
       .pipe(first())
@@ -163,7 +175,6 @@ export class TimeSlotTasksEditorComponent implements OnInit {
   }
 
   onAddTask() {
-
     this.submitted = true;
     this.isAdding = true;
 
@@ -179,50 +190,32 @@ export class TimeSlotTasksEditorComponent implements OnInit {
 
     var dateControl = this.f['scheduledDate'];
     var date = moment(dateControl.value).format(this.dateTimeFormat)
-    var tasks: string = this.getTasksStr(date); 
-   
+    var tasks: string = this.getTasksStr(date);
+
     console.log(tasks);
-    var timeslotsTasksDTO : TimeSlotsTasksDTO = {
-      date : date,
-      tasks : tasks,
-      isDeleting : false,
-      highlighted : false
+    var timeslotsTasksDTO: TimeSlotsTasksDTO = {
+      date: date,
+      tasks: tasks,
+      isDeleting: false,
+      highlighted: false
     }
     this.writeTimeSlotsTasks(timeslotsTasksDTO);
-
-    var timeslotsTasks : TimeSlotsTasks = {
-      date : date,
-      tasks : tasks.split(" "),
-      isDeleting : false,
-      highlighted : false
-    }
-
-    this.refreshTimeSlotsTasks(timeslotsTasks);
   }
-  private getTasksStr(date: string) {
-    var tasks: string = "";
-    console.log(date);
-    for (let cfg of this.agentTaskConfigs) {
-      const control = this.form.get(cfg.agentTaskStr); // 'control' is a FormControl
-      for (var i = 0; i < control.value; i++) {
-        if (i > 0 || tasks.length > 0)
-          tasks = tasks.concat(" ").concat(cfg.agentTaskStr);
-
-        else
-          tasks = tasks.concat(cfg.agentTaskStr);
-      }
-      console.log(cfg);
-    };
-    return tasks;
-  }
-
-  private writeTimeSlotsTasks(tasks : TimeSlotsTasksDTO) {
-    this.accountService.setTimeSlotsTasks(tasks)
+  private writeTimeSlotsTasks(task: TimeSlotsTasksDTO) {
+    this.accountService.setTimeSlotsTasks(task)
       .pipe(first())
       .subscribe({
         next: () => {
         },
         complete: () => {
+          var timeslotsTasks: TimeSlotsTasks = {
+            date: task.date,
+            tasks: task.tasks.split(" "),
+            isDeleting: false,
+            highlighted: false
+          }
+
+          this.refreshTimeSlotsTasks(timeslotsTasks);
           this.isAdding = false;
         },
         error: error => {
@@ -231,8 +224,25 @@ export class TimeSlotTasksEditorComponent implements OnInit {
         }
       });
   }
-  splitArr(arr: AgentTaskConfig[], size: number) : AgentTaskConfig[][] {
-    let newArr:AgentTaskConfig[][] = [];
+
+  private getTasksStr(date: string) {
+    var tasks: string = "";
+    console.log(date);
+    for (let cfg of this.agentTaskConfigs) {
+      const control = this.form.get(cfg.agentTaskStr); // 'control' is a FormControl
+      for (var i = 0; i < control.value; i++) {
+        if (i > 0 || tasks.length > 0)
+          tasks = tasks.concat(" ").concat(cfg.agentTaskStr);
+        else
+          tasks = tasks.concat(cfg.agentTaskStr);
+      }
+      console.log(cfg);
+    };
+    return tasks;
+  }
+
+  splitArr(arr: AgentTaskConfig[], size: number): AgentTaskConfig[][] {
+    let newArr: AgentTaskConfig[][] = [];
     for (let i = 0; i < arr.length; i += size) {
       newArr.push(arr.slice(i, i + size));
     }
@@ -271,7 +281,7 @@ export class TimeSlotTasksEditorComponent implements OnInit {
       this.setTasksCounters(slot);
     }
   }
-  isSameTimeSlot(s1: TimeSlotsTasks, s2: TimeSlotsTasks) : boolean {
+  isSameTimeSlot(s1: TimeSlotsTasks, s2: TimeSlotsTasks): boolean {
     console.assert(s1 != null && s2 != null, "One or both of the time slots is null");
     return s1.date == s2.date;
   }
@@ -283,7 +293,7 @@ export class TimeSlotTasksEditorComponent implements OnInit {
     var map = this.getWordCount(slot.tasks);
     this.agentTaskConfigs.forEach(task => {
       var control = this.f[task.agentTaskStr];
-      if(map.get(task.agentTaskStr) == undefined)
+      if (map.get(task.agentTaskStr) == undefined)
         control.setValue(0);
       else
         control.setValue(map.get(task.agentTaskStr));
@@ -294,10 +304,10 @@ export class TimeSlotTasksEditorComponent implements OnInit {
     const map = new Map();
     for (let i = 0; i < array.length; i++) {
       let item = array[i];
-      if(map.get(item) == undefined)
+      if (map.get(item) == undefined)
         map.set(item, 1);
       else
-        map.set(item, map.get(item) + 1); 
+        map.set(item, map.get(item) + 1);
     }
     return map;
   }

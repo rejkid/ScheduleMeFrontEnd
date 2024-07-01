@@ -1,5 +1,11 @@
 <div id="alert">
 </div>
+@if(!isLoaded) {
+<div class="loader">
+    <mat-progress-spinner diameter="60" [value]="0" mode="indeterminate">
+    </mat-progress-spinner>
+</div>
+}
 <div class="container-fluid">
     <form [formGroup]="form">
         <div class="col mx-md-2">
@@ -33,7 +39,7 @@
                             <mat-header-cell *matHeaderCellDef> Delete </mat-header-cell>
                             <mat-cell *matCellDef="let row">
                                 <button class="btn3d btn btn-sm btn-danger btn-delete-account" type="button" #button
-                                    (click)="onDeleteSchedules($event, row)" [ngClass]="{ 'disabled': row.isDeleting}">
+                                    (click)="onDeleteSchedules($event, row)" [ngClass]="{ 'disabled': row.isDeleting || !row.highlighted}">
                                     <span *ngIf="row.isDeleting" class="spinner-border spinner-border-sm mr-1"></span>
                                     Delete
                                 </button>

@@ -130,7 +130,9 @@ export class MainSchedulerComponent {
           /* selected == undefined if user selected and deleted row in Schedules - top screen table */
           if (oldSelected != undefined) {
             var selected = this.futureScheduleDates().find(function (item) { return item.id == oldSelected.id });
-            selected.highlighted = oldSelected.highlighted;
+            if(selected != undefined) {
+              selected.highlighted = oldSelected.highlighted;
+            }
           }
           this.isLoaded = true;
         },
@@ -176,6 +178,7 @@ export class MainSchedulerComponent {
     if (event.ctrlKey) {
       if (schedule.highlighted) {
         schedule.highlighted = false;
+        this.generateScheduleComponent.unselect();
         return;
       }
     }
