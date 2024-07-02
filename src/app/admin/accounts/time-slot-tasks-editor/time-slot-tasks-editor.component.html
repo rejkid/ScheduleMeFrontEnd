@@ -3,7 +3,7 @@
         <legend>Date & Tasks:</legend>
         <div class="container">
             <div class="row">
-                <div class="mb-3 col-6">
+                <div class="mb-3 col-3">
                     <mat-form-field appearance="outline">
                         <mat-label>Schedule</mat-label>
                         <input formControlName="scheduledDate" #ref matInput [ngxMatDatetimePicker]="picker"
@@ -16,6 +16,9 @@
                         </ngx-mat-datetime-picker>
                         <mat-error *ngIf="f['scheduledDate'].errors">Invalid Scheduled date</mat-error>
                     </mat-form-field>
+                </div>
+                <div class="mb-3 col-sm">
+                    <mat-label style="font-size: 32px;">{{getDayStrFromDate}}</mat-label> 
                 </div>
             </div>
         </div>

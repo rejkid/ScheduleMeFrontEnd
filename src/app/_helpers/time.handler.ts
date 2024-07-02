@@ -58,4 +58,9 @@ export class TimeHandler {
           }
         });  
       }
+      static getDayStrFromDate(dateStr: string): string {
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var date = moment(dateStr, Constants.dateTimeFormat).toDate();
+        return days[date.getDay()];
+      }
 }

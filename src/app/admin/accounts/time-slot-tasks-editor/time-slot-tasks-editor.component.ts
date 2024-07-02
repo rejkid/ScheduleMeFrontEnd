@@ -312,8 +312,8 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
     return map;
   }
   onChangeDateTime(event: any) {
-    var date = moment(event.value).format(this.dateTimeFormat)
-    console.log(date);
+    let day = moment(event.value).format(this.dateTimeFormat)
+    console.log(day);
   }
   onChangePageProperties(event: any) {
     TimeSlotTasksEditorComponent.pageSize = event.pageSize;
@@ -321,5 +321,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   get pageSize() {
     return TimeSlotTasksEditorComponent.pageSize;
   }
-
+  get getDayStrFromDate(): string {
+    return TimeHandler.getDayStrFromDate(moment(this.f['scheduledDate'].value).format(this.dateTimeFormat));
+  }
 }
