@@ -1,18 +1,16 @@
 import { ViewportScroller } from '@angular/common';
-import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild, computed, effect, inject, input, signal } from '@angular/core';
-import { AbstractControl, Form, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Component, Injector, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
-import { Task } from 'src/app/_models/task';
-import { TaskDTO } from 'src/app/_models/taskDTO';
-import { AccountService, AlertService } from 'src/app/_services';
-import { Constants } from 'src/app/constants';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
+import { Task } from 'src/app/_models/task';
+import { AccountService, AlertService } from 'src/app/_services';
 
 const COLUMNS_SCHEMA = [
   {
@@ -114,7 +112,7 @@ export class FunctionComponent implements OnInit {
                 this.possibleTasks = value;
 
                 this.account = account;
-                this.userFunctions.set(account.userFunctions.slice()); // = signal(account.userFunctions.slice());
+                this.userFunctions.set(account.userFunctions.slice());
                 this.dataSource = new MatTableDataSource(this.userFunctions());
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
@@ -213,28 +211,22 @@ export class FunctionComponent implements OnInit {
       isDeleting: false,
       highlighted: false
     }
-    var userFunctionDTO: TaskDTO = {
-      userFunction: task,
-    }
     this.userFunctions().push(task);
-    this.addFunction4Account(userFunctionDTO);
+    this.addFunction4Account(task);
   }
-  deleteFunction(uFunction: Task) {
+  deleteFunction(task: Task) {
     // reset alerts on submit
     this.alertService.clear();
 
-    var userFunctionDTO: TaskDTO = {
-      userFunction: uFunction,
-    }
-    this.deleteFunction4Account(userFunctionDTO);
+    this.deleteFunction4Account(task);
   }
-  private addFunction4Account(userFunction: TaskDTO) {
+  private addFunction4Account(task: Task) {
 
-    this.accountService.addFunction(this.id, userFunction)
+    this.accountService.addFunction(this.id, task)
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.userFunctions = signal(account.userFunctions.slice());
+          this.userFunctions.set(account.userFunctions.slice());
           //this.alertService.success('Update successful', { keepAfterRouteChange: true });
           //this.router.navigate(['../../'], { relativeTo: this.route });
           this.dataSource.data = this.userFunctions();
@@ -245,7 +237,7 @@ export class FunctionComponent implements OnInit {
         }
       });
   }
-  private deleteFunction4Account(userFunctionDTO: TaskDTO) {
+  private deleteFunction4Account(userFunctionDTO: Task) {
     this.accountService.deleteFunction(this.id, userFunctionDTO)
       .pipe(first())
       .subscribe({

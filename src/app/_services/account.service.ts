@@ -16,7 +16,7 @@ import { Schedule } from '../_models/schedule';
 import { ScheduleDateTimes } from '../_models/scheduledatetimes';
 import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { SchedulePoolElements } from '../_models/schedulepoolelements';
-import { TaskDTO } from '../_models/taskDTO';
+import { Task } from "../_models/task";
 import { DateFunctionTeams } from '../_models/teams';
 import { TimeSlotsTasksDTO } from '../_models/timeslotstasksDTO';
 
@@ -168,11 +168,11 @@ export class AccountService {
         return this.http.post<Account>(`${baseUrl}/delete-schedule/${id}`, schedule);
     }
 
-    addFunction(id: any, userFunction: TaskDTO) {
+    addFunction(id: any, userFunction: Task) {
         return this.http.put<Account>(`${baseUrl}/add-function/${id}`, userFunction);
     }
 
-    deleteFunction(id: any, userFunction: TaskDTO) {
+    deleteFunction(id: any, userFunction: Task) {
         return this.http.post<Account>(`${baseUrl}/delete-function/${id}`, userFunction);
     }
 
