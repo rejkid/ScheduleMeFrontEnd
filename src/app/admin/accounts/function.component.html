@@ -65,7 +65,7 @@
                                 <div class="col-12">
                                     <label for="group">Group</label>
                                     <input type="text" #data formControlName="groupTask" name="group"
-                                        placeholder="Specify a group" class="form-control"/>
+                                        placeholder="Specify a group" class="form-control" />
                                 </div>
                             </div>
                             <div *ngIf="submitted && form.controls['groupTask'].hasError('invalidGroup')"
@@ -112,19 +112,11 @@
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
 
                     <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
-                        [ngClass]="{'highlighted': i == staticHighlightRow}" #tr
-                        (click)="onRowSelected(row, tr, i, $event)" (mouseover)="row.hovered = true"
-                        (mouseout)="row.hovered = false"></mat-row>
-
-                    <!-- <mat-row *matRowDef="let row; columns: displayedColumns;let i = index;"
-            (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row> -->
-
-
+                        [ngClass]="{'highlighted': row.highlighted}" #tr (click)="onRowSelected(row, tr, i, $event)"
+                        (mouseover)="row.hovered = true" (mouseout)="row.hovered = false"></mat-row>
                 </mat-table>
-
-
-                <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="userFunctions().length" [pageSizeOptions]="[10, 30, 50, 100]"
-                    showFirstLastButtons>
+                <mat-paginator #paginator class="lessons-table mat-elevation-z8" [length]="userFunctions().length"
+                    [pageSizeOptions]="[10, 30, 50, 100]" showFirstLastButtons>
                 </mat-paginator>
                 <div class="mt-3">
                     <button type="button" (click)="addFunction()" class="btn3d btn btn-primary">

@@ -2,7 +2,7 @@ import { ViewportScroller } from '@angular/common';
 import { Component, Injector, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -61,8 +61,7 @@ export class FunctionComponent implements OnInit {
   currentSelectedContact: Task = null;
   lastSelectedContact: Task = null;
   highlighted: boolean;
-  static HighlightRow: Number = -1;
-
+  
   isLoaded: boolean = false;
 
   // JD Test
@@ -86,7 +85,7 @@ export class FunctionComponent implements OnInit {
     numbers.set(2);
     numbers.set(3);
 
-    var numbers$ = toObservable(numbers, {injector: this.injector});
+    var numbers$ = toObservable(numbers, { injector: this.injector });
     numbers.set(4);
 
     numbers$.subscribe({
@@ -227,9 +226,14 @@ export class FunctionComponent implements OnInit {
       .subscribe({
         next: (account) => {
           this.userFunctions.set(account.userFunctions.slice());
-          //this.alertService.success('Update successful', { keepAfterRouteChange: true });
-          //this.router.navigate(['../../'], { relativeTo: this.route });
           this.dataSource.data = this.userFunctions();
+        },
+        complete: () => {
+          // We have just succesfuly added a new schedule
+          var tasks = this.userFunctions().filter(s => this.isSameTask(s, task));
+          console.assert(tasks.length == 1, "Task  just created not found");
+          this.selectRow(tasks[0]);
+
         },
         error: error => {
           this.alertService.error(error);
@@ -242,7 +246,7 @@ export class FunctionComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.userFunctions = signal(account.userFunctions.slice());
+          this.userFunctions.set(account.userFunctions.slice());
 
           //this.alertService.success('Update successful', { keepAfterRouteChange: true });
           //this.router.navigate(['../../'], { relativeTo: this.route });
@@ -311,28 +315,57 @@ export class FunctionComponent implements OnInit {
   }
   onRowSelected(contact: Task, input: any, index: number, event: MouseEvent) {
 
+    // if (event.ctrlKey) {
+    //   FunctionComponent.HighlightRow = FunctionComponent.HighlightRow == index ? -1 : index;
+    // } else {
+    //   FunctionComponent.HighlightRow = index;
+    // }
+
+    // contact.highlighted = !contact.highlighted;
+    // this.currentSelectedContact = contact;
+
+    // if (this.lastSelectedContact != null) {
+    //   this.lastSelectedContact.highlighted = false;
+    // }
+    // this.lastSelectedContact = this.currentSelectedContact;
+
+    // if (!contact.highlighted) {
+    //   // If row is deselected mark both contacts as deselected(null);
+    //   this.lastSelectedContact = null;
+    //   this.currentSelectedContact = null;
+    // }
+    // console.log("clickedRow: row == this.staticHighlightRow: " + (index == this.staticHighlightRow));
+
     if (event.ctrlKey) {
-      FunctionComponent.HighlightRow = FunctionComponent.HighlightRow == index ? -1 : index;
-    } else {
-      FunctionComponent.HighlightRow = index;
-    }
-
-    contact.highlighted = !contact.highlighted;
-    this.currentSelectedContact = contact;
-
-    if (this.lastSelectedContact != null) {
-      this.lastSelectedContact.highlighted = false;
-    }
-    this.lastSelectedContact = this.currentSelectedContact;
-
-    if (!contact.highlighted) {
-      // If row is deselected mark both contacts as deselected(null);
-      this.lastSelectedContact = null;
-      this.currentSelectedContact = null;
-    }
-    console.log("clickedRow: row == this.staticHighlightRow: " + (index == this.staticHighlightRow));
+      if (contact.highlighted) {
+          contact.highlighted = false;
+          return;
+      }
   }
-  get staticHighlightRow() {
-    return FunctionComponent.HighlightRow;
+  this.selectRow(contact);
+  }
+  private selectRow(contact: Task) {
+    for (let index = 0; index < this.userFunctions().length; index++) {
+      const element = this.userFunctions()[index];
+      if (element.highlighted)
+        element.highlighted = false;
+
+      if (this.isSameTask(contact, element)) {
+        var pageNumber = Math.floor(index / this.paginator.pageSize);
+        this.paginator.pageIndex = pageNumber;
+
+        this.paginator.page.next({
+          pageIndex: pageNumber,
+          pageSize: this.paginator.pageSize,
+          length: this.paginator.length
+        } as PageEvent);
+      }
+    }
+    contact.highlighted = true;
+  }
+
+  isSameTask(t1: Task, t2: Task): boolean {
+    console.assert(t1 != null && t2 != null, "One of the tasks is null");
+    return t1.userFunction == t2.userFunction && t1.isGroup == t2.isGroup;
   }
 }

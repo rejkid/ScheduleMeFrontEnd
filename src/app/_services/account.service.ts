@@ -10,7 +10,6 @@ import { Account, Role } from '../_models';
 import { CookieService } from 'ngx-cookie-service';
 
 import { environment } from 'src/environments/environment';
-import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
 import { AgentTaskConfig } from '../_models/agenttaskconfig';
 import { Schedule } from '../_models/schedule';
 import { ScheduleDateTimes } from '../_models/scheduledatetimes';
@@ -102,10 +101,6 @@ export class AccountService {
 
     getAll() {
         return this.http.get<Account[]>(baseUrl);
-    }
-
-    getByDateAndTask(accountsByDateAndTaskDTO: AccountsByDateAndTaskDTO) {
-        return this.http.post<Account[]>(`${baseUrl}/accounts-by-date`, accountsByDateAndTaskDTO);
     }
 
     getById(id: string) {

@@ -7,12 +7,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { Account } from 'src/app/_models';
-import { AccountsByDateAndTaskDTO } from 'src/app/_models/AccountsByDateAndTaskDTO';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { Schedule } from 'src/app/_models/schedule';
 import { User } from 'src/app/_models/user';
-import { Task } from 'src/app/_models/task';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 
