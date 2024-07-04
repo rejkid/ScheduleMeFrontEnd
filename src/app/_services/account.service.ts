@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, finalize, map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 //import { environment } from '@environments/environment';
 import { Account, Role } from '../_models';
@@ -10,18 +10,15 @@ import { Account, Role } from '../_models';
 import { CookieService } from 'ngx-cookie-service';
 
 import { environment } from 'src/environments/environment';
+import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
+import { AgentTaskConfig } from '../_models/agenttaskconfig';
 import { Schedule } from '../_models/schedule';
 import { ScheduleDateTimes } from '../_models/scheduledatetimes';
 import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { SchedulePoolElements } from '../_models/schedulepoolelements';
-import { DateFunctionTeams } from '../_models/teams';
-import { UserFunctions } from '../_models/userfunctions';
-import { Task } from '../_models/task';
 import { TaskDTO } from '../_models/taskDTO';
-import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
-import { TimeSlotsTasks } from '../_models/timeslotstasks';
+import { DateFunctionTeams } from '../_models/teams';
 import { TimeSlotsTasksDTO } from '../_models/timeslotstasksDTO';
-import { AgentTaskConfig } from '../_models/agenttaskconfig';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;

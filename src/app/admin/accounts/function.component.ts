@@ -205,7 +205,7 @@ export class FunctionComponent implements OnInit {
       return;
     }
 
-    var uFunction: Task = {
+    var task: Task = {
       id: (++this.userFunctionIndexer).toString(),
       userFunction: this.f['function'].value,
       group: this.isGroupTaskSelected ? this.f['groupTask'].value : "",
@@ -214,9 +214,9 @@ export class FunctionComponent implements OnInit {
       highlighted: false
     }
     var userFunctionDTO: TaskDTO = {
-      userFunction: uFunction,
+      userFunction: task,
     }
-    this.userFunctions().push(uFunction);
+    this.userFunctions().push(task);
     this.addFunction4Account(userFunctionDTO);
   }
   deleteFunction(uFunction: Task) {

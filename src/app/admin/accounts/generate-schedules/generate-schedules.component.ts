@@ -4,15 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { Subscription /* , first */ } from 'rxjs';
 import { first } from 'rxjs/operators';
+import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
 import { User } from 'src/app/_models/user';
-import { Task } from 'src/app/_models/task';
-import { UserFunctions } from 'src/app/_models/userfunctions';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { FunctionScheduleComponent } from '../function-schedule/function-schedule.component';
-import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 
 
 
