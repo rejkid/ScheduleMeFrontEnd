@@ -1,4 +1,4 @@
-import { AgentTask } from "./userfunction";
+import { Task } from "./task";
 
 
 export class AccountsByDateAndTaskDTO {

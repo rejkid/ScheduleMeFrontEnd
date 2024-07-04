@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { Account, Role } from '../_models';
 import { AgentTaskConfig } from '../_models/agenttaskconfig';
-import { AgentTask } from '../_models/userfunction';
+import { Task } from '../_models/task';
 import { AccountService, AlertService } from '../_services';
 
 @Component({ templateUrl: 'schedule-function.component.html' })
@@ -14,7 +14,7 @@ export class ScheduleFunctionComponent implements OnInit {
   form: FormGroup;
   userFunctionIndexer: number = 0;
 
-  userFunctions: AgentTask[] = null;
+  userFunctions: Task[] = null;
   functions: AgentTaskConfig[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;

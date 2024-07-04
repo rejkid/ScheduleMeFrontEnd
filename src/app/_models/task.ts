@@ -1,4 +1,4 @@
-export class AgentTask {
+export class Task {
     id: string;
     userFunction: string;
     group: string;

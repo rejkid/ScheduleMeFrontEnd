@@ -7,8 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
-import { AgentTask } from 'src/app/_models/userfunction';
-import { UserFunctionDTO } from 'src/app/_models/userfunctionDTO';
+import { Task } from 'src/app/_models/task';
+import { TaskDTO } from 'src/app/_models/taskDTO';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -47,21 +47,21 @@ export class FunctionComponent implements OnInit {
   form: FormGroup;
   userFunctionIndexer: number = 0;
 
-  dataSource: MatTableDataSource<AgentTask>;
+  dataSource: MatTableDataSource<Task>;
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
   labeledColumns: string[] = COLUMNS_SCHEMA.map((col) => col.label);
   columnsSchema: any = COLUMNS_SCHEMA;
 
 
-  userFunctions = signal<AgentTask[]>([]);
+  userFunctions = signal<Task[]>([]);
   possibleTasks: AgentTaskConfig[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
   loading = false;
   accountService: AccountService;
 
-  currentSelectedContact: AgentTask = null;
-  lastSelectedContact: AgentTask = null;
+  currentSelectedContact: Task = null;
+  lastSelectedContact: Task = null;
   highlighted: boolean;
   static HighlightRow: Number = -1;
 
@@ -191,7 +191,7 @@ export class FunctionComponent implements OnInit {
     var currentGroupTask = this.f['groupTask'].value;
 
     /* Sanity check */
-    var existing: AgentTask[] = this.userFunctions().filter((f) => {
+    var existing: Task[] = this.userFunctions().filter((f) => {
       return (f.userFunction === currentValue && f.group === currentGroupTask)
     });
     if (existing.length > 0) {
@@ -205,7 +205,7 @@ export class FunctionComponent implements OnInit {
       return;
     }
 
-    var uFunction: AgentTask = {
+    var uFunction: Task = {
       id: (++this.userFunctionIndexer).toString(),
       userFunction: this.f['function'].value,
       group: this.isGroupTaskSelected ? this.f['groupTask'].value : "",
@@ -213,22 +213,22 @@ export class FunctionComponent implements OnInit {
       isDeleting: false,
       highlighted: false
     }
-    var userFunctionDTO: UserFunctionDTO = {
+    var userFunctionDTO: TaskDTO = {
       userFunction: uFunction,
     }
     this.userFunctions().push(uFunction);
     this.addFunction4Account(userFunctionDTO);
   }
-  deleteFunction(uFunction: AgentTask) {
+  deleteFunction(uFunction: Task) {
     // reset alerts on submit
     this.alertService.clear();
 
-    var userFunctionDTO: UserFunctionDTO = {
+    var userFunctionDTO: TaskDTO = {
       userFunction: uFunction,
     }
     this.deleteFunction4Account(userFunctionDTO);
   }
-  private addFunction4Account(userFunction: UserFunctionDTO) {
+  private addFunction4Account(userFunction: TaskDTO) {
 
     this.accountService.addFunction(this.id, userFunction)
       .pipe(first())
@@ -245,7 +245,7 @@ export class FunctionComponent implements OnInit {
         }
       });
   }
-  private deleteFunction4Account(userFunctionDTO: UserFunctionDTO) {
+  private deleteFunction4Account(userFunctionDTO: TaskDTO) {
     this.accountService.deleteFunction(this.id, userFunctionDTO)
       .pipe(first())
       .subscribe({
@@ -280,7 +280,7 @@ export class FunctionComponent implements OnInit {
     }
     return false;
   }
-  public isGroupTask(f: AgentTask): boolean {
+  public isGroupTask(f: Task): boolean {
     if (this.form == undefined)
       return false;
     for (let index = 0; index < this.possibleTasks.length; index++) {
@@ -317,7 +317,7 @@ export class FunctionComponent implements OnInit {
       this.f["groupTask"].setValue("");
     }
   }
-  onRowSelected(contact: AgentTask, input: any, index: number, event: MouseEvent) {
+  onRowSelected(contact: Task, input: any, index: number, event: MouseEvent) {
 
     if (event.ctrlKey) {
       FunctionComponent.HighlightRow = FunctionComponent.HighlightRow == index ? -1 : index;

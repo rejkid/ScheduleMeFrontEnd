@@ -16,8 +16,8 @@ import { SchedulePoolElement } from '../_models/schedulepoolelement';
 import { SchedulePoolElements } from '../_models/schedulepoolelements';
 import { DateFunctionTeams } from '../_models/teams';
 import { UserFunctions } from '../_models/userfunctions';
-import { AgentTask } from '../_models/userfunction';
-import { UserFunctionDTO } from '../_models/userfunctionDTO';
+import { Task } from '../_models/task';
+import { TaskDTO } from '../_models/taskDTO';
 import { AccountsByDateAndTaskDTO } from '../_models/AccountsByDateAndTaskDTO';
 import { TimeSlotsTasks } from '../_models/timeslotstasks';
 import { TimeSlotsTasksDTO } from '../_models/timeslotstasksDTO';
@@ -171,11 +171,11 @@ export class AccountService {
         return this.http.post<Account>(`${baseUrl}/delete-schedule/${id}`, schedule);
     }
 
-    addFunction(id: any, userFunction: UserFunctionDTO) {
+    addFunction(id: any, userFunction: TaskDTO) {
         return this.http.put<Account>(`${baseUrl}/add-function/${id}`, userFunction);
     }
 
-    deleteFunction(id: any, userFunction: UserFunctionDTO) {
+    deleteFunction(id: any, userFunction: TaskDTO) {
         return this.http.post<Account>(`${baseUrl}/delete-function/${id}`, userFunction);
     }
 

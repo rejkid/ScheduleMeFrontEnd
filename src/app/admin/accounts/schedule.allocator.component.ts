@@ -6,7 +6,7 @@ import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { Schedule } from 'src/app/_models/schedule';
 import { SchedulePoolElement } from 'src/app/_models/schedulepoolelement';
-import { AgentTask } from 'src/app/_models/userfunction';
+import { Task } from 'src/app/_models/task';
 import { AccountService, AlertService } from 'src/app/_services';
 import { environment } from 'src/environments/environment';
 
@@ -80,7 +80,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
   columnsSchema: any = COLUMNS_SCHEMA;
 
-  userFunctions: AgentTask[] = [];
+  userFunctions: Task[] = [];
 
   isLoggedAsAdmin: boolean = false;
 

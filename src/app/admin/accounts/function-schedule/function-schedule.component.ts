@@ -12,7 +12,7 @@ import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { Schedule } from 'src/app/_models/schedule';
 import { User } from 'src/app/_models/user';
-import { AgentTask } from 'src/app/_models/userfunction';
+import { Task } from 'src/app/_models/task';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 

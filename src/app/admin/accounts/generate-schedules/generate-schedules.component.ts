@@ -7,7 +7,7 @@ import { first } from 'rxjs/operators';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
 import { User } from 'src/app/_models/user';
-import { AgentTask } from 'src/app/_models/userfunction';
+import { Task } from 'src/app/_models/task';
 import { UserFunctions } from 'src/app/_models/userfunctions';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
