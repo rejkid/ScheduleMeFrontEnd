@@ -53,6 +53,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('groupDataCtrl') groupCtrl: ElementRef;
+  @ViewChild('add') add: ElementRef;
 
   readonly CLEANER_STR = Constants.CLEANER_STR;
 
@@ -319,7 +320,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     var formDate = new Date(this.form.controls['scheduledDate'].value);
     formDate.setSeconds(0); // Re-set seconds to zero
 
-    var formTimeStr = moment(formDate).format(Constants.dateTimeFormat);
+    var formDateTimeStr = moment(formDate).format(Constants.dateTimeFormat);
     var formFunctionStr = this.form.controls['function'].value;
     var formGroup = this.form.controls['groupTask'].value;
 
@@ -328,9 +329,9 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       var scheduleFunction = this.schedules[index].userFunction;
       var scheduleGroup = this.schedules[index].scheduleGroup;
 
-      if (scheduleTimeStr == formTimeStr && scheduleFunction == formFunctionStr && scheduleGroup == formGroup) {
+      if (scheduleTimeStr == formDateTimeStr && scheduleFunction == formFunctionStr && scheduleGroup == formGroup) {
         var GroupStr = scheduleGroup.length > 0 ? "/" + formGroup : "";
-        this.alertService.info("The user is already " + scheduleFunction + GroupStr + " for that date/time");
+        this.alertService.info("The user is already " + scheduleFunction + GroupStr + " for Dat/Time: " + formDateTimeStr);
         this.scroller.scrollToAnchor("pageStart");
 
         // Select the existing one
@@ -341,8 +342,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
     var schedule: Schedule = {
       accountId: this.account.id,
-      date: formTimeStr,
-      newDate: formTimeStr,
+      date: formDateTimeStr,
+      newDate: formDateTimeStr,
       dob: this.account.dob,
       required: true,
       deleting: false,
@@ -393,6 +394,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   onDateChanged(event: any) {
     var dateTime = event.value;
     var t = typeof (dateTime === 'Date');
+    this.add.nativeElement.click();
   }
   onUserFunctionChanged(event: any) {
     this.setupGroupTaskCtrl();

@@ -51,7 +51,7 @@ export class FunctionComponent implements OnInit {
   columnsSchema: any = COLUMNS_SCHEMA;
 
 
-  userFunctions = signal<Task[]>([]);
+  userTasks = signal<Task[]>([]);
   possibleTasks: AgentTaskConfig[] = [];
   submitted = false;
   isLoggedAsAdmin: boolean = false;
@@ -111,8 +111,8 @@ export class FunctionComponent implements OnInit {
                 this.possibleTasks = value;
 
                 this.account = account;
-                this.userFunctions.set(account.userFunctions.slice());
-                this.dataSource = new MatTableDataSource(this.userFunctions());
+                this.userTasks.set(account.userFunctions.slice());
+                this.dataSource = new MatTableDataSource(this.userTasks());
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
 
@@ -188,11 +188,12 @@ export class FunctionComponent implements OnInit {
     var currentGroupTask = this.f['groupTask'].value;
 
     /* Sanity check */
-    var existing: Task[] = this.userFunctions().filter((f) => {
+    var existing: Task[] = this.userTasks().filter((f) => {
       return (f.userFunction === currentValue && f.group === currentGroupTask)
     });
+    console.assert(existing.length <= 1, "We have double " + currentValue + " task for the same user: "+ this.account.email);
     if (existing.length > 0) {
-      this.alertService.error(currentValue + " already exists");
+      this.alertService.warn(this.account.email + " is already a " + currentValue + (existing[0].isGroup ? " for group agent " + existing[0].group  : ""));
       this.scroller.scrollToAnchor("pageStart");
       return;
     }
@@ -210,7 +211,7 @@ export class FunctionComponent implements OnInit {
       isDeleting: false,
       highlighted: false
     }
-    this.userFunctions().push(task);
+    this.userTasks().push(task);
     this.addFunction4Account(task);
   }
   deleteFunction(task: Task) {
@@ -225,12 +226,12 @@ export class FunctionComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.userFunctions.set(account.userFunctions.slice());
-          this.dataSource.data = this.userFunctions();
+          this.userTasks.set(account.userFunctions.slice());
+          this.dataSource.data = this.userTasks();
         },
         complete: () => {
           // We have just succesfuly added a new schedule
-          var tasks = this.userFunctions().filter(s => this.isSameTask(s, task));
+          var tasks = this.userTasks().filter(s => this.isSameTask(s, task));
           console.assert(tasks.length == 1, "Task  just created not found");
           this.selectRow(tasks[0]);
 
@@ -246,11 +247,11 @@ export class FunctionComponent implements OnInit {
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.userFunctions.set(account.userFunctions.slice());
+          this.userTasks.set(account.userFunctions.slice());
 
           //this.alertService.success('Update successful', { keepAfterRouteChange: true });
           //this.router.navigate(['../../'], { relativeTo: this.route });
-          this.dataSource.data = this.userFunctions();
+          this.dataSource.data = this.userTasks();
           // this.dataSource.paginator = this.paginator;
           // this.dataSource.sort = this.sort;
 
@@ -345,8 +346,8 @@ export class FunctionComponent implements OnInit {
   this.selectRow(contact);
   }
   private selectRow(contact: Task) {
-    for (let index = 0; index < this.userFunctions().length; index++) {
-      const element = this.userFunctions()[index];
+    for (let index = 0; index < this.userTasks().length; index++) {
+      const element = this.userTasks()[index];
       if (element.highlighted)
         element.highlighted = false;
 
