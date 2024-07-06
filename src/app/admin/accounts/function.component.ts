@@ -193,7 +193,7 @@ export class FunctionComponent implements OnInit {
     });
     console.assert(existing.length <= 1, "We have double " + currentValue + " task for the same user: "+ this.account.email);
     if (existing.length > 0) {
-      this.alertService.warn(this.account.email + " is already a " + currentValue + (existing[0].isGroup ? " for group agent " + existing[0].group  : ""));
+      this.alertService.warn(this.account.email + " is already " + currentValue + (existing[0].isGroup ? " for group agent " + existing[0].group  : ""));
       this.scroller.scrollToAnchor("pageStart");
       return;
     }

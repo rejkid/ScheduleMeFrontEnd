@@ -1,13 +1,14 @@
 ﻿import { ViewportScroller } from '@angular/common';
-import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { pipe } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
+import { CtrlActionService, NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 const COLUMNS_SCHEMA = [
     {
@@ -37,11 +38,13 @@ const COLUMNS_SCHEMA = [
     },
 ]
 
+
 @Component({
     templateUrl: 'list.component.html',
     styleUrls: ['./list.component.less'],
 })
 export class ListComponent implements OnInit, AfterViewInit {
+    private modalService = inject(NgbModal);
     @ViewChild('paginator') paginator!: MatPaginator;
     @ViewChild(MatSort) sort!: MatSort;
 
@@ -63,19 +66,43 @@ export class ListComponent implements OnInit, AfterViewInit {
     constructor(private accountService: AccountService,
         private alertService: AlertService,
         private scroller: ViewportScroller,
-        private router: Router) {
+        private router: Router,
+        private ctrlActionService: CtrlActionService) {
 
     }
     ngOnInit() {
+        this.ctrlActionService.getAction().subscribe({
+            next: (value) => {
+                console.log("Got it");
+                // this.isDeleting = true;
+                this.accountService.deleteAllUserAccounts()
+                    .pipe(first())
+                    .subscribe({
+                        next: (accounts: any) => {
+                            this.refreshList();
+                            console.log(accounts);
+                        },
+                        complete: () => {
+                            //this.alertService.info("Done");
+                            this.isDeleting = false;
+                        },
+                        error: error => {
+                            this.alertService.error(error);
+                            this.scroller.scrollToAnchor("pageStart");
+                            this.isDeleting = false;
+                        }
+                    });
+            }
+        });
     }
     ngAfterViewInit(): void {
         setTimeout(() => {
             this.dataSource = new MatTableDataSource();
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-    
+
             this.refreshList();
-           }, 0);
+        }, 0);
     }
 
     onRowSelected(contact: Account, input: any, index: number, event: MouseEvent) {
@@ -133,7 +160,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 this.dataSource.data = this.accounts();
                 this.paginator.pageIndex = ListComponent.pageIndex;
                 this.paginator.pageSize = ListComponent.pageSize;
-    
+
                 // Initial sort by 'name' is asc order
                 this.sortInAscNameOrder();
 
@@ -158,24 +185,7 @@ export class ListComponent implements OnInit, AfterViewInit {
         return Role.Admin;
     }
     public onDeleteAllUserAccounts(event: Event) {
-        this.isDeleting = true;
-        this.accountService.deleteAllUserAccounts()
-            .pipe(first())
-            .subscribe({
-                next: (accounts: any) => {
-                    this.refreshList();
-                    console.log(accounts);
-                },
-                complete: () => {
-                    //this.alertService.info("Done");
-                    this.isDeleting = false;
-                },
-                error: error => {
-                    this.alertService.error(error);
-                    this.scroller.scrollToAnchor("pageStart");
-                    this.isDeleting = false;
-                }
-            });
+        const modalRef = this.modalService.open(NgbdModalConfirmComponent);
     }
     public onChangeAutoEmail(event: any, tr: any) {
         this.accountService.setAutoEmail(new Boolean(event.target.checked))
@@ -246,7 +256,7 @@ export class ListComponent implements OnInit, AfterViewInit {
             }
         );
     }
-    onChangePageSettings(event: PageEvent ) {
+    onChangePageSettings(event: PageEvent) {
         ListComponent.pageSize = event.pageSize;
         ListComponent.pageIndex = event.pageIndex;
     }

@@ -32,6 +32,7 @@ import { RouterModule } from '@angular/router';
 import { ColorConfig, TestService } from './_services/test.service';
 import { ApplicationPipesModuleModule } from './application-pipes-module/application-pipes-module.module';
 import { OrderByDateOrFunctionPipe } from './application-pipes-module/order-by-date-or-function.pipe';
+import { CtrlActionService } from './admin/accounts/ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 // TODO JD TEST
 export const USERS_SERVICE_TOKEN = new InjectionToken<TestService>('');
@@ -78,6 +79,7 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
         //AutoGeneratorModule,
         // AddEditModule,
         OrderByDateOrFunctionPipe], providers: [
+        CtrlActionService,
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

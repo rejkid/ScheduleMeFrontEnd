@@ -217,6 +217,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
 
           this.refreshTimeSlotsTasks(timeslotsTasks);
           this.isAdding = false;
+          this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
