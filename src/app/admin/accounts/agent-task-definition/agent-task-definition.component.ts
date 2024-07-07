@@ -1,8 +1,7 @@
-import { ViewportScroller } from '@angular/common';
 import { Component, OnInit, ViewChild, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable, Sort, SortDirection } from '@angular/material/sort';
+import { MatSort, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { AccountService, AlertService } from 'src/app/_services';
@@ -44,11 +43,10 @@ export class AgentTaskDefinitionComponent implements OnInit {
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.label);
   columnsSchema: any = COLUMNS_SCHEMA;
 
-  static HighlightRow: Number = -1;
   static pageSize: number = 10;
   selectedBySubmit: boolean = false;
 
-  constructor(private scroller: ViewportScroller, private alertService: AlertService, private accountService: AccountService, private fb: FormBuilder) {
+  constructor(private alertService: AlertService, private accountService: AccountService, private fb: FormBuilder) {
 
   }
   ngOnInit(): void {
@@ -83,17 +81,17 @@ export class AgentTaskDefinitionComponent implements OnInit {
       },
       complete: () => {
         this.isLoaded = true;
-        if (AgentTaskDefinitionComponent.HighlightRow != -1) {
-          for (let index = 0; index < this.agentTaskConfigs().length; index++) {
-            const task = this.agentTaskConfigs()[index];
-            if (index == AgentTaskDefinitionComponent.HighlightRow) {
-              if (!task.isDeleting) {
-                this.form.get('agentTaskName').setValue(task.agentTaskStr);
-                this.form.get('isGroupBox').setValue(task.isGroup);
-              }
-            }
-          }
-        }
+        // if (AgentTaskDefinitionComponent.HighlightRow != -1) {
+        //   for (let index = 0; index < this.agentTaskConfigs().length; index++) {
+        //     const task = this.agentTaskConfigs()[index];
+        //     if (index == AgentTaskDefinitionComponent.HighlightRow) {
+        //       if (!task.isDeleting) {
+        //         this.form.get('agentTaskName').setValue(task.agentTaskStr);
+        //         this.form.get('isGroupBox').setValue(task.isGroup);
+        //       }
+        //     }
+        //   }
+        // }
         if (this.f['agentTaskName'].value.length <= 0) {
           this.f['isGroupBox'].disable();
         }
@@ -101,7 +99,6 @@ export class AgentTaskDefinitionComponent implements OnInit {
       error: (error) => {
         this.isLoaded = true;
         this.alertService.error(error);
-        this.scroller.scrollToAnchor("pageStart");
       }
     });
   }
@@ -146,10 +143,10 @@ export class AgentTaskDefinitionComponent implements OnInit {
         console.assert(element2Update != null, "AgentTaskConfig  is null");
         this.selectedBySubmit = true;
         this.selectRow(element2Update);
+        this.alertService.info("Data Saved");
       },
       error: (error) => {
         this.alertService.error(error);
-        this.scroller.scrollToAnchor("pageStart");
       }
     });
   }
@@ -163,11 +160,10 @@ export class AgentTaskDefinitionComponent implements OnInit {
         this.dataSource.data = this.agentTaskConfigs();
       },
       complete: () => {
-        console.log("Agent task deleted");
+        this.alertService.info("Data Saved");
       },
       error: (error) => {
         this.alertService.error(error);
-        this.scroller.scrollToAnchor("pageStart");
       }
     });
   }
@@ -193,42 +189,46 @@ export class AgentTaskDefinitionComponent implements OnInit {
       });
     }
   }
-  onRowSelected(task: AgentTaskConfig, tr: any, index: number, event: any) {
+  onRowSelected(slot: AgentTaskConfig, tr: any, index: number, event: any) {
     if (event.ctrlKey) {
-      AgentTaskDefinitionComponent.HighlightRow = AgentTaskDefinitionComponent.HighlightRow == index ? -1 : index;
-    } else {
-      AgentTaskDefinitionComponent.HighlightRow = index;
+      if (slot.highlighted) {
+        slot.highlighted = false;
+        return;
+      }
     }
-    this.selectRow(task);
+    this.selectRow(slot);
   }
-  private selectRow(task: AgentTaskConfig) {
-
-    if (!task.isDeleting) {
-      this.form.get('agentTaskName').setValue(task.agentTaskStr);
-      this.form.get('isGroupBox').setValue(task.isGroup);
-    }
-
+  private selectRow(slot: AgentTaskConfig) {
     for (let index = 0; index < this.agentTaskConfigs().length; index++) {
       const element = this.agentTaskConfigs()[index];
-      if (task.agentTaskStr == element.agentTaskStr && this.selectedBySubmit) {
-        this.staticHighlightRow = index;
-        this.selectedBySubmit = false;
+      if (element.highlighted)
+        element.highlighted = false;
 
+      if (this.isSameTaskConfig(slot, element)) {
+        var pageNumber = Math.floor(index / this.paginator.pageSize);
+        this.paginator.pageIndex = pageNumber;
+
+        this.paginator.page.next({
+          pageIndex: pageNumber,
+          pageSize: this.paginator.pageSize,
+          length: this.paginator.length
+        });
       }
-      if (index == AgentTaskDefinitionComponent.HighlightRow)
-        console.log("Selected element: " + element.agentTaskStr);
-
     }
+
+    slot.highlighted = true;
+    if (!slot.isDeleting) {
+      this.form.get('agentTaskName').setValue(slot.agentTaskStr);
+      this.form.get('isGroupBox').setValue(slot.isGroup);
+    }
+  }
+  isSameTaskConfig(s1: AgentTaskConfig, s2: AgentTaskConfig) : boolean{
+    console.assert(s1 != null && s2 != null, "One or both of the time slots is null");
+    return s1.agentTaskStr == s2.agentTaskStr && s1.isGroup == s2.isGroup;
   }
 
   get pageSize() {
     return AgentTaskDefinitionComponent.pageSize;
-  }
-  get staticHighlightRow(): Number {
-    return AgentTaskDefinitionComponent.HighlightRow;
-  }
-  set staticHighlightRow(index: Number) {
-    AgentTaskDefinitionComponent.HighlightRow = index;
   }
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }

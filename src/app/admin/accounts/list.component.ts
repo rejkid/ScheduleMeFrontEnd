@@ -1,5 +1,4 @@
-﻿import { ViewportScroller } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild, inject, signal } from '@angular/core';
+﻿import { AfterViewInit, Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -65,7 +64,6 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     constructor(private accountService: AccountService,
         private alertService: AlertService,
-        private scroller: ViewportScroller,
         private router: Router,
         private ctrlActionService: CtrlActionService) {
 
@@ -88,7 +86,6 @@ export class ListComponent implements OnInit, AfterViewInit {
                         },
                         error: error => {
                             this.alertService.error(error);
-                            this.scroller.scrollToAnchor("pageStart");
                             this.isDeleting = false;
                         }
                     });
@@ -177,9 +174,14 @@ export class ListComponent implements OnInit, AfterViewInit {
         account.isDeleting = true;
         this.accountService.delete(id)
             .pipe(first())
-            .subscribe(() => {
+            .subscribe({
+                next: (value) => {
                 this.refreshList();
-            });
+            },
+        complete: () => {
+            this.alertService.info("Data Saved");
+
+        }});
     }
     public get RoleAdminEnum() {
         return Role.Admin;
@@ -200,7 +202,6 @@ export class ListComponent implements OnInit, AfterViewInit {
                 },
                 error: error => {
                     this.alertService.error(error);
-                    this.scroller.scrollToAnchor("pageStart");
                 }
 
             });

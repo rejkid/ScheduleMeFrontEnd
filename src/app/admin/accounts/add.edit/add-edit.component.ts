@@ -157,8 +157,10 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             .pipe(first())
             .subscribe({
                 next: () => {
-                    this.alertService.success('Account created successfully', { keepAfterRouteChange: true });
                     this.router.navigate(['../..'], { relativeTo: this.route });
+                },
+                complete: () => {
+                    this.alertService.info("Data Saved");
                 },
                 error: error => {
                     this.alertService.error(error);
@@ -186,9 +188,11 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             .subscribe({
                 next: (value) => {
                     this.alertService.clear();
-                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
                     //this.router.navigate(['../../../'], { relativeTo: this.route });
                     this.loading = false;
+                },
+                complete: () => {
+                    this.alertService.info("Data Saved");
                 },
                 error: error => {
                     this.alertService.error(error);

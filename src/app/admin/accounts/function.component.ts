@@ -1,4 +1,3 @@
-import { ViewportScroller } from '@angular/common';
 import { Component, Injector, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
@@ -72,8 +71,7 @@ export class FunctionComponent implements OnInit {
     private alertService: AlertService,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router,
-    private scroller: ViewportScroller) {
+    private router: Router) {
     this.accountService = accountService;
     this.isLoggedAsAdmin = this.accountService.isAdmin();
   }
@@ -193,8 +191,7 @@ export class FunctionComponent implements OnInit {
     });
     console.assert(existing.length <= 1, "We have double " + currentValue + " task for the same user: "+ this.account.email);
     if (existing.length > 0) {
-      this.alertService.warn(this.account.email + " is already " + currentValue + (existing[0].isGroup ? " for group agent " + existing[0].group  : ""));
-      this.scroller.scrollToAnchor("pageStart");
+      this.alertService.error(this.account.email + " is already " + currentValue + (existing[0].isGroup ? " for group agent " + existing[0].group  : ""));
       return;
     }
 
@@ -234,7 +231,7 @@ export class FunctionComponent implements OnInit {
           var tasks = this.userTasks().filter(s => this.isSameTask(s, task));
           console.assert(tasks.length == 1, "Task  just created not found");
           this.selectRow(tasks[0]);
-
+          this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
@@ -248,13 +245,8 @@ export class FunctionComponent implements OnInit {
       .subscribe({
         next: (account) => {
           this.userTasks.set(account.userFunctions.slice());
-
-          //this.alertService.success('Update successful', { keepAfterRouteChange: true });
-          //this.router.navigate(['../../'], { relativeTo: this.route });
           this.dataSource.data = this.userTasks();
-          // this.dataSource.paginator = this.paginator;
-          // this.dataSource.sort = this.sort;
-
+          this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
@@ -315,28 +307,6 @@ export class FunctionComponent implements OnInit {
     }
   }
   onRowSelected(contact: Task, input: any, index: number, event: MouseEvent) {
-
-    // if (event.ctrlKey) {
-    //   FunctionComponent.HighlightRow = FunctionComponent.HighlightRow == index ? -1 : index;
-    // } else {
-    //   FunctionComponent.HighlightRow = index;
-    // }
-
-    // contact.highlighted = !contact.highlighted;
-    // this.currentSelectedContact = contact;
-
-    // if (this.lastSelectedContact != null) {
-    //   this.lastSelectedContact.highlighted = false;
-    // }
-    // this.lastSelectedContact = this.currentSelectedContact;
-
-    // if (!contact.highlighted) {
-    //   // If row is deselected mark both contacts as deselected(null);
-    //   this.lastSelectedContact = null;
-    //   this.currentSelectedContact = null;
-    // }
-    // console.log("clickedRow: row == this.staticHighlightRow: " + (index == this.staticHighlightRow));
-
     if (event.ctrlKey) {
       if (contact.highlighted) {
           contact.highlighted = false;
@@ -363,6 +333,10 @@ export class FunctionComponent implements OnInit {
       }
     }
     contact.highlighted = true;
+    if (!contact.isDeleting) {
+      this.form.get('function').setValue(contact.userFunction);
+      this.form.get('groupTask').setValue(contact.group);
+    }
   }
 
   isSameTask(t1: Task, t2: Task): boolean {

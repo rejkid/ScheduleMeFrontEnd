@@ -146,6 +146,10 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   }
   onDeleteTimeSlotTasks(event: MouseEvent, tasks: TimeSlotsTasks) {
     console.log("MainSchedulerComponent deleting called");
+    // Reset alerts on submit
+    this.alertService.clear();
+
+
     tasks.isDeleting = true;
     var timeslotsTasks: TimeSlotsTasksDTO = {
       date: tasks.date,
@@ -161,6 +165,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
         complete: () => {
           tasks.isDeleting = false;
           this.refreshTimeSlotsTasks(null);
+          this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
@@ -185,6 +190,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
     if (this.form.invalid) {
       this.form.markAsTouched(); //markAllAsTouched();
       this.f['groupTask'].markAsTouched();
+      this.alertService.info("Data Invalid");
       return;
     }
 

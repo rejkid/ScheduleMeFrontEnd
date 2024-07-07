@@ -3,11 +3,16 @@ import { Observable, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { Alert, AlertType } from '../_models';
+import { ViewportScroller } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class AlertService {
     private subject = new Subject<Alert>();
     private defaultId = 'default-alert';
+
+    constructor(private scroller: ViewportScroller) {
+
+    }
 
     // enable subscribing to alerts observable
     onAlert(id = this.defaultId): Observable<Alert> {
@@ -36,6 +41,7 @@ export class AlertService {
         alert.id = alert.id || this.defaultId;
         alert.autoClose = (alert.autoClose === undefined ? true : alert.autoClose);
         this.subject.next(alert);
+        this.scroller.scrollToAnchor("pageStart");
     }
 
     // clear alerts

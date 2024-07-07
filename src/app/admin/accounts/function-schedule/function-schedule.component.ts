@@ -1,4 +1,3 @@
-import { ViewportScroller } from '@angular/common';
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
@@ -86,7 +85,6 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   constructor(private accountService: AccountService,
     private route: ActivatedRoute,
     private router: Router,
-    private scroller: ViewportScroller,
     private formBuilder: FormBuilder,
     private alertService: AlertService) {
     this.schedulesUpdatedEmitter = new EventEmitter<FunctionScheduleData>();
@@ -288,8 +286,6 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
         error: error => {
           this.alertService.error(error);
           this.isAdding = false;
-          this.scroller.scrollToAnchor("pageStart");
-
         }
       });
   }

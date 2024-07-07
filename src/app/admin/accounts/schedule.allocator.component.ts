@@ -12,10 +12,10 @@ import { environment } from 'src/environments/environment';
 
 import { MatTableDataSource } from '@angular/material/table';
 
-import { UpperCasePipe, ViewportScroller } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { ThemePalette } from '@angular/material/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable, Sort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import * as signalR from '@microsoft/signalr';
 import { TimeHandler } from 'src/app/_helpers/time.handler';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
@@ -102,8 +102,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private alertService: AlertService,
     private cdr: ChangeDetectorRef,
-    private uppercasePipe: UpperCasePipe,
-    private scroller: ViewportScroller,
+    private uppercasePipe: UpperCasePipe
   ) {
 
     this.accountService = accountService;
@@ -307,10 +306,10 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
           var schedules = this.schedules.filter(s => this.isSameSchedule(s, newSchedule));
           console.assert(schedules.length == 1, "Schedule  just created not found");
           this.selectRow(schedules[0]);
+          this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
-          this.scroller.scrollToAnchor("pageStart");
           this.isAdding = false;
         }
       });
@@ -331,8 +330,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
       if (scheduleTimeStr == formDateTimeStr && scheduleFunction == formFunctionStr && scheduleGroup == formGroup) {
         var GroupStr = scheduleGroup.length > 0 ? "/" + formGroup : "";
-        this.alertService.info("The user is already " + scheduleFunction + GroupStr + " for Dat/Time: " + formDateTimeStr);
-        this.scroller.scrollToAnchor("pageStart");
+        this.alertService.error("The user is already " + scheduleFunction + GroupStr + " for Dat/Time: " + formDateTimeStr);
 
         // Select the existing one
         this.selectRow(this.schedules[index]);
