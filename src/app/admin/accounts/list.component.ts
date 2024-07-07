@@ -170,6 +170,9 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     deleteAccount(id: string) {
+        // Reset alerts on delete
+        this.alertService.clear();
+
         const account = this.accounts().find(x => x.id === id);
         account.isDeleting = true;
         this.accountService.delete(id)

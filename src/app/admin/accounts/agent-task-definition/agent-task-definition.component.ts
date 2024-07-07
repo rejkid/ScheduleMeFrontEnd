@@ -104,6 +104,9 @@ export class AgentTaskDefinitionComponent implements OnInit {
   }
 
   onAddUpdateTask() {
+    // Reset alerts on submit
+    this.alertService.clear();
+
     var taskName = this.form.get('agentTaskName').value;
     var isGroup = this.form.get('isGroupBox').value;
 
@@ -123,13 +126,9 @@ export class AgentTaskDefinitionComponent implements OnInit {
     } else {
       // Existing item
       console.assert(existing.length == 1, "Duplicate elements found");
-      element2Update = existing[0];
-      element2Update.isGroup = isGroup;
-      element2Update.highlighted = true;
-      element2Update.isDeleting = false;
+      this.alertService.warn((isGroup ? "Group " : "") + "Task: " + taskName + "  already exists");
+      return;
     }
-    // Reset alerts on submit
-    this.alertService.clear();
 
     this.accountService.updateAgentTaskConfig(element2Update.agentTaskStr, element2Update).subscribe({
       next: (value) => {

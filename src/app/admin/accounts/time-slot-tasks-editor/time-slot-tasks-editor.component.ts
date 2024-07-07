@@ -195,16 +195,31 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
     }
 
     var dateControl = this.f['scheduledDate'];
-    var date = moment(dateControl.value).format(this.dateTimeFormat)
-    var tasks: string = this.getTasksStr(date);
+    var date = moment(dateControl.value).format(this.dateTimeFormat);
+    var tasks: string = this.getTasksStr();
 
-    console.log(tasks);
-    var timeslotsTasksDTO: TimeSlotsTasksDTO = {
-      date: date,
-      tasks: tasks,
-      isDeleting: false,
-      highlighted: false
+    /* Sanity check */
+    var existing: TimeSlotsTasks[] = this.timeSlots().filter((tst) => {
+      return (tst.date === date && tst.tasks.join(" ") === tasks)
+    });
+    if (existing.length <= 0) {
+      // New item to add, create one
+      console.log(tasks);
+      var timeslotsTasksDTO: TimeSlotsTasksDTO = {
+        date: date,
+        tasks: tasks,
+        isDeleting: false,
+        highlighted: false
+      }
+    } else {
+      // Existing item
+      console.assert(existing.length == 1, "Duplicate elements found");
+      this.isAdding = false;
+      this.alertService.warn("Date " + date + "  already exists with the specified number of tasks");
+      return;
     }
+    
+    
     this.writeTimeSlotsTasks(timeslotsTasksDTO);
   }
   private writeTimeSlotsTasks(task: TimeSlotsTasksDTO) {
@@ -232,9 +247,8 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private getTasksStr(date: string) {
+  private getTasksStr() {
     var tasks: string = "";
-    console.log(date);
     for (let cfg of this.agentTaskConfigs) {
       const control = this.form.get(cfg.agentTaskStr); // 'control' is a FormControl
       for (var i = 0; i < control.value; i++) {
