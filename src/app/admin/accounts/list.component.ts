@@ -263,15 +263,15 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     sortData($event: Sort) {
-        if ($event.active == this.displayedColumns[0]) {
+        if ($event.active == this.displayedColumns[0]) { // name
             this.accounts().sort((a, b) => {
                 if ($event.direction == 'asc' as SortDirection) {
-                    return a.firstName.localeCompare(b.firstName);
+                    return a.role.localeCompare(b.role) == 0 ? a.firstName.localeCompare(b.firstName) : a.role.localeCompare(b.role);
                 } else {
-                    return b.firstName.localeCompare(a.firstName);
+                    return b.role.localeCompare(a.role) == 0 ? b.firstName.localeCompare(a.firstName) : b.role.localeCompare(a.role);
                 }
             });
-        } else if ($event.active == this.displayedColumns[1]) {
+        } else if ($event.active == this.displayedColumns[1]) { // email
             this.accounts().sort((a, b) => {
                 if ($event.direction == 'asc' as SortDirection) {
                     return Number(a.email) - Number(b.email);
