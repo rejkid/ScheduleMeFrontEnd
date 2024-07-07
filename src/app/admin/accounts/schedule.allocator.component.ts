@@ -158,7 +158,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
               this.initSchedules(account);
 
               // Initial sorting by date
-              this.sortInAscDateOrder();
+              // this.sortInAscDateOrder();
+              this.sortInDescDateOrder();
 
               this.uniqueTasks = [... new Set(account.userFunctions.slice().map((f) => {
                 return f.userFunction
@@ -232,12 +233,19 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     this.schedules = schedules;
     this.dataSource.data = this.schedules;
 
-    this.sortInAscDateOrder();
-
+    //this.sortInAscDateOrder();
+    this.sortInDescDateOrder();
   }
 
   private sortInAscDateOrder() {
     const sortState: Sort = { active: 'scheduleDate', direction: 'asc' };
+    this.sort.active = sortState.active;
+    this.sort.direction = sortState.direction;
+    this.sort.sortChange.emit(sortState);
+  }
+
+  private sortInDescDateOrder() {
+    const sortState: Sort = { active: 'scheduleDate', direction: 'desc' };
     this.sort.active = sortState.active;
     this.sort.direction = sortState.direction;
     this.sort.sortChange.emit(sortState);
@@ -353,6 +361,9 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     return schedule;
   }
   onDeleteSchedule(rowIndex: string, schedule2Delete: Schedule) { // rowIndex is table index
+    // reset alerts on submit
+    this.alertService.clear();
+
     schedule2Delete.deleting = true;
     this.accountService.deleteSchedule(this.account.id, schedule2Delete)
       .pipe(first())
@@ -362,6 +373,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
         },
         complete: () => {
           schedule2Delete.deleting = false;
+          this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
@@ -390,9 +402,10 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   }
 
   onDateChanged(event: any) {
+    let day = moment(event.value).format(this.dateTimeFormat)
     var dateTime = event.value;
     var t = typeof (dateTime === 'Date');
-    this.add.nativeElement.click();
+    //this.add.nativeElement.click();
   }
   onUserFunctionChanged(event: any) {
     this.setupGroupTaskCtrl();
