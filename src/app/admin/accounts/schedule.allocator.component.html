@@ -115,7 +115,7 @@
         <ng-container matColumnDef="action">
             <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
             <mat-cell *matCellDef="let rowIndex = index; let schedule;">
-                <button mat-raised-button color="warn" (click)="onDeleteSchedule(rowIndex, schedule)">
+                <button mat-raised-button color="warn" (click)="onDeleteSchedule(rowIndex, schedule)" class="btn3d btn btn-sm btn-danger btn-delete-account">
                     <span *ngIf="schedule.deleting" class="spinner-border spinner-border-sm mr-1"></span>Delete
                 </button>
             </mat-cell>

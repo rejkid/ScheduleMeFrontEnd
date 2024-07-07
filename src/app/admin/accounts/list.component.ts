@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
-import { CtrlActionService, NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
+import { NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 const COLUMNS_SCHEMA = [
     {
@@ -64,33 +64,10 @@ export class ListComponent implements OnInit, AfterViewInit {
 
     constructor(private accountService: AccountService,
         private alertService: AlertService,
-        private router: Router,
-        private ctrlActionService: CtrlActionService) {
+        private router: Router) {
 
     }
     ngOnInit() {
-        this.ctrlActionService.getAction().subscribe({
-            next: (value) => {
-                console.log("Got it");
-                // this.isDeleting = true;
-                this.accountService.deleteAllUserAccounts()
-                    .pipe(first())
-                    .subscribe({
-                        next: (accounts: any) => {
-                            this.refreshList();
-                            console.log(accounts);
-                        },
-                        complete: () => {
-                            //this.alertService.info("Done");
-                            this.isDeleting = false;
-                        },
-                        error: error => {
-                            this.alertService.error(error);
-                            this.isDeleting = false;
-                        }
-                    });
-            }
-        });
     }
     ngAfterViewInit(): void {
         setTimeout(() => {
@@ -170,27 +147,59 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     deleteAccount(id: string) {
-        // Reset alerts on delete
-        this.alertService.clear();
+        const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+        modalRef.componentInstance.titleStr = "User Account Deletion";
+        modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete user account profile?";
+        modalRef.componentInstance.bodyInfoStr = "All information associated with the user profile will be permanently deleted.";
+        modalRef.result.then((data) => {
+            // Reset alerts on delete
+            this.alertService.clear();
 
-        const account = this.accounts().find(x => x.id === id);
-        account.isDeleting = true;
-        this.accountService.delete(id)
-            .pipe(first())
-            .subscribe({
-                next: (value) => {
-                this.refreshList();
-            },
-        complete: () => {
-            this.alertService.info("Data Saved");
+            const account = this.accounts().find(x => x.id === id);
+            account.isDeleting = true;
+            this.accountService.delete(id)
+                .pipe(first())
+                .subscribe({
+                    next: (value) => {
+                        this.refreshList();
+                    },
+                    complete: () => {
+                        this.alertService.info("Data Saved");
 
-        }});
+                    }
+                });
+        }).catch((error) => { });
     }
+
     public get RoleAdminEnum() {
         return Role.Admin;
     }
     public onDeleteAllUserAccounts(event: Event) {
         const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+        modalRef.componentInstance.titleStr = "User Accounts Deletion";
+        modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete user account profiles?";
+        modalRef.componentInstance.bodyInfoStr = "All information associated with the user profiles will be permanently deleted.";
+
+        modalRef.result.then((data) => {
+            this.accountService.deleteAllUserAccounts()
+                .pipe(first())
+                .subscribe({
+                    next: (accounts: any) => {
+                        this.refreshList();
+                        console.log(accounts);
+                    },
+                    complete: () => {
+                        //this.alertService.info("Done");
+                        this.isDeleting = false;
+                    },
+                    error: error => {
+                        this.alertService.error(error);
+                        this.isDeleting = false;
+                    }
+                });
+        }).catch((error) => {
+            this.alertService.error(error);
+        })
     }
     public onChangeAutoEmail(event: any, tr: any) {
         this.accountService.setAutoEmail(new Boolean(event.target.checked))

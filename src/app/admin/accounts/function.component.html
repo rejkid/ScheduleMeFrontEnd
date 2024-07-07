@@ -100,7 +100,7 @@
                         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                         <mat-cell *matCellDef="let function">
 
-                            <button (click)="deleteFunction(function)" class="btn btn-sm btn-danger btn-delete-account"
+                            <button (click)="deleteFunction(function)" class="btn3d btn btn-sm btn-danger btn-delete-account"
                                 [disabled]="function.isDeleting">
                                 <span *ngIf="function.isDeleting" class="spinner-border spinner-border-sm"></span>
                                 <span *ngIf="!function.isDeleting">Delete</span>

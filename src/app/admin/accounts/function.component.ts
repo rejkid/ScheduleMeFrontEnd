@@ -5,11 +5,13 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { Task } from 'src/app/_models/task';
 import { AccountService, AlertService } from 'src/app/_services';
+import { NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 const COLUMNS_SCHEMA = [
   {
@@ -38,7 +40,8 @@ const COLUMNS_SCHEMA = [
 export class FunctionComponent implements OnInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
+  private modalService = inject(NgbModal);
+  
   id: string;
   account: Account;
   form: FormGroup;
@@ -218,7 +221,6 @@ export class FunctionComponent implements OnInit {
     this.deleteFunction4Account(task);
   }
   private addFunction4Account(task: Task) {
-
     this.accountService.addFunction(this.id, task)
       .pipe(first())
       .subscribe({
@@ -240,19 +242,28 @@ export class FunctionComponent implements OnInit {
       });
   }
   private deleteFunction4Account(userFunctionDTO: Task) {
-    this.accountService.deleteFunction(this.id, userFunctionDTO)
-      .pipe(first())
-      .subscribe({
-        next: (account) => {
-          this.userTasks.set(account.userFunctions.slice());
-          this.dataSource.data = this.userTasks();
-          this.alertService.info("Data Saved");
-        },
-        error: error => {
-          this.alertService.error(error);
-          this.loading = false;
-        }
-      });
+
+    const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+    modalRef.componentInstance.titleStr = "Task Deletion";
+    modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete task profile?";
+    modalRef.componentInstance.bodyInfoStr = "All information associated with the task profile will be permanently deleted.";
+    modalRef.result.then((data) => {
+      this.accountService.deleteFunction(this.id, userFunctionDTO)
+        .pipe(first())
+        .subscribe({
+          next: (account) => {
+            this.userTasks.set(account.userFunctions.slice());
+            this.dataSource.data = this.userTasks();
+            this.alertService.info("Data Saved");
+          },
+          error: error => {
+            this.alertService.error(error);
+            this.loading = false;
+          }
+        });
+    }).catch((error) => {
+      this.loading = false;
+    });
   }
 
   get isAdmin() {

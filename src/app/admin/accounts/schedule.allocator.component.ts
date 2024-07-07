@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, signal } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -20,6 +20,8 @@ import * as signalR from '@microsoft/signalr';
 import { TimeHandler } from 'src/app/_helpers/time.handler';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { Constants } from '../../constants';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 const COLUMNS_SCHEMA = [
   {
@@ -54,7 +56,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild('groupDataCtrl') groupCtrl: ElementRef;
   @ViewChild('add') add: ElementRef;
-
+  private modalService = inject(NgbModal);
+  
   readonly CLEANER_STR = Constants.CLEANER_STR;
 
   dateFormat = Constants.dateTimeFormat;
@@ -365,21 +368,31 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     this.alertService.clear();
 
     schedule2Delete.deleting = true;
-    this.accountService.deleteSchedule(this.account.id, schedule2Delete)
-      .pipe(first())
-      .subscribe({
-        next: (account) => {
-          this.updateSchedulesFromServer();
-        },
-        complete: () => {
-          schedule2Delete.deleting = false;
-          this.alertService.info("Data Saved");
-        },
-        error: error => {
-          this.alertService.error(error);
-          schedule2Delete.deleting = false;
-        }
-      });
+
+
+    const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+    modalRef.componentInstance.titleStr = "Schedule Deletion";
+    modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete Schedule profile?";
+    modalRef.componentInstance.bodyInfoStr = "All information associated with the Schedule profile will be permanently deleted.";
+    modalRef.result.then((data) => {
+      this.accountService.deleteSchedule(this.account.id, schedule2Delete)
+        .pipe(first())
+        .subscribe({
+          next: (account) => {
+            this.updateSchedulesFromServer();
+          },
+          complete: () => {
+            schedule2Delete.deleting = false;
+            this.alertService.info("Data Saved");
+          },
+          error: error => {
+            this.alertService.error(error);
+            schedule2Delete.deleting = false;
+          }
+        });
+    }).catch((error) => {
+      schedule2Delete.deleting = false;
+    });
   }
 
   private updateSchedulesFromServer() {

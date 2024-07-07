@@ -1,22 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subject } from 'rxjs';
-
-
-export class CtrlActionService {
-  private actionStatus = new Subject<any>();
-
-  constructor() {}
-
-  //ctrl submit action
-  public callAction() {
-    this.actionStatus.next(true);
-  }
-  public getAction(): Observable<boolean> {
-    return this.actionStatus.asObservable();
-  }
-}
 
 @Component({
   selector: 'app-ngbd-modal-confirm',
@@ -26,7 +11,7 @@ export class CtrlActionService {
   template: `
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="ui form">
   <div class="modal-header">
-  <h4 class="modal-title" id="modal-title">User Accounts Deletion</h4>
+  <h4 class="modal-title" id="modal-title">{{titleStr}}</h4>
   <button
     type="button"
     class="btn-close"
@@ -37,10 +22,10 @@ export class CtrlActionService {
 </div>
 <div class="modal-body">
   <p>
-    <strong>Are you sure you want to delete user account profiles?</strong>
+    <strong>{{bodyQuestionStr}}</strong>
   </p>
   <p>
-    All information associated to the user profiles will be permanently deleted.
+    {{bodyInfoStr}}
     <span class="text-danger">This operation can not be undone.</span>
   </p>
 </div>
@@ -53,7 +38,11 @@ export class CtrlActionService {
   styleUrl: './ngbd-modal-confirm.component.less'
 })
 export class NgbdModalConfirmComponent {
-  constructor(private formBuilder : FormBuilder, private ctrlActionService : CtrlActionService  )
+  @Input() titleStr: string;
+  @Input() bodyQuestionStr: string;
+  @Input() bodyInfoStr: string;
+
+  constructor(private formBuilder : FormBuilder)
   {
     this.form = this.formBuilder.group({});
   }
@@ -67,7 +56,6 @@ export class NgbdModalConfirmComponent {
   }
   onSubmit() {
     console.log("Form was submitted!");
-    this.ctrlActionService.callAction();
     this.modal.close("Submit");
   }
 }
