@@ -258,11 +258,9 @@ export class FunctionComponent implements OnInit {
           },
           error: error => {
             this.alertService.error(error);
-            this.loading = false;
           }
         });
     }).catch((error) => {
-      this.loading = false;
     });
   }
 

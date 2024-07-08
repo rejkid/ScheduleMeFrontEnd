@@ -51,7 +51,7 @@
 <div class="row">
     <div class="col-12">
         <fieldset style="overflow:auto">
-            <legend>Schedule Dates</legend>
+            <legend>Time Slot Dates</legend>
             <mat-table #table class="lessons-table mat-elevation-z8" [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
                 <ng-container matColumnDef="{{displayedColumns[0]}}">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedLabels[0]}} </mat-header-cell>

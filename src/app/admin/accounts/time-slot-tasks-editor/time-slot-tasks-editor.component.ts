@@ -1,8 +1,9 @@
-import { signal, Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { signal, Component, OnInit, ViewChild, AfterViewInit, inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 
 import { first } from 'rxjs';
@@ -12,6 +13,7 @@ import { TimeSlotsTasks } from 'src/app/_models/timeslotstasks';
 import { TimeSlotsTasksDTO } from 'src/app/_models/timeslotstasksDTO';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
+import { NgbdModalConfirmComponent } from '../ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 
 const COLUMNS_SCHEMA = [
@@ -38,6 +40,7 @@ const COLUMNS_SCHEMA = [
 export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  private modalService = inject(NgbModal);
 
   dateFormat = Constants.dateTimeFormat;
   dateTimeFormat = Constants.dateTimeFormat;
@@ -146,32 +149,40 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   }
   onDeleteTimeSlotTasks(event: MouseEvent, tasks: TimeSlotsTasks) {
     console.log("MainSchedulerComponent deleting called");
+    tasks.isDeleting = true;
     // Reset alerts on submit
     this.alertService.clear();
 
+    const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+    modalRef.componentInstance.titleStr = "Time Slot Deletion";
+    modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete time slot profile?";
+    modalRef.componentInstance.bodyInfoStr = "All information associated with the time slot profile will be permanently deleted.";
+    modalRef.result.then((data) => {
+      var timeslotsTasks: TimeSlotsTasksDTO = {
+        date: tasks.date,
+        tasks: tasks.tasks.join(" "),
+        isDeleting: false,
+        highlighted: false
+      }
+      this.accountService.deleteTimeSlotsTasks(timeslotsTasks)
+        .pipe(first())
+        .subscribe({
+          next: () => {
+          },
+          complete: () => {
+            tasks.isDeleting = false;
+            this.refreshTimeSlotsTasks(null);
+            this.alertService.info("Data Saved");
+            tasks.isDeleting = false;
+          },
+          error: error => {
+            this.alertService.error(error);
+            tasks.isDeleting = false;
+          }
+        });
+      }).catch((error) => {
+    });
 
-    tasks.isDeleting = true;
-    var timeslotsTasks: TimeSlotsTasksDTO = {
-      date: tasks.date,
-      tasks: tasks.tasks.join(" "),
-      isDeleting: false,
-      highlighted: false
-    }
-    this.accountService.deleteTimeSlotsTasks(timeslotsTasks)
-      .pipe(first())
-      .subscribe({
-        next: () => {
-        },
-        complete: () => {
-          tasks.isDeleting = false;
-          this.refreshTimeSlotsTasks(null);
-          this.alertService.info("Data Saved");
-        },
-        error: error => {
-          this.alertService.error(error);
-          tasks.isDeleting = false;
-        }
-      });
   }
   // convenience getter for easy access to form fields
   get f() {

@@ -1,10 +1,12 @@
-import { Component, OnInit, ViewChild, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { AccountService, AlertService } from 'src/app/_services';
+import { NgbdModalConfirmComponent } from '../ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 const COLUMNS_SCHEMA = [
   {
@@ -32,6 +34,7 @@ const COLUMNS_SCHEMA = [
 export class AgentTaskDefinitionComponent implements OnInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  private modalService = inject(NgbModal);
 
   form: FormGroup;
   isAdding: boolean = false;
@@ -153,18 +156,26 @@ export class AgentTaskDefinitionComponent implements OnInit {
     // Reset alerts on submit
     this.alertService.clear();
 
-    this.accountService.deleteAgentTaskConfig(task.agentTaskStr).subscribe({
-      next: (value) => {
-        this.agentTaskConfigs().splice(this.agentTaskConfigs().findIndex(t => t.agentTaskStr == task.agentTaskStr), 1);
-        this.dataSource.data = this.agentTaskConfigs();
-      },
-      complete: () => {
-        this.alertService.info("Data Saved");
-      },
-      error: (error) => {
-        this.alertService.error(error);
-      }
+    const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+    modalRef.componentInstance.titleStr = "Agent Task Deletion";
+    modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete agent task profile?";
+    modalRef.componentInstance.bodyInfoStr = "All information associated with the agent task profile will be permanently deleted.";
+    modalRef.result.then((data) => {
+      this.accountService.deleteAgentTaskConfig(task.agentTaskStr).subscribe({
+        next: (value) => {
+          this.agentTaskConfigs().splice(this.agentTaskConfigs().findIndex(t => t.agentTaskStr == task.agentTaskStr), 1);
+          this.dataSource.data = this.agentTaskConfigs();
+        },
+        complete: () => {
+          this.alertService.info("Data Saved");
+        },
+        error: (error) => {
+          this.alertService.error(error);
+        }
+      });
+      }).catch((error) => {
     });
+
   }
   onChangePageProperties(event: any) {
     AgentTaskDefinitionComponent.pageSize = event.pageSize;
