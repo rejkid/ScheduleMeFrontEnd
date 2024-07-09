@@ -161,8 +161,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
               this.initSchedules(account);
 
               // Initial sorting by date
-              // this.sortInAscDateOrder();
-              this.sortInDescDateOrder();
+              this.sortInAscDateOrder();
+              //this.sortInDescDateOrder();
 
               this.uniqueTasks = [... new Set(account.userFunctions.slice().map((f) => {
                 return f.userFunction
@@ -237,8 +237,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     this.schedules = schedules;
     this.dataSource.data = this.schedules;
 
-    //this.sortInAscDateOrder();
-    this.sortInDescDateOrder();
+    this.sortInAscDateOrder();
+    //this.sortInDescDateOrder();
   }
 
   private sortInAscDateOrder() {

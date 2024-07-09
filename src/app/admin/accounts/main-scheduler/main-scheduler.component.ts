@@ -129,7 +129,7 @@ export class MainSchedulerComponent {
           this.dataSource.data = this.futureScheduleDates();
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-          this.sortInDescDateOrder(); //this.sortInAscDateOrder();
+          this.sortInAscDateOrder(); //this.sortInDescDateOrder();
 
           /* Set up selected row if still exists*/
           /* selected == undefined if user selected and deleted row in Schedules - top screen table */
