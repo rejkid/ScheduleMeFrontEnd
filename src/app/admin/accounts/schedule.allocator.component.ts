@@ -222,6 +222,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
           newDate: dbSchedule.date,
           dob: dbSchedule.dob,
           required: true,
+          email: account.email,
           userAvailability: true,
           scheduleGroup: dbSchedule.scheduleGroup,
           userFunction: dbSchedule.userFunction,
@@ -359,7 +360,8 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
       userAvailability: true,
       scheduleGroup: this.isGroupTaskSelected ? formGroup : "",
       userFunction: formFunctionStr,
-      newUserFunction: formFunctionStr
+      newUserFunction: formFunctionStr,
+      email: this.account.email,
     }
     return schedule;
   }

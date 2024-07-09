@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { first } from 'rxjs/operators';
 import { Account } from 'src/app/_models';
 import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
@@ -12,6 +13,7 @@ import { Schedule } from 'src/app/_models/schedule';
 import { User } from 'src/app/_models/user';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
+import { NgbdModalOptionsComponent } from '../ngbd-modal-options/ngbd-modal-options.component';
 
 const COLUMNS_SCHEMA = [
   {
@@ -86,7 +88,8 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     private route: ActivatedRoute,
     private router: Router,
     private formBuilder: FormBuilder,
-    private alertService: AlertService) {
+    private alertService: AlertService,
+    private modalService: NgbModal) {
     this.schedulesUpdatedEmitter = new EventEmitter<FunctionScheduleData>();
   }
 
@@ -141,7 +144,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   }
   private refreshAccounts(callback? : any) {
     this.accountsLoaded = false;
-    this.accountService.getSchedules4Date(this.dateTimeStr) //getAll()
+    this.accountService.getAll() //getSchedules4Date(this.dateTimeStr) //getAll()
       .pipe(first())
       .subscribe({
         next: (accounts: Account[]) => {
@@ -272,6 +275,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
       scheduleGroup: user.scheduleGroup,
       userFunction: this.functionStr,
       newUserFunction: this.functionStr,
+      email: user.email,
     };
     this.isAdding = true;
     this.accountService.addSchedule(user.id, schedule2Add)
@@ -313,6 +317,12 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
 
   onDeleteSchedule(event: MouseEvent, user: User) { // rowIndex is table index
     user.isDeleting = true;
+    const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
+      backdrop: 'static',
+      centered: true,
+      windowClass: 'modalClass',
+      keyboard: false
+    });
 
     var schedule2Delete: Schedule = {
       accountId: user.id,
@@ -325,6 +335,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
       scheduleGroup: user.scheduleGroup,
       userFunction: this.functionStr,
       newUserFunction: this.functionStr,
+      email: user.email,
     };
     this.accountService.deleteSchedule(user.id, schedule2Delete)
       .pipe(first())
@@ -337,6 +348,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
           });
         },
         complete: () => {
+          modalRef.close();
         },
         error: error => {
           this.alertService.error(error);

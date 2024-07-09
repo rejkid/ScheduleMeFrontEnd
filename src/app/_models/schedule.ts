@@ -6,6 +6,7 @@ export class Schedule {
     required: boolean;
     userAvailability: boolean;
     dob: string;
+    email: string;
     userFunction : string;
     scheduleGroup : string;
     newUserFunction : string;

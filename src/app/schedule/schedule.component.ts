@@ -400,7 +400,8 @@ export class ScheduleComponent implements OnInit, AfterViewInit {
       userAvailability: true,
       scheduleGroup: cleanerGroup,
       userFunction: formFunction,
-      newUserFunction: formFunction
+      newUserFunction: formFunction,
+      email: this.account.email,
     }
     return schedule;
   }

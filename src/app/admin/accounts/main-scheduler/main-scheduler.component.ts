@@ -221,10 +221,10 @@ export class MainSchedulerComponent {
   dateTimeChanged(date: string) {
     var futureScheduleDate = this.futureScheduleDates().find((d) => { return d.date == date });
 
-    if (futureScheduleDate != undefined) {
+    if (futureScheduleDate != undefined) { 
       this.selectRow(futureScheduleDate);
     }
-    // else {
+    // else { // New date - not existing yet
     //   var newSchedule: ScheduleDateTime = {
     //     id: '',
     //     date: date,
