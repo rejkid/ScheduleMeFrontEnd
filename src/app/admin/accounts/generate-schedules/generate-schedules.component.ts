@@ -174,13 +174,15 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
     this.setCopyPasteButtons();
   }
-  onDeleteSchedules(event: MouseEvent, data: ScheduleDateTime) {
+  onDeleteSchedules(event: MouseEvent, date: ScheduleDateTime) {
     this.fComponents.forEach(element => {
 
-      /* Make sure the row is selected first so the ``dateTimeStr`` is set up properly 
+      /* Make sure the row is selected first so the ``dateTimeStr`` is set up properly. 
       `functionStr` is set on creation time by this class*/
-      element.setCurrentDate(this.getDateTimeStr());
-      element.onDeleteSchedules(event);
+      element.setCurrentDate(this.getDateTimeStr(), () => {
+        element.onDeleteSchedules(event);
+      });
+      
       console.log("GenerateSchedulesComponent deleting functionStr:" + element.functionStr + " dateStr:" + element.dateTimeStr);
     });
   }

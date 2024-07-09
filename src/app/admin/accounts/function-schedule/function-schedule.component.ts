@@ -139,9 +139,9 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   get possibleUserStrings(): string[] {
     return Array.from(this.possibleUsersMap.keys());
   }
-  private refreshAccounts() {
+  private refreshAccounts(callback? : any) {
     this.accountsLoaded = false;
-    this.accountService.getAll()
+    this.accountService.getSchedules4Date(this.dateTimeStr) //getAll()
       .pipe(first())
       .subscribe({
         next: (accounts: Account[]) => {
@@ -151,13 +151,16 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
         complete: () => {
           this.accountsLoaded = true;
           /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
-          var funcSchedData: FunctionScheduleData = {
-            userFunction: this.functionStr,
-            date: this.dateTimeStr,
-            accounts: this.accounts4DateAndFunction
-          }
+          // var funcSchedData: FunctionScheduleData = {
+          //   userFunction: this.functionStr,
+          //   date: this.dateTimeStr,
+          //   accounts: this.accounts4DateAndFunction
+          // }
           //this.schedulesUpdatedEmitter.emit(funcSchedData);
           this.accountsLoaded = true;
+          if(callback != undefined) {
+            callback();
+          }
         },
         error: (error) => {
           this.alertService.error(error);
@@ -228,9 +231,9 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     )
     );
   }
-  setCurrentDate(dateTime: string) {
+  setCurrentDate(dateTime: string, callback? : any) {
     this.dateTimeStr = dateTime;
-    this.refreshAccounts();
+    this.refreshAccounts(callback);
     console.log("Called for: for:" + this.functionStr + " New datetime is:" + dateTime);
   }
 
@@ -275,10 +278,10 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
       .pipe(first())
       .subscribe({
         next: (account) => {
-          this.refreshAccounts();
-
-          /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
-          this.notifyParentOnChange();
+          this.refreshAccounts(() => {
+            /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
+            this.notifyParentOnChange();
+          });
         },
         complete: () => {
           this.isAdding = false;
@@ -328,9 +331,10 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
       .subscribe({
         next: (z) => {
           console.log("FunctionScheduleComponent functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr + " deleted");
-          this.refreshAccounts();
-          /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
-          this.notifyParentOnChange();
+          this.refreshAccounts(() => {
+            /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
+            this.notifyParentOnChange();
+          });
         },
         complete: () => {
         },

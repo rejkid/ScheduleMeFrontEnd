@@ -10,9 +10,11 @@ import { TimeHandler } from 'src/app/_helpers/time.handler';
 import { FunctionScheduleData } from 'src/app/_models/functionscheduledata';
 import { ScheduleDateTime } from 'src/app/_models/scheduledatetime';
 import { ScheduleDateTimes } from 'src/app/_models/scheduledatetimes';
-import { AccountService } from 'src/app/_services';
+import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { GenerateSchedulesComponent } from '../generate-schedules/generate-schedules.component';
+import { NgbdModalOptionsComponent } from '../ngbd-modal-options/ngbd-modal-options.component';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 const COLUMNS_SCHEMA = [
   {
     key: "scheduleDate",
@@ -32,7 +34,8 @@ const COLUMNS_SCHEMA = [
 @Component({
   selector: 'app-main-scheduler',
   templateUrl: './main-scheduler.component.html',
-  styleUrls: ['./main-scheduler.component.less']
+  styleUrls: ['./main-scheduler.component.less'],
+  
 })
 export class MainSchedulerComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -57,6 +60,8 @@ export class MainSchedulerComponent {
   static pageSize: number;
 
   constructor(private accountService: AccountService,
+    private alertService: AlertService,
+    private modalService: NgbModal,
     private formBuilder: FormBuilder) {
   }
   ngAfterViewInit(): void {
@@ -85,7 +90,7 @@ export class MainSchedulerComponent {
 
   getAllDates() {
     this.isLoaded = false;
-    console.log("getAllDates");
+    console.log("MainSchedulerComponent:getAllDates");
     this.accountService.getAllDates()
       .pipe(first())
       .subscribe({
@@ -231,10 +236,32 @@ export class MainSchedulerComponent {
     // }
   }
 
-  onDeleteSchedules(event: MouseEvent, data: ScheduleDateTime) {
-    console.log("MainSchedulerComponent deleting called");
-    data.isDeleting = true;
-    this.generateScheduleComponent.onDeleteSchedules(event, data);
+  onDeleteSchedules(event: MouseEvent, date: ScheduleDateTime) {
+    this.isLoaded = false;
+    const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
+      backdrop: 'static',
+      centered: true,
+      windowClass: 'modalClass',
+      keyboard: false
+    });
+console.log("MainSchedulerComponent deleting called");
+    this.accountService.deleteSchedules4Date(date.date) //getAll()
+      .pipe(first())
+      .subscribe({
+        next: (value) => {
+        },
+        complete: () => {
+          console.log("Deleting schedules for date: " + date.date);
+          this.getAllDates();
+          this.generateScheduleComponent.unselect();
+          this.isLoaded = true;
+          modalRef.close();
+        },
+        error: (error) => {
+          this.alertService.error(error);
+          this.isLoaded = true;
+        }
+      });
   }
   get pageSize() {
     return MainSchedulerComponent.pageSize;

@@ -8,6 +8,7 @@ import { first } from 'rxjs/operators';
 import { Account, Role } from 'src/app/_models';
 import { AccountService, AlertService } from 'src/app/_services';
 import { NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
+import { NgbdModalOptionsComponent } from './ngbd-modal-options/ngbd-modal-options.component';
 
 const COLUMNS_SCHEMA = [
     {
@@ -224,6 +225,13 @@ export class ListComponent implements OnInit, AfterViewInit {
     generateSchedules() {
         this.alertService.clear();
         this.generatingSchedules = true;
+        const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
+            backdrop: 'static',
+            centered: true,
+            windowClass: 'modalClass',
+            keyboard: false
+        });
+
         this.accountService.generateSchedules()
             .pipe(first())
             .subscribe({
@@ -232,6 +240,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                 },
                 complete: () => {
                     this.generatingSchedules = false;
+                    modalRef.close();
                 },
                 error: error => {
                     this.alertService.error(error);

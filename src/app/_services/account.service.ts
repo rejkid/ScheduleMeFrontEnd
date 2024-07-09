@@ -163,6 +163,14 @@ export class AccountService {
         return this.http.post<Account>(`${baseUrl}/delete-schedule/${id}`, schedule);
     }
 
+    deleteSchedules4Date(date: string) {
+        return this.http.delete(`${baseUrl}/delete-schedules_4_date/${date}`);
+    }
+
+    getSchedules4Date(dateStr: string) {
+        return this.http.get<Account[]>(`${baseUrl}/get-schedule/${dateStr}`);
+    }
+
     addFunction(id: any, userFunction: Task) {
         return this.http.put<Account>(`${baseUrl}/add-function/${id}`, userFunction);
     }
