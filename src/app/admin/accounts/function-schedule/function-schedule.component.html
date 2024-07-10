@@ -82,7 +82,7 @@
     </mat-paginator>
 
     <button #button type="button"
-        [ngClass]="{ 'disabled': possibleUserStrings.length <= 0 || selectedUser4Function == undefined }"
+        [ngClass]="{ 'disabled': f['selectedUser'].value == null || f['selectedUser'].value.length <= 0 }"
         (click)="onAddSchedule($event, button)" class="btn3d btn btn-primary">
         @if(isAdding) {
         <span class="spinner-border spinner-border-sm mr-1"></span>

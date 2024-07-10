@@ -15,6 +15,7 @@ import { Constants } from 'src/app/constants';
 import { GenerateSchedulesComponent } from '../generate-schedules/generate-schedules.component';
 import { NgbdModalOptionsComponent } from '../ngbd-modal-options/ngbd-modal-options.component';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbdModalConfirmComponent } from '../ngbd-modal-confirm/ngbd-modal-confirm.component';
 const COLUMNS_SCHEMA = [
   {
     key: "scheduleDate",
@@ -35,7 +36,7 @@ const COLUMNS_SCHEMA = [
   selector: 'app-main-scheduler',
   templateUrl: './main-scheduler.component.html',
   styleUrls: ['./main-scheduler.component.less'],
-  
+
 })
 export class MainSchedulerComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -135,7 +136,7 @@ export class MainSchedulerComponent {
           /* selected == undefined if user selected and deleted row in Schedules - top screen table */
           if (oldSelected != undefined) {
             var selected = this.futureScheduleDates().find(function (item) { return item.id == oldSelected.id });
-            if(selected != undefined) {
+            if (selected != undefined) {
               selected.highlighted = oldSelected.highlighted;
             }
           }
@@ -219,7 +220,7 @@ export class MainSchedulerComponent {
     if (!scheduleDateTime.isDeleting) {
       var date = moment(scheduleDateTime.date, Constants.dateTimeFormat).toDate();
       /* Trigger `dateTimeChanged` on every `FunctionScheduleComponent` component (via `GenerateSchedulesComponent`) */
-      this.generateScheduleComponent.setCurrentDate(scheduleDateTime.date);
+      this.generateScheduleComponent.setCurrentDateTime(scheduleDateTime.date);
     }
   }
   isSameScheduleDateTime(s1: ScheduleDateTime, s2: ScheduleDateTime): boolean {
@@ -229,49 +230,67 @@ export class MainSchedulerComponent {
   dateTimeChanged(date: string) {
     var futureScheduleDate = this.futureScheduleDates().find((d) => { return d.date == date });
 
-    if (futureScheduleDate != undefined) { 
+    if (futureScheduleDate != undefined) {
       this.selectRow(futureScheduleDate);
     }
-    // else { // New date - not existing yet
-    //   var newSchedule: ScheduleDateTime = {
-    //     id: '',
-    //     date: date,
-    //     highlighted: false,
-    //     isDeleting: false,
-    //     day: this.getDayStrFromDate(date),
-    //   }
-    //   futureScheduleDate = newSchedule;
-    // }
+    else { // New date - not existing yet
+      this.unselect();
+    }
   }
 
   onDeleteSchedules(event: MouseEvent, date: ScheduleDateTime) {
     this.isLoaded = false;
-    const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
-      backdrop: 'static',
-      centered: true,
-      windowClass: 'modalClass',
-      keyboard: false
-    });
-console.log("MainSchedulerComponent deleting called");
-    this.accountService.deleteSchedules4Date(date.date) //getAll()
-      .pipe(first())
-      .subscribe({
-        next: (value) => {
-        },
-        complete: () => {
-          console.log("Deleting schedules for date: " + date.date);
-          this.getAllDates();
-          this.generateScheduleComponent.unselect();
-          this.isLoaded = true;
-          modalRef.close();
-        },
-        error: (error) => {
-          this.alertService.error(error);
-          this.isLoaded = true;
-        }
+
+    // First display confirmation dialog box ...
+    const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+    modalRef.componentInstance.titleStr = "Schedules Deletion";
+    modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete schedules?";
+    modalRef.componentInstance.bodyInfoStr = "All information associated with the schedules will be permanently deleted.";
+
+    modalRef.result.then((data) => {
+
+      // ... then display busy cursor
+      const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
+        backdrop: 'static',
+        centered: true,
+        windowClass: 'modalClass',
+        keyboard: false
       });
+      console.log("MainSchedulerComponent deleting called");
+      this.accountService.deleteSchedules4Date(date.date) //getAll()
+        .pipe(first())
+        .subscribe({
+          next: (value) => {
+          },
+          complete: () => {
+            console.log("Deleting schedules for date: " + date.date);
+            this.getAllDates();
+            this.generateScheduleComponent.unselect();
+            this.isLoaded = true;
+            modalRef.close();
+          },
+          error: (error) => {
+            this.alertService.error(error);
+            this.isLoaded = true;
+          }
+        });
+    }).catch((error) => {
+      this.alertService.error(error);
+    })
   }
   get pageSize() {
     return MainSchedulerComponent.pageSize;
+  }
+  unselect() {
+    for (let index = 0; index < this.futureScheduleDates().length; index++) {
+      const element = this.futureScheduleDates()[index];
+      if (element.highlighted)
+        element.highlighted = false;
+    }
+    this.paginator.page.next({
+      pageIndex: 0,
+      pageSize: this.paginator.pageSize,
+      length: this.paginator.length
+    });
   }
 }

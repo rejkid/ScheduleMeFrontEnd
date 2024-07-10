@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -14,6 +14,7 @@ import { User } from 'src/app/_models/user';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { NgbdModalOptionsComponent } from '../ngbd-modal-options/ngbd-modal-options.component';
+import { NgbdModalConfirmComponent } from '../ngbd-modal-confirm/ngbd-modal-confirm.component';
 
 const COLUMNS_SCHEMA = [
   {
@@ -56,6 +57,7 @@ const COLUMNS_SCHEMA = [
 export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(`element`) dateCtrl: ElementRef;
 
   @Input() functionStr: string;
   @Input() dateTimeStr: string;
@@ -125,7 +127,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.dataSource = new MatTableDataSource();
-    this.refreshAccounts();
+    this.refreshAccounts(() => { });
   }
   ngOnDestroy() {
     console.log("Called");
@@ -142,7 +144,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   get possibleUserStrings(): string[] {
     return Array.from(this.possibleUsersMap.keys());
   }
-  private refreshAccounts(callback? : any) {
+  private refreshAccounts(callback: any) {
     this.accountsLoaded = false;
     this.accountService.getAll() //getSchedules4Date(this.dateTimeStr) //getAll()
       .pipe(first())
@@ -161,7 +163,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
           // }
           //this.schedulesUpdatedEmitter.emit(funcSchedData);
           this.accountsLoaded = true;
-          if(callback != undefined) {
+          if (callback != undefined) {
             callback();
           }
         },
@@ -175,7 +177,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   private createString2UserMap(accounts: Account[]) {
     this.string2UserMap.clear();
 
-    var selected: string = undefined;
+    var selected: string = "";
     accounts.map((a) => a.schedules.filter((s) => s.userFunction == this.functionStr && s.date == this.dateTimeStr).map((s) => {
       var str = a.firstName + '/' + a.lastName + '/' + a.email + '/' + a.dob;
       if (s.scheduleGroup.length != 0) {
@@ -196,14 +198,20 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
 
       if (!this.string2UserMap.has(str)) {
         this.string2UserMap.set(str, user);
-        if (selected === undefined) {
+        if (selected.length <= 0) {
           selected = str;
         }
       }
     }))
 
-    console.log("createAccountStrings4Function: " + this.string2UserMap);
+
     this.f['selectedUser'].setValue(selected);
+    if (this.dateCtrl) {
+      // /* Trigger atrificially  `onChangeUser` */
+      var event = new CustomEvent("change", { detail: selected });//new Event("HTMLEvents", {"bubbles":true, "cancelable":false});
+      (this.dateCtrl.nativeElement as HTMLInputElement).dispatchEvent(event);
+    }
+
     this.users.set([...this.string2UserMap.values()]);
     this.dataSource.data = this.users();
     this.dataSource.paginator = this.paginator;
@@ -234,9 +242,11 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     )
     );
   }
-  setCurrentDate(dateTime: string, callback? : any) {
+  setCurrentDateTime(dateTime: string) {
     this.dateTimeStr = dateTime;
-    this.refreshAccounts(callback);
+    this.refreshAccounts(() => {
+
+    });
     console.log("Called for: for:" + this.functionStr + " New datetime is:" + dateTime);
   }
 
@@ -305,55 +315,68 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     this.schedulesUpdatedEmitter.emit(funcSchedData);
   }
 
-  onDeleteSchedules(event: MouseEvent) {
-    // Reset alerts on submit
-    this.alertService.clear();
+  // onDeleteSchedules(event: MouseEvent) {
+  //   // Reset alerts on submit
+  //   this.alertService.clear();
 
-    Array.from(this.string2UserMap.values()).forEach(user => {
-      console.log("FunctionScheduleComponent deleting email:" + user.email + " functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr);
-      this.onDeleteSchedule(event, user);
-    });
-  }
+  //   Array.from(this.string2UserMap.values()).forEach(user => {
+  //     console.log("FunctionScheduleComponent deleting email:" + user.email + " functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr);
+  //     this.onDeleteSchedule(event, user);
+  //   });
+  // }
 
   onDeleteSchedule(event: MouseEvent, user: User) { // rowIndex is table index
     user.isDeleting = true;
-    const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
-      backdrop: 'static',
-      centered: true,
-      windowClass: 'modalClass',
-      keyboard: false
-    });
+    // First display confirmation dialog box ...
+    const modalRef = this.modalService.open(NgbdModalConfirmComponent);
+    modalRef.componentInstance.titleStr = "Schedules Deletion";
+    modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete schedules?";
+    modalRef.componentInstance.bodyInfoStr = "All information associated with the schedules will be permanently deleted.";
 
-    var schedule2Delete: Schedule = {
-      accountId: user.id,
-      date: this.dateTimeStr,
-      newDate: this.dateTimeStr,
-      dob: user.dob,
-      required: true,
-      deleting: false,
-      userAvailability: true,
-      scheduleGroup: user.scheduleGroup,
-      userFunction: this.functionStr,
-      newUserFunction: this.functionStr,
-      email: user.email,
-    };
-    this.accountService.deleteSchedule(user.id, schedule2Delete)
-      .pipe(first())
-      .subscribe({
-        next: (z) => {
-          console.log("FunctionScheduleComponent functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr + " deleted");
-          this.refreshAccounts(() => {
-            /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
-            this.notifyParentOnChange();
-          });
-        },
-        complete: () => {
-          modalRef.close();
-        },
-        error: error => {
-          this.alertService.error(error);
-        }
+    modalRef.result.then((data) => {
+
+      // ... then display busy cursor
+
+      const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
+        backdrop: 'static',
+        centered: true,
+        windowClass: 'modalClass',
+        keyboard: false
       });
+
+      var schedule2Delete: Schedule = {
+        accountId: user.id,
+        date: this.dateTimeStr,
+        newDate: this.dateTimeStr,
+        dob: user.dob,
+        required: true,
+        deleting: false,
+        userAvailability: true,
+        scheduleGroup: user.scheduleGroup,
+        userFunction: this.functionStr,
+        newUserFunction: this.functionStr,
+        email: user.email,
+      };
+      this.accountService.deleteSchedule(user.id, schedule2Delete)
+        .pipe(first())
+        .subscribe({
+          next: (z) => {
+            console.log("FunctionScheduleComponent functionStr:" + this.functionStr + " dateStr:" + this.dateTimeStr + " deleted");
+            this.refreshAccounts(() => {
+              /* Notify parent that we got data from server - possibly from adding new schedule from this pannel */
+              this.notifyParentOnChange();
+            });
+          },
+          complete: () => {
+            modalRef.close();
+          },
+          error: error => {
+            this.alertService.error(error);
+          }
+        });
+    }).catch((error) => {
+      this.alertService.error(error);
+    })
   }
   onRowSelected(user: User, tr: any, index: number, event: any) {
     if (event.ctrlKey) {

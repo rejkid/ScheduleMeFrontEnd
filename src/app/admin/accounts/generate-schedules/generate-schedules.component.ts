@@ -123,7 +123,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   onChangeDateTime(event: any) {
     this.fComponents.forEach(element => {
       console.log("Changing time to: " + this.getDateTimeStr());
-      element.setCurrentDate(this.getDateTimeStr());
+      element.setCurrentDateTime(this.getDateTimeStr());
     });
     this.setCopyPasteButtons();
     this.dateTimeChangedEmitter.emit(this.getDateTimeStr());
@@ -134,7 +134,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
   getDateTimeStr(): string {
     return moment(this.f['scheduledDateTime'].value).format(this.dateTimeFormat)
   }
-  setCurrentDate(dateStr: string) {
+  setCurrentDateTime(dateStr: string) {
     this.f['scheduledDateTime'].setValue(moment(dateStr, Constants.dateTimeFormat).toDate());
     // /* Trigger atrificially  `onChangeDateTime` */
     // const event = new CustomEvent("change", { detail: dateStr });
@@ -143,7 +143,7 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     // );
     this.fComponents.forEach(element => {
       console.log("Changing time to: " + this.getDateTimeStr());
-      element.setCurrentDate(this.getDateTimeStr());
+      element.setCurrentDateTime(this.getDateTimeStr());
     });
     this.setCopyPasteButtons();
     console.log("Generate changing date: " + dateStr);
@@ -174,18 +174,18 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
     this.setCopyPasteButtons();
   }
-  onDeleteSchedules(event: MouseEvent, date: ScheduleDateTime) {
-    this.fComponents.forEach(element => {
+  // onDeleteSchedules(event: MouseEvent, date: ScheduleDateTime) {
+  //   this.fComponents.forEach(element => {
 
-      /* Make sure the row is selected first so the ``dateTimeStr`` is set up properly. 
-      `functionStr` is set on creation time by this class*/
-      element.setCurrentDate(this.getDateTimeStr(), () => {
-        element.onDeleteSchedules(event);
-      });
+  //     /* Make sure the row is selected first so the ``dateTimeStr`` is set up properly. 
+  //     `functionStr` is set on creation time by this class*/
+  //     element.setCurrentDate(this.getDateTimeStr(), () => {
+  //       element.onDeleteSchedules(event);
+  //     });
       
-      console.log("GenerateSchedulesComponent deleting functionStr:" + element.functionStr + " dateStr:" + element.dateTimeStr);
-    });
-  }
+  //     console.log("GenerateSchedulesComponent deleting functionStr:" + element.functionStr + " dateStr:" + element.dateTimeStr);
+  //   });
+  // }
 
   private copyChildData(): Map<FunctionScheduleComponent, User[]> {
     GenerateSchedulesComponent.functions2SchedulesMap.clear();
