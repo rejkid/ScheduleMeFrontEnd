@@ -148,13 +148,14 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
 
     deleteAccount(id: string) {
+        // Reset alerts on delete
+        this.alertService.clear();
+
         const modalRef = this.modalService.open(NgbdModalConfirmComponent);
         modalRef.componentInstance.titleStr = "User Account Deletion";
         modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete user account profile?";
         modalRef.componentInstance.bodyInfoStr = "All information associated with the user profile will be permanently deleted.";
         modalRef.result.then((data) => {
-            // Reset alerts on delete
-            this.alertService.clear();
 
             const account = this.accounts().find(x => x.id === id);
             account.isDeleting = true;
@@ -167,15 +168,23 @@ export class ListComponent implements OnInit, AfterViewInit {
                     complete: () => {
                         this.alertService.info("Data Saved");
 
+                    },
+                    error: (error) => {
+                        this.alertService.error(error);
                     }
                 });
-        }).catch((error) => { });
+        }).catch((error) => { 
+            this.alertService.error(error);
+        });
     }
 
     public get RoleAdminEnum() {
         return Role.Admin;
     }
     public onDeleteAllUserAccounts(event: Event) {
+        // Reset alerts on delete
+        this.alertService.clear();
+
         const modalRef = this.modalService.open(NgbdModalConfirmComponent);
         modalRef.componentInstance.titleStr = "User Accounts Deletion";
         modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete user account profiles?";
@@ -243,6 +252,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                     modalRef.close();
                 },
                 error: error => {
+                    modalRef.close();
                     this.alertService.error(error);
                     this.generatingSchedules = false;
                 }
@@ -251,6 +261,13 @@ export class ListComponent implements OnInit, AfterViewInit {
     }
     downloadSchedules(event: any) {
         this.downloadingSchedules = true;
+
+        const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
+            backdrop: 'static',
+            centered: true,
+            windowClass: 'modalClass',
+            keyboard: false
+        });
 
         this.accountService.downloadSchedulesFile().subscribe(
             {
@@ -270,10 +287,12 @@ export class ListComponent implements OnInit, AfterViewInit {
                 complete: () => {
                     //this.router.navigate(['../'], { relativeTo: this.route });
                     this.downloadingSchedules = false;
+                    modalRef.close();
                 },
                 error: error => {
                     this.alertService.error(error);
                     this.downloadingSchedules = false;
+                    modalRef.close();
                 }
             }
         );

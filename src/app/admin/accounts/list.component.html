@@ -191,7 +191,7 @@
                                 #input>
                         </mat-form-field>
                         <mat-table matSort class="lessons-table mat-elevation-z8" [dataSource]="dataSource"
-                            (matSortChange)="sortData($event)" >
+                            (matSortChange)="sortData($event)">
                             <ng-container matColumnDef="{{displayedColumns[0]}}">
                                 <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
                                 <mat-cell *matCellDef="let account">
@@ -231,9 +231,9 @@
                                     <button (click)="deleteAccount(account.id)"
                                         class="btn btn-sm btn-danger btn-delete-account btn3d"
                                         [disabled]="account.isDeleting || account.role == Role.Admin || generatingSchedules || downloadingSchedules">
-                                        <span *ngIf="account.isDeleting"
-                                            class="spinner-border spinner-border-sm"></span>
-                                        <span *ngIf="!account.isDeleting">Delete</span>
+                                        @if(account.isDeleting) {
+                                        <span class="spinner-border spinner-border-sm mr-1"></span>
+                                        } Delete
                                     </button>
 
                                 </mat-cell>
@@ -247,9 +247,9 @@
                                 (mouseout)="row.hovered = false"></mat-row>
 
                         </mat-table>
-                        <mat-paginator #paginator class="lessons-table mat-elevation-z8" pageSize={{pageSize}} pageIndex={{pageIndex}}
-                            [length]="accounts().length" [pageSizeOptions]="[10, 30, 50, 100]" showFirstLastButtons
-                            (page)="onChangePageSettings($event)">
+                        <mat-paginator #paginator class="lessons-table mat-elevation-z8" pageSize={{pageSize}}
+                            pageIndex={{pageIndex}} [length]="accounts().length" [pageSizeOptions]="[10, 30, 50, 100]"
+                            showFirstLastButtons (page)="onChangePageSettings($event)">
                         </mat-paginator>
                     </form>
                 </div>

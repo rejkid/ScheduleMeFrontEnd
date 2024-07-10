@@ -30,7 +30,7 @@ import { Observable, Subject } from 'rxjs';
   </p>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Operation cancelled')">Cancel</button>
   <a><button type="submit" ngbAutofocus class="button btn btn-outline-success btn-default">Submit</button></a>
 </div>
 </form>

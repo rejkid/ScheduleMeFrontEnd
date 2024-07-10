@@ -128,6 +128,11 @@ export class GenerateSchedulesComponent implements OnInit, AfterViewInit {
     this.setCopyPasteButtons();
     this.dateTimeChangedEmitter.emit(this.getDateTimeStr());
   }
+  onKeydown(event : any) {
+    if (event.key === "Enter") {
+      this.onChangeDateTime(event);
+    }
+  }
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
 

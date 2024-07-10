@@ -326,7 +326,9 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   // }
 
   onDeleteSchedule(event: MouseEvent, user: User) { // rowIndex is table index
-    user.isDeleting = true;
+    // Reset alerts on delete
+    this.alertService.clear();
+
     // First display confirmation dialog box ...
     const modalRef = this.modalService.open(NgbdModalConfirmComponent);
     modalRef.componentInstance.titleStr = "Schedules Deletion";
@@ -334,6 +336,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     modalRef.componentInstance.bodyInfoStr = "All information associated with the schedules will be permanently deleted.";
 
     modalRef.result.then((data) => {
+      user.isDeleting = true;
 
       // ... then display busy cursor
 
@@ -369,6 +372,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
           },
           complete: () => {
             modalRef.close();
+            this.alertService.info("Data Saved");
           },
           error: error => {
             this.alertService.error(error);

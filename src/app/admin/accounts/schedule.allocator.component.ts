@@ -369,14 +369,12 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
     // reset alerts on submit
     this.alertService.clear();
 
-    schedule2Delete.deleting = true;
-
-
     const modalRef = this.modalService.open(NgbdModalConfirmComponent);
     modalRef.componentInstance.titleStr = "Schedule Deletion";
     modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete Schedule profile?";
     modalRef.componentInstance.bodyInfoStr = "All information associated with the Schedule profile will be permanently deleted.";
     modalRef.result.then((data) => {
+      schedule2Delete.deleting = true;
       this.accountService.deleteSchedule(this.account.id, schedule2Delete)
         .pipe(first())
         .subscribe({

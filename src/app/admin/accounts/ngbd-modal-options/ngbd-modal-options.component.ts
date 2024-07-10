@@ -16,7 +16,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
       border: none;
       background: none;
     }
-    .spinner-border {
+    .spinner-grow {
       width: 5rem !important;
       height: 5rem !important;
       border-width: 0.5rem;

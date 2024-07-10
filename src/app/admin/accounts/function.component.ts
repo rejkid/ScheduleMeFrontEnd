@@ -248,6 +248,7 @@ export class FunctionComponent implements OnInit {
     modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete task profile?";
     modalRef.componentInstance.bodyInfoStr = "All information associated with the task profile will be permanently deleted.";
     modalRef.result.then((data) => {
+      userFunctionDTO.isDeleting = true;
       this.accountService.deleteFunction(this.id, userFunctionDTO)
         .pipe(first())
         .subscribe({
@@ -257,6 +258,7 @@ export class FunctionComponent implements OnInit {
             this.alertService.info("Data Saved");
           },
           error: error => {
+            userFunctionDTO.isDeleting = false;
             this.alertService.error(error);
           }
         });

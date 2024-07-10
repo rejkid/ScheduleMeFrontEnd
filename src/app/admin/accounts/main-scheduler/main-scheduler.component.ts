@@ -70,7 +70,7 @@ export class MainSchedulerComponent {
     this.dataSource.sort = this.sort;
     this.dataSource = new MatTableDataSource();
 
-    this.getAllDates();
+    this.getAllDates(() => {});
     console.log("Sorting ngAfterViewInit");
   }
 
@@ -81,7 +81,7 @@ export class MainSchedulerComponent {
     });
   }
   onCheckboxChange(event: any) {
-    this.getAllDates();
+    this.getAllDates(() => {});
   }
 
   get f() {
@@ -89,7 +89,7 @@ export class MainSchedulerComponent {
   }
 
 
-  getAllDates() {
+  getAllDates(callback: any) {
     this.isLoaded = false;
     console.log("MainSchedulerComponent:getAllDates");
     this.accountService.getAllDates()
@@ -142,6 +142,11 @@ export class MainSchedulerComponent {
           }
           this.isLoaded = true;
         },
+        complete: () => {
+          if (callback != undefined) {
+            callback();
+          }
+        },
         error: error => {
           console.log();
           this.isLoaded = true;
@@ -182,7 +187,15 @@ export class MainSchedulerComponent {
     return null;
   }
   onSchedulesUpdated(data: FunctionScheduleData) {
-    this.getAllDates();
+    this.getAllDates(() => {
+    var futureScheduleDate = this.futureScheduleDates().find((d) => { return d.date == data.date });
+    if (futureScheduleDate != undefined) {
+      this.selectRow(futureScheduleDate);
+    }
+    else { // New date - not existing yet
+      this.unselect();
+    }
+    });
   }
   onChangePageProperties(event: any) {
     MainSchedulerComponent.pageSize = event.pageSize;
@@ -239,6 +252,9 @@ export class MainSchedulerComponent {
   }
 
   onDeleteSchedules(event: MouseEvent, date: ScheduleDateTime) {
+    // Reset alerts on delete
+    this.alertService.clear();
+
     this.isLoaded = false;
 
     // First display confirmation dialog box ...
@@ -248,6 +264,7 @@ export class MainSchedulerComponent {
     modalRef.componentInstance.bodyInfoStr = "All information associated with the schedules will be permanently deleted.";
 
     modalRef.result.then((data) => {
+      date.isDeleting = true;
 
       // ... then display busy cursor
       const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
@@ -264,10 +281,11 @@ export class MainSchedulerComponent {
           },
           complete: () => {
             console.log("Deleting schedules for date: " + date.date);
-            this.getAllDates();
+            this.getAllDates(() => {});
             this.generateScheduleComponent.unselect();
             this.isLoaded = true;
             modalRef.close();
+            this.alertService.info("Data Saved");
           },
           error: (error) => {
             this.alertService.error(error);

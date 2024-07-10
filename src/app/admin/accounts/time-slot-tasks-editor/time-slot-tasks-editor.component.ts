@@ -149,7 +149,6 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   }
   onDeleteTimeSlotTasks(event: MouseEvent, tasks: TimeSlotsTasks) {
     console.log("MainSchedulerComponent deleting called");
-    tasks.isDeleting = true;
     // Reset alerts on submit
     this.alertService.clear();
 
@@ -158,6 +157,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
     modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete time slot profile?";
     modalRef.componentInstance.bodyInfoStr = "All information associated with the time slot profile will be permanently deleted.";
     modalRef.result.then((data) => {
+      tasks.isDeleting = true;
       var timeslotsTasks: TimeSlotsTasksDTO = {
         date: tasks.date,
         tasks: tasks.tasks.join(" "),

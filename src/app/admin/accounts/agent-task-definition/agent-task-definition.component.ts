@@ -161,6 +161,7 @@ export class AgentTaskDefinitionComponent implements OnInit {
     modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete agent task profile?";
     modalRef.componentInstance.bodyInfoStr = "All information associated with the agent task profile will be permanently deleted.";
     modalRef.result.then((data) => {
+      task.isDeleting = true;
       this.accountService.deleteAgentTaskConfig(task.agentTaskStr).subscribe({
         next: (value) => {
           this.agentTaskConfigs().splice(this.agentTaskConfigs().findIndex(t => t.agentTaskStr == task.agentTaskStr), 1);
@@ -168,9 +169,11 @@ export class AgentTaskDefinitionComponent implements OnInit {
         },
         complete: () => {
           this.alertService.info("Data Saved");
+          task.isDeleting = false;
         },
         error: (error) => {
           this.alertService.error(error);
+          task.isDeleting = false;
         }
       });
       }).catch((error) => {

@@ -8,7 +8,7 @@
                         <mat-label>Schedule</mat-label>
                         <input id="test" formControlName="scheduledDateTime" #ref matInput
                             [ngxMatDatetimePicker]="picker" placeholder="Choose a date" required
-                            (dateChange)="onChangeDateTime($event)" />
+                            (dateChange)="onChangeDateTime($event)" (keydown.enter)="onKeydown($event)"/>
                         <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
                         <mat-hint>{{dateFormat}}</mat-hint>
                         <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
