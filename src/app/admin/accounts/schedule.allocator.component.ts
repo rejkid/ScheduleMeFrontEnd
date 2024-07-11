@@ -342,7 +342,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
 
       if (scheduleTimeStr == formDateTimeStr && scheduleFunction == formFunctionStr && scheduleGroup == formGroup) {
         var GroupStr = scheduleGroup.length > 0 ? "/" + formGroup : "";
-        this.alertService.error("The user is already " + scheduleFunction + GroupStr + " for Dat/Time: " + formDateTimeStr);
+        this.alertService.warn("Schedule " + scheduleFunction + GroupStr + " for Dat/Time: " + formDateTimeStr +" already exists");
 
         // Select the existing one
         this.selectRow(this.schedules[index]);

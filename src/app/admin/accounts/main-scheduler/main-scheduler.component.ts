@@ -242,9 +242,10 @@ export class MainSchedulerComponent {
   }
   dateTimeChanged(date: string) {
     var futureScheduleDate = this.futureScheduleDates().find((d) => { return d.date == date });
-
+    this.alertService.clear();
     if (futureScheduleDate != undefined) {
       this.selectRow(futureScheduleDate);
+      this.alertService.warn("Schedule(s) for the date: " + date + " already exist");
     }
     else { // New date - not existing yet
       this.unselect();

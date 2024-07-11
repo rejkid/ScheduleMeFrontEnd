@@ -259,6 +259,8 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   onChangeUser(event: Event) {
     var valueSelected = (event.target as HTMLInputElement).value;
     this.selectedUser4Function = this.possibleUsersMap.get(valueSelected);
+    // Fix up the date
+    this.selectedUser4Function.date = this.dateTimeStr;
   }
   /* I am not sure if we need 'input' parameter - keep it for now*/
   onApplyFilter(t: any, input: any) {
@@ -269,6 +271,21 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
     this.dataSource.filter = filterValue;
   }
   onAddSchedule(event: MouseEvent, button: any) {
+    this.alertService.clear();
+    
+    var existing: User[] = this.users().filter((u) => {
+      return (u.date == this.selectedUser4Function.date 
+        && u.function == this.selectedUser4Function.function 
+        && u.scheduleGroup == this.selectedUser4Function.scheduleGroup 
+        && u.email == this.selectedUser4Function.email)});
+      console.assert(existing.length <= 1, "We have double " + this.selectedUser4Function.firstName + " user for the same user: "+ this.selectedUser4Function.email);
+      if (existing.length > 0) {
+        this.alertService.warn(this.selectedUser4Function.email + " is already " + this.selectedUser4Function.function 
+          + (existing[0].scheduleGroup.length > 0 ? " for group agent " + existing[0].scheduleGroup  : ""));
+        this.selectRow(existing[0]);
+        return;
+      }
+  
     // Reset alerts on submit
     this.alertService.clear();
     this.addSchedule(this.selectedUser4Function);
