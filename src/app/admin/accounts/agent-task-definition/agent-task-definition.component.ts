@@ -126,10 +126,13 @@ export class AgentTaskDefinitionComponent implements OnInit {
         highlighted: true,
         isDeleting: false
       };
+      this.selectRow(element2Update);
     } else {
       // Existing item
+      element2Update = existing[0];
       console.assert(existing.length == 1, "Duplicate elements found");
       this.alertService.warn((isGroup ? "Group " : "") + "Task: " + taskName + "  already exists");
+      this.selectRow(element2Update);
       return;
     }
 

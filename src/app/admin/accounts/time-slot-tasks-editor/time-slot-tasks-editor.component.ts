@@ -127,7 +127,8 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
           this.dataSource.data = this.timeSlots();
         },
         complete: () => {
-          this.sortInDescDateOrder();
+          this.sortInAsccDateOrder();
+          //this.sortInDescDateOrder();
           if (selectRow != null)
             this.selectRow(selectedRow);
         },
@@ -138,6 +139,13 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   }
   private sortInDescDateOrder() {
     const sortState: Sort = { active: 'timeSlotDate', direction: 'desc' };
+    this.sort.active = sortState.active;
+    this.sort.direction = sortState.direction;
+    this.sort.sortChange.emit(sortState);
+  }
+
+  private sortInAsccDateOrder() {
+    const sortState: Sort = { active: 'timeSlotDate', direction: 'asc' };
     this.sort.active = sortState.active;
     this.sort.direction = sortState.direction;
     this.sort.sortChange.emit(sortState);
@@ -211,7 +219,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
 
     /* Sanity check */
     var existing: TimeSlotsTasks[] = this.timeSlots().filter((tst) => {
-      return (tst.date === date && tst.tasks.join(" ") === tasks)
+      return (tst.date === date)
     });
     if (existing.length <= 0) {
       // New item to add, create one
@@ -227,6 +235,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
       console.assert(existing.length == 1, "Duplicate elements found");
       this.isAdding = false;
       this.alertService.warn("Date " + date + "  already exists with the specified number of tasks");
+      this.selectRow(existing[0]);
       return;
     }
     
