@@ -17,7 +17,8 @@
             </div>
             <div class="row">
                 <div class="col-2">
-                    <button type="button" (click)="onAddUpdateTask()" class="btn3d btn btn-primary" [ngClass]="{ 'disabled': f['agentTaskName'].value.length <= 0}">
+                    <button type="button" (click)="onAddUpdateTask()" class="btn3d btn btn-primary" 
+                    [ngClass]="{ 'disabled': !form.valid || !validateAddUpdateButton()}">
                         <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span> Add/Update
                     </button>
                 </div>
@@ -35,7 +36,7 @@
                 <ng-container matColumnDef="{{displayedColumns[0]}}">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{displayedColumns[0]}} </mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <input type="text" matInput [value]="row.agentTaskStr" [disabled]="true">
+                        <input type="text" matInput [value]="row.agentTaskStr" readonly >
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="{{displayedColumns[1]}}">

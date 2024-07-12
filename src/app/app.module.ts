@@ -16,7 +16,7 @@ import { FloatingSchedulesComponent } from './floating-schedules/floating-schedu
 import { HomeComponent } from './home';
 ;
 
-import { NgxMatDatetimePickerModule, NgxMatNativeDateModule } from '@angular-material-components/datetime-picker';
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -58,7 +58,6 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
     bootstrap: [AppComponent], imports: [CommonModule,
         BrowserModule,
         FormsModule,
-        //HttpClientModule,
         ReactiveFormsModule,
         AppRoutingModule,
         RouterModule,
@@ -73,10 +72,8 @@ export const USERS_SERVICE_CONFIG_TOKEN = new InjectionToken<ColorConfig>(
         MatInputModule,
         MatFormFieldModule,
         NgxMatDatetimePickerModule,
-        NgxMatNativeDateModule,
+        NgxMatTimepickerModule,
         ApplicationPipesModuleModule,
-        //AutoGeneratorModule,
-        // AddEditModule,
         OrderByDateOrFunctionPipe], providers: [
         { provide: APP_INITIALIZER, useFactory: appInitializer, multi: true, deps: [AccountService] },
         { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

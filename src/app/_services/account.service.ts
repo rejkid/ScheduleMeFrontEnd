@@ -18,6 +18,7 @@ import { SchedulePoolElements } from '../_models/schedulepoolelements';
 import { Task } from "../_models/task";
 import { DateFunctionTeams } from '../_models/teams';
 import { TimeSlotsTasksDTO } from '../_models/timeslotstasksDTO';
+import { TimeSlotsTasks } from '../_models/timeslotstasks';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;
@@ -122,7 +123,7 @@ export class AccountService {
         return this.http.get<TimeSlotsTasksDTO[]>(`${baseUrl}/timeslots-tasks`);
     }
     setTimeSlotsTasks(tasks : TimeSlotsTasksDTO) {
-        return this.http.put(`${baseUrl}/timeslots-tasks`, tasks);
+        return this.http.put<TimeSlotsTasksDTO[]>(`${baseUrl}/timeslots-tasks`, tasks);
     }
     deleteTimeSlotsTasks(tasks : TimeSlotsTasksDTO) {
         return this.http.post(`${baseUrl}/timeslots-tasks`, tasks);
@@ -242,7 +243,7 @@ export class AccountService {
         return this.http.get<AgentTaskConfig[]>(`${baseUrl}/get-all-agent-task-configs`);
     }
     updateAgentTaskConfig(id: string, config : AgentTaskConfig) {
-        return this.http.put(`${baseUrl}/create-agent-task-config/${id}`, config);
+        return this.http.put<AgentTaskConfig[]>(`${baseUrl}/create-agent-task-config/${id}`, config);
     }
     deleteAgentTaskConfig(id: string) {
         return this.http.delete(`${baseUrl}/delete-agent-task-config/${id}`);

@@ -144,7 +144,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   get possibleUserStrings(): string[] {
     return Array.from(this.possibleUsersMap.keys());
   }
-  private refreshAccounts(callback: any) {
+  private refreshAccounts(callback: () => void) {
     this.accountsLoaded = false;
     this.accountService.getAll() //getSchedules4Date(this.dateTimeStr) //getAll()
       .pipe(first())
@@ -272,7 +272,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   }
   onAddSchedule(event: MouseEvent, button: any) {
     this.alertService.clear();
-    
+
     var existing: User[] = this.users().filter((u) => {
       return (u.date == this.selectedUser4Function.date 
         && u.function == this.selectedUser4Function.function 

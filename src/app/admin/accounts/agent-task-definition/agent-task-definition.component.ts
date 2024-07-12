@@ -47,8 +47,7 @@ export class AgentTaskDefinitionComponent implements OnInit {
   columnsSchema: any = COLUMNS_SCHEMA;
 
   static pageSize: number = 10;
-  selectedBySubmit: boolean = false;
-
+  
   constructor(private alertService: AlertService, private accountService: AccountService, private fb: FormBuilder) {
 
   }
@@ -113,44 +112,27 @@ export class AgentTaskDefinitionComponent implements OnInit {
     var taskName = this.form.get('agentTaskName').value;
     var isGroup = this.form.get('isGroupBox').value;
 
-
-    var element2Update: AgentTaskConfig = null;
-    var existing = this.agentTaskConfigs().filter(function (item) {
-      return item.agentTaskStr == taskName;
-    });
-    if (existing.length <= 0) {
-      // New item to add, create one
-      element2Update = {
-        agentTaskStr: taskName,
-        isGroup: isGroup,
-        highlighted: true,
-        isDeleting: false
-      };
-      this.selectRow(element2Update);
-    } else {
-      // Existing item
-      element2Update = existing[0];
-      console.assert(existing.length == 1, "Duplicate elements found");
-      this.alertService.warn((isGroup ? "Group " : "") + "Task: " + taskName + "  already exists");
-      this.selectRow(element2Update);
-      return;
-    }
-
+    let element2Update : AgentTaskConfig = {
+      agentTaskStr: taskName,
+      isGroup: isGroup,
+      highlighted: true,
+      isDeleting: false
+    };
     this.accountService.updateAgentTaskConfig(element2Update.agentTaskStr, element2Update).subscribe({
-      next: (value) => {
-        if (existing.length <= 0) {
-          console.assert(element2Update != null, "AgentTaskConfig  is null");
-          this.agentTaskConfigs().push(element2Update);
-        }
+      next: (value : AgentTaskConfig[]) => {
+        this.agentTaskConfigs.set(value);
         this.dataSource.data = this.agentTaskConfigs();
       },
       complete: () => {
         console.assert(element2Update != null, "AgentTaskConfig  is null");
-        this.selectedBySubmit = true;
-        this.selectRow(element2Update);
+        let selected = this.agentTaskConfigs().filter(function (item) {
+          return item.agentTaskStr == taskName;
+        });
+        console.assert(selected.length == 1, "Number of selected tasks:" + selected.length);
+        this.selectRow(selected[0]);
         this.alertService.info("Data Saved");
       },
-      error: (error) => {
+      error: (error : string) => {
         this.alertService.error(error);
       }
     });
@@ -248,4 +230,11 @@ export class AgentTaskDefinitionComponent implements OnInit {
   }
   // convenience getter for easy access to form fields
   get f() { return this.form.controls; }
+
+  validateAddUpdateButton() : boolean {
+    let retVal = this.agentTaskConfigs().find(function (item) {
+      return item.highlighted == true;
+    });
+    return retVal != undefined;
+  }
 }

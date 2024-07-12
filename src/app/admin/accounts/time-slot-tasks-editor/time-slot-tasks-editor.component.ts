@@ -1,4 +1,4 @@
-import { signal, Component, OnInit, ViewChild, AfterViewInit, inject } from '@angular/core';
+import { signal, Component, OnInit, ViewChild, AfterViewInit, inject, TemplateRef, ElementRef } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -14,6 +14,7 @@ import { TimeSlotsTasksDTO } from 'src/app/_models/timeslotstasksDTO';
 import { AccountService, AlertService } from 'src/app/_services';
 import { Constants } from 'src/app/constants';
 import { NgbdModalConfirmComponent } from '../ngbd-modal-confirm/ngbd-modal-confirm.component';
+import { ThemePalette } from '@angular/material/core';
 
 
 const COLUMNS_SCHEMA = [
@@ -40,6 +41,8 @@ const COLUMNS_SCHEMA = [
 export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  
+  public color: ThemePalette = 'primary';
   private modalService = inject(NgbModal);
 
   dateFormat = Constants.dateTimeFormat;
@@ -79,6 +82,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
     this.refreshTaskCounters();
     this.refreshTimeSlotsTasks(null);
     this.isLoaded = true;
+    this.f['scheduledDate'].disable();
   }
 
   private refreshTaskCounters() {
@@ -188,7 +192,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
             tasks.isDeleting = false;
           }
         });
-      }).catch((error) => {
+    }).catch((error) => {
     });
 
   }
@@ -198,7 +202,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
 
   }
 
-  onAddTask() {
+  onAddUpdateTimeSlot() {
     this.submitted = true;
     this.isAdding = true;
 
@@ -217,46 +221,44 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
     var date = moment(dateControl.value).format(this.dateTimeFormat);
     var tasks: string = this.getTasksStr();
 
-    /* Sanity check */
-    var existing: TimeSlotsTasks[] = this.timeSlots().filter((tst) => {
-      return (tst.date === date)
-    });
-    if (existing.length <= 0) {
-      // New item to add, create one
-      console.log(tasks);
-      var timeslotsTasksDTO: TimeSlotsTasksDTO = {
-        date: date,
-        tasks: tasks,
-        isDeleting: false,
-        highlighted: false
-      }
-    } else {
-      // Existing item
-      console.assert(existing.length == 1, "Duplicate elements found");
-      this.isAdding = false;
-      this.alertService.warn("Date " + date + "  already exists with the specified number of tasks");
-      this.selectRow(existing[0]);
-      return;
+    let timeslotsTasksDTO: TimeSlotsTasksDTO = {
+      date: date,
+      tasks: tasks,
+      isDeleting: false,
+      highlighted: false
     }
-    
-    
+
     this.writeTimeSlotsTasks(timeslotsTasksDTO);
   }
   private writeTimeSlotsTasks(task: TimeSlotsTasksDTO) {
     this.accountService.setTimeSlotsTasks(task)
       .pipe(first())
       .subscribe({
-        next: () => {
+        next: (value: TimeSlotsTasksDTO[]) => {
+          
+          let slots = value.map((tst) => {
+            let retVal : TimeSlotsTasks = {
+              date: tst.date,
+              tasks: tst.tasks.split(" "),
+              isDeleting : false,
+              highlighted : false,
+            }
+            return retVal;
+            });
+          this.timeSlots.set(slots);
+          this.dataSource.data = this.timeSlots();
         },
         complete: () => {
-          var timeslotsTasks: TimeSlotsTasks = {
-            date: task.date,
-            tasks: task.tasks.split(" "),
-            isDeleting: false,
-            highlighted: false
-          }
+          console.assert(task != null, "AgentTaskConfig  is null");
+          let selected = this.timeSlots().filter(function (item) {
+            return item.date == task.date;
+          });
+          console.assert(selected.length == 1, "Number of selected tasks:" + selected.length);
 
-          this.refreshTimeSlotsTasks(timeslotsTasks);
+          this.sortInAsccDateOrder();
+          //this.sortInDescDateOrder();
+
+          this.selectRow(selected[0]);
           this.isAdding = false;
           this.alertService.info("Data Saved");
         },
@@ -364,5 +366,11 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
   }
   get getDayStrFromDate(): string {
     return TimeHandler.getDayStrFromDate(moment(this.f['scheduledDate'].value).format(this.dateTimeFormat));
+  }
+  validateAddUpdateButton() : boolean {
+    let retVal = this.timeSlots().find(function (item) {
+      return item.highlighted == true;
+    });
+    return retVal != undefined;
   }
 }

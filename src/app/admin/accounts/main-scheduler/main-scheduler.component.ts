@@ -202,6 +202,9 @@ export class MainSchedulerComponent {
   }
 
   onRowSelected(schedule: ScheduleDateTime, tr: any, index: number, event: any) {
+    // Reset alerts on delete
+    this.alertService.clear();
+
     if (event.ctrlKey) {
       if (schedule.highlighted) {
         schedule.highlighted = false;

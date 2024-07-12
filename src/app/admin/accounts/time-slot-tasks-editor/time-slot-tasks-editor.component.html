@@ -7,11 +7,12 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Schedule</mat-label>
                         <input formControlName="scheduledDate" #ref matInput [ngxMatDatetimePicker]="picker"
-                            placeholder="Choose a date" required (dateChange)="onChangeDateTime($event)" />
-                        <mat-datepicker-toggle matSuffix [for]="$any(picker)"></mat-datepicker-toggle>
+                            placeholder="Choose a date" required (dateChange)="onChangeDateTime($event)" [disabled]="true"/>
+                        
+                        <!-- <mat-datepicker-toggle matSuffix hide [for]="$any(picker)"></mat-datepicker-toggle> -->
                         <mat-hint>{{dateFormat}}</mat-hint>
                         <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
-                            [stepMinute]="1" [stepSecond]="0" [touchUi]="false" [color]="undefined"
+                            [stepMinute]="1" [stepSecond]="0" [touchUi]="false" [color]="color"
                             [enableMeridian]="false" [disableMinute]="false" [hideTime]="false">
                         </ngx-mat-datetime-picker>
                         <mat-error *ngIf="f['scheduledDate'].errors">Invalid Scheduled date</mat-error>
@@ -39,8 +40,8 @@
             }
         </div>
         <div class="mb-3">
-            <button type="button" (click)="onAddTask()" class="btn3d btn btn-primary"
-                [ngClass]="{ 'disabled': !form.controls['scheduledDate'].valid}">
+            <button type="button" (click)="onAddUpdateTimeSlot()" class="btn3d btn btn-primary"
+                [ngClass]="{ 'disabled': !form.valid || !validateAddUpdateButton()} ">
                 <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span> Add/Update
             </button>
             &nbsp;
@@ -62,7 +63,7 @@
                 <ng-container matColumnDef="{{displayedColumns[1]}}">
                     <mat-header-cell *matHeaderCellDef> {{displayedLabels[1]}} </mat-header-cell>
                     <mat-cell *matCellDef="let row">
-                        <input type="text" matInput [value]="row.tasks" readonly>
+                        <input type="text" matInput [value]="row.tasks.join(' ')" readonly>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="delete">
