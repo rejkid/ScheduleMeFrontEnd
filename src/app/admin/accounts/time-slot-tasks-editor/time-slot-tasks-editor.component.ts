@@ -82,7 +82,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
     this.refreshTaskCounters();
     this.refreshTimeSlotsTasks(null);
     this.isLoaded = true;
-    this.f['scheduledDate'].disable();
+    //this.f['scheduledDate'].disable();
   }
 
   private refreshTaskCounters() {
@@ -184,7 +184,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
           complete: () => {
             tasks.isDeleting = false;
             this.refreshTimeSlotsTasks(null);
-            this.alertService.info("Data Saved");
+            //this.alertService.info("Data Saved");
             tasks.isDeleting = false;
           },
           error: error => {
@@ -260,7 +260,7 @@ export class TimeSlotTasksEditorComponent implements OnInit, AfterViewInit {
 
           this.selectRow(selected[0]);
           this.isAdding = false;
-          this.alertService.info("Data Saved");
+          //this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);

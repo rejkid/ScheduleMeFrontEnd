@@ -18,7 +18,6 @@ import { SchedulePoolElements } from '../_models/schedulepoolelements';
 import { Task } from "../_models/task";
 import { DateFunctionTeams } from '../_models/teams';
 import { TimeSlotsTasksDTO } from '../_models/timeslotstasksDTO';
-import { TimeSlotsTasks } from '../_models/timeslotstasks';
 
 
 const baseUrl = `${environment.apiUrl}/accounts`;

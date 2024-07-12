@@ -318,7 +318,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
           var schedules = this.schedules.filter(s => this.isSameSchedule(s, newSchedule));
           console.assert(schedules.length == 1, "Schedule  just created not found");
           this.selectRow(schedules[0]);
-          this.alertService.info("Data Saved");
+          //this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
@@ -383,7 +383,7 @@ export class ScheduleAllocatorComponent implements OnInit, AfterViewInit {
           },
           complete: () => {
             schedule2Delete.deleting = false;
-            this.alertService.info("Data Saved");
+            //this.alertService.info("Data Saved");
           },
           error: error => {
             this.alertService.error(error);

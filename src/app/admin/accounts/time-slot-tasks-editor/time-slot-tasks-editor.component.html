@@ -7,9 +7,8 @@
                     <mat-form-field appearance="outline">
                         <mat-label>Schedule</mat-label>
                         <input formControlName="scheduledDate" #ref matInput [ngxMatDatetimePicker]="picker"
-                            placeholder="Choose a date" required (dateChange)="onChangeDateTime($event)" [disabled]="true"/>
-                        
-                        <!-- <mat-datepicker-toggle matSuffix hide [for]="$any(picker)"></mat-datepicker-toggle> -->
+                            placeholder="Choose a date" required (dateChange)="onChangeDateTime($event)" />
+                        <mat-datepicker-toggle matSuffix hide [for]="$any(picker)"></mat-datepicker-toggle>
                         <mat-hint>{{dateFormat}}</mat-hint>
                         <ngx-mat-datetime-picker #picker [showSpinners]="true" [showSeconds]="false" [stepHour]="1"
                             [stepMinute]="1" [stepSecond]="0" [touchUi]="false" [color]="color"
@@ -41,7 +40,7 @@
         </div>
         <div class="mb-3">
             <button type="button" (click)="onAddUpdateTimeSlot()" class="btn3d btn btn-primary"
-                [ngClass]="{ 'disabled': !form.valid || !validateAddUpdateButton()} ">
+                [ngClass]="{ 'disabled': !form.valid} ">
                 <span *ngIf="isAdding" class="spinner-border spinner-border-sm mr-1"></span> Add/Update
             </button>
             &nbsp;

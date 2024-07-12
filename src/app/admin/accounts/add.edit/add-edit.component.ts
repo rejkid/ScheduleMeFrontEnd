@@ -160,7 +160,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                     this.router.navigate(['../..'], { relativeTo: this.route });
                 },
                 complete: () => {
-                    this.alertService.info("Data Saved");
+                    //this.alertService.info("Data Saved");
                 },
                 error: error => {
                     this.alertService.error(error);
@@ -192,7 +192,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
                     this.loading = false;
                 },
                 complete: () => {
-                    this.alertService.info("Data Saved");
+                    //this.alertService.info("Data Saved");
                 },
                 error: error => {
                     this.alertService.error(error);

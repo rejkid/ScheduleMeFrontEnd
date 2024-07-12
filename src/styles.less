@@ -2,6 +2,25 @@
 //@import '~@angular/material/prebuilt-themes/indigo-pink.css';
 /* @import "../node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css"; */
 
+
+// Workaround for material transparent background START.
+.mat-datepicker-content {
+	box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f;
+	background-color: #fff;
+	color: #000000de
+  }
+  
+  .mat-calendar-body-selected {
+	background-color: #007f51;
+	color: #fff;
+  }
+  
+  .mat-calendar-body-cell-content {
+	border: none !important;
+  }
+// Workaround for material transparent background END.
+
+
 html,
 body {
 	height: 100%;

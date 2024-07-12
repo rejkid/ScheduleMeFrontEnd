@@ -234,7 +234,7 @@ export class FunctionComponent implements OnInit {
           var tasks = this.userTasks().filter(s => this.isSameTask(s, task));
           console.assert(tasks.length == 1, "Task  just created not found");
           this.selectRow(tasks[0]);
-          this.alertService.info("Data Saved");
+          //this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
@@ -256,7 +256,7 @@ export class FunctionComponent implements OnInit {
           next: (account) => {
             this.userTasks.set(account.userFunctions.slice());
             this.dataSource.data = this.userTasks();
-            this.alertService.info("Data Saved");
+            //this.alertService.info("Data Saved");
           },
           error: error => {
             userFunctionDTO.isDeleting = false;

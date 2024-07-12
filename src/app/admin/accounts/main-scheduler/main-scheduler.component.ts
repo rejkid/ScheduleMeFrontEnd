@@ -289,7 +289,7 @@ export class MainSchedulerComponent {
             this.generateScheduleComponent.unselect();
             this.isLoaded = true;
             modalRef.close();
-            this.alertService.info("Data Saved");
+            //this.alertService.info("Data Saved");
           },
           error: (error) => {
             this.alertService.error(error);

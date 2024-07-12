@@ -130,7 +130,7 @@ export class AgentTaskDefinitionComponent implements OnInit {
         });
         console.assert(selected.length == 1, "Number of selected tasks:" + selected.length);
         this.selectRow(selected[0]);
-        this.alertService.info("Data Saved");
+        //this.alertService.info("Data Saved");
       },
       error: (error : string) => {
         this.alertService.error(error);
@@ -153,7 +153,7 @@ export class AgentTaskDefinitionComponent implements OnInit {
           this.dataSource.data = this.agentTaskConfigs();
         },
         complete: () => {
-          this.alertService.info("Data Saved");
+          //this.alertService.info("Data Saved");
           task.isDeleting = false;
         },
         error: (error) => {

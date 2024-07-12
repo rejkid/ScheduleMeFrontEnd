@@ -389,7 +389,7 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
           },
           complete: () => {
             modalRef.close();
-            this.alertService.info("Data Saved");
+            //this.alertService.info("Data Saved");
           },
           error: error => {
             this.alertService.error(error);
