@@ -1,4 +1,4 @@
-import { Component, Injector, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, Injector, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -12,12 +12,19 @@ import { AgentTaskConfig } from 'src/app/_models/agenttaskconfig';
 import { Task } from 'src/app/_models/task';
 import { AccountService, AlertService } from 'src/app/_services';
 import { NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
+import { NgxTimepickerFieldComponent } from 'ngx-material-timepicker';
+import * as moment from 'moment';
 
 const COLUMNS_SCHEMA = [
   {
     key: "task",
     type: "text",
     label: "Task"
+  },
+  {
+    key: "preferredTime",
+    type: "text",
+    label: "Preferred Time"
   },
   {
     key: "group",
@@ -37,9 +44,11 @@ const COLUMNS_SCHEMA = [
     "(click)": "onToObservable($event)"
   }
 })
-export class FunctionComponent implements OnInit {
+export class FunctionComponent implements OnInit, AfterViewInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild('openTime') openTime: NgxTimepickerFieldComponent;
+  
   private modalService = inject(NgbModal);
   
   id: string;
@@ -65,6 +74,7 @@ export class FunctionComponent implements OnInit {
   highlighted: boolean;
   
   isLoaded: boolean = false;
+  preferredTimeInitialized: boolean = false;;
 
   // JD Test
   injector: Injector = inject(Injector);
@@ -77,8 +87,25 @@ export class FunctionComponent implements OnInit {
     private router: Router) {
     this.accountService = accountService;
     this.isLoggedAsAdmin = this.accountService.isAdmin();
+    this.form = this.formBuilder.group({
+      function: ['', [Validators.required, this.functionValidator]],
+      groupTask: ['', [this.groupValidator.bind(this)]],
+      preferredTime: ['9:00 am', [Validators.required]]
+    });//, { validator: this.validate});
+
+  }
+  ngAfterViewInit(): void {
   }
 
+  ngDoCheck(): void {
+    if(this.openTime != undefined && !this.preferredTimeInitialized) {
+      var date = new Date();
+      this.preferredTimeInitialized = true;
+
+      this.openTime.changeHour(date.getHours());
+      this.openTime.changeMinute(date.getMinutes());
+    }
+  }
   // JD Test
   onToObservable(e: any) {
     const numbers = signal(0);
@@ -118,10 +145,6 @@ export class FunctionComponent implements OnInit {
                 this.dataSource.sort = this.sort;
 
                 console.log(this.account + this.id);
-                this.form = this.formBuilder.group({
-                  function: ['', [Validators.required, this.functionValidator]],
-                  groupTask: ['', [this.groupValidator.bind(this)]],
-                });//, { validator: this.validate});
 
                 this.form.get('function').setValue(this.possibleTasks[0].agentTaskStr);
                 this.form.setValidators(this.validateForm.bind(this));
@@ -129,7 +152,6 @@ export class FunctionComponent implements OnInit {
                 this.userFunctionIndexer = account.userFunctions.length > 0 ? parseInt(account.userFunctions[account.userFunctions.length - 1].id) : 0;
 
                 this.isLoaded = true;
-
               },
               error: error => {
                 this.alertService.error(error);
@@ -174,23 +196,25 @@ export class FunctionComponent implements OnInit {
   }
   get isValid() {
     var funcValid = this.f['function'].valid;
+    var preferredTimeValid = this.f['preferredTime'].valid;
     var groupValid = this.f['groupTask'].valid;
     var formValid = this.form.valid;
     return this.form.valid;
 
   }
-  addFunction() {
-    // reset alerts on submit
+  onAddTask() {
+    // Reset alerts on submit
     this.alertService.clear();
 
     this.submitted = true;
 
     var currentValue = this.f['function'].value;
     var currentGroupTask = this.f['groupTask'].value;
+    var preferredTime = this.f['preferredTime'].value;
 
     /* Sanity check */
     var existing: Task[] = this.userTasks().filter((f) => {
-      return (f.userFunction === currentValue && f.group === currentGroupTask)
+      return (f.userFunction === currentValue && f.group === currentGroupTask && f.preferredTime === preferredTime)
     });
     console.assert(existing.length <= 1, "We have double " + currentValue + " task for the same user: "+ this.account.email);
     if (existing.length > 0) {
@@ -206,8 +230,9 @@ export class FunctionComponent implements OnInit {
 
     var task: Task = {
       id: (++this.userFunctionIndexer).toString(),
-      userFunction: this.f['function'].value,
-      group: this.isGroupTaskSelected ? this.f['groupTask'].value : "",
+      preferredTime : preferredTime, 
+      userFunction: currentValue,
+      group: this.isGroupTaskSelected ? currentGroupTask : "",
       isGroup: this.isGroupTaskSelected,
       isDeleting: false,
       highlighted: false
@@ -215,8 +240,8 @@ export class FunctionComponent implements OnInit {
     this.userTasks().push(task);
     this.addFunction4Account(task);
   }
-  deleteFunction(task: Task) {
-    // reset alerts on submit
+  onDeleteTask(task: Task) {
+    // Reset alerts on submit
     this.alertService.clear();
 
     this.deleteFunction4Account(task);
@@ -348,11 +373,19 @@ export class FunctionComponent implements OnInit {
     if (!contact.isDeleting) {
       this.form.get('function').setValue(contact.userFunction);
       this.form.get('groupTask').setValue(contact.group);
+
+      let date = moment(contact.preferredTime, "HH:mm").toDate();
+      this.openTime.changeHour(date.getHours());
+      this.openTime.changeMinute(date.getMinutes());
+
     }
   }
 
   isSameTask(t1: Task, t2: Task): boolean {
     console.assert(t1 != null && t2 != null, "One of the tasks is null");
-    return t1.userFunction == t2.userFunction && t1.isGroup == t2.isGroup;
+    return t1.userFunction == t2.userFunction && t1.isGroup == t2.isGroup && t1.preferredTime == t2.preferredTime;
+  }
+  onChangeHour(event : any){
+    console.log(event);
   }
 }

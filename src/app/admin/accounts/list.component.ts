@@ -173,7 +173,7 @@ export class ListComponent implements OnInit, AfterViewInit {
                         this.alertService.error(error);
                     }
                 });
-        }).catch((error) => { 
+        }).catch((error) => {
             //this.alertService.error(error);
         });
     }
@@ -191,6 +191,13 @@ export class ListComponent implements OnInit, AfterViewInit {
         modalRef.componentInstance.bodyInfoStr = "All information associated with the user profiles will be permanently deleted.";
 
         modalRef.result.then((data) => {
+            const modalRef = this.modalService.open(NgbdModalOptionsComponent, {
+                backdrop: 'static',
+                centered: true,
+                windowClass: 'modalClass',
+                keyboard: false
+            });
+
             this.accountService.deleteAllUserAccounts()
                 .pipe(first())
                 .subscribe({
@@ -201,10 +208,12 @@ export class ListComponent implements OnInit, AfterViewInit {
                     complete: () => {
                         //this.alertService.info("Done");
                         this.isDeleting = false;
+                        modalRef.close();
                     },
                     error: error => {
                         this.alertService.error(error);
                         this.isDeleting = false;
+                        modalRef.close();
                     }
                 });
         }).catch((error) => {

@@ -36,6 +36,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { NgbdModalOptionsComponent } from './ngbd-modal-options/ngbd-modal-options.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 
 
 // If using Moment
@@ -79,7 +80,8 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
     MatProgressSpinnerModule,
     MatCheckboxModule,
     TextFieldModule,
-    NgbModule
+    NgbModule,
+    NgxMaterialTimepickerModule
   
   ],
   declarations: [

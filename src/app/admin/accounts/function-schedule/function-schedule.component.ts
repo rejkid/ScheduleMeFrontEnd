@@ -259,8 +259,10 @@ export class FunctionScheduleComponent implements OnInit, AfterViewInit, OnDestr
   onChangeUser(event: Event) {
     var valueSelected = (event.target as HTMLInputElement).value;
     this.selectedUser4Function = this.possibleUsersMap.get(valueSelected);
-    // Fix up the date
-    this.selectedUser4Function.date = this.dateTimeStr;
+    if (this.selectedUser4Function != undefined) {
+      // Fix up the date
+      this.selectedUser4Function.date = this.dateTimeStr;
+    }
   }
   /* I am not sure if we need 'input' parameter - keep it for now*/
   onApplyFilter(t: any, input: any) {

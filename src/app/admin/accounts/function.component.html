@@ -43,7 +43,7 @@
             <div class="container">
                 <div class="border-primary">
                     <div class="row" *ngIf="isLoggedAsAdmin">
-                        <div class="mb-3 col-5">
+                        <div class="mb-3 col-4">
                             <label>Choose Task for {{account.firstName}} {{account.lastName}}</label>
                             <select formControlName="function" class="form-select"
                                 [ngClass]="{ 'is-invalid': submitted && f['function'].errors }"
@@ -59,8 +59,14 @@
                                 can't be empty</div>
                         </div>
 
+                        <div class="col-2 me-5">
+                            <div class="ngx-timepicker-field-example">
+                                <label for="timepicker">Preferred time</label>
+                                <ngx-timepicker-field id="timepicker" [format]="24" (timeChanged)="onChangeHour($event)" formControlName="preferredTime" #openTime></ngx-timepicker-field>
+                            </div>
+                        </div>
 
-                        <div class="col-5" *ngIf="isGroupTaskSelected">
+                        <div class="col-4" *ngIf="isGroupTaskSelected">
                             <div class="row">
                                 <div class="col-12">
                                     <label for="group">Group</label>
@@ -74,7 +80,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <mat-form-field appearance="outline">
                     <mat-label>Filter</mat-label>
@@ -92,16 +97,23 @@
                     <ng-container matColumnDef="{{displayedColumns[1]}}">
                         <mat-header-cell *matHeaderCellDef mat-sort-header> {{labeledColumns[1]}} </mat-header-cell>
                         <mat-cell *matCellDef="let function">
-                            <input type="text" matInput [value]="function.group" readonly />
+                            <input type="text" matInput [value]="function.preferredTime" readonly />
                         </mat-cell>
                     </ng-container>
 
                     <ng-container matColumnDef="{{displayedColumns[2]}}">
+                        <mat-header-cell *matHeaderCellDef mat-sort-header> {{labeledColumns[2]}} </mat-header-cell>
+                        <mat-cell *matCellDef="let function">
+                            <input type="text" matInput [value]="function.group" readonly />
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="{{displayedColumns[3]}}">
                         <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
                         <mat-cell *matCellDef="let function">
 
-                            <button (click)="deleteFunction(function)" class="btn3d btn btn-sm btn-danger btn-delete-account"
-                                [disabled]="function.isDeleting">
+                            <button (click)="onDeleteTask(function)"
+                                class="btn3d btn btn-sm btn-danger btn-delete-account" [disabled]="function.isDeleting">
                                 <span *ngIf="function.isDeleting" class="spinner-border spinner-border-sm"></span>
                                 <span>Delete</span>
                             </button>
@@ -119,7 +131,7 @@
                     [pageSizeOptions]="[10, 30, 50, 100]" showFirstLastButtons>
                 </mat-paginator>
                 <div class="mt-3">
-                    <button type="button" (click)="addFunction()" class="btn3d btn btn-primary">
+                    <button type="button" (click)="onAddTask()" class="btn3d btn btn-primary">
                         Add
                     </button>
                 </div>

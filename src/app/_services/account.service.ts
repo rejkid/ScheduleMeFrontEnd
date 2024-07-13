@@ -171,12 +171,12 @@ export class AccountService {
         return this.http.get<Account[]>(`${baseUrl}/get-schedule/${dateStr}`);
     }
 
-    addFunction(id: any, userFunction: Task) {
-        return this.http.put<Account>(`${baseUrl}/add-function/${id}`, userFunction);
+    addFunction(id: any, userTask: Task) {
+        return this.http.put<Account>(`${baseUrl}/add-function/${id}`, userTask);
     }
 
-    deleteFunction(id: any, userFunction: Task) {
-        return this.http.post<Account>(`${baseUrl}/delete-function/${id}`, userFunction);
+    deleteFunction(id: any, userTask: Task) {
+        return this.http.post<Account>(`${baseUrl}/delete-function/${id}`, userTask);
     }
 
     deletePoolElement(id: string, email: string, userFunction: string) {
