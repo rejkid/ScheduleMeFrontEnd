@@ -297,7 +297,7 @@ export class FunctionComponent implements OnInit, AfterViewInit {
           var tasks = this.userTasks().filter(s => this.isSameTask(s, task));
           console.assert(tasks.length == 1, "Task  just created not found or multiple tasks found");
           this.selectRow(tasks[0]);
-          this.alertService.info("Data Saved");
+          //this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
