@@ -25,7 +25,8 @@ import { Observable, Subject } from 'rxjs';
     <strong>{{bodyQuestionStr}}</strong>
   </p>
   <p>
-    {{bodyInfoStr}}
+  <span [innerHTML]='bodyInfoStr'></span>
+  
     <span class="text-danger">This operation can not be undone.</span>
   </p>
 </div>

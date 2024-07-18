@@ -14,6 +14,7 @@ import { AccountService, AlertService } from 'src/app/_services';
 import { NgbdModalConfirmComponent } from './ngbd-modal-confirm/ngbd-modal-confirm.component';
 import { NgxTimepickerFieldComponent } from 'ngx-material-timepicker';
 import * as moment from 'moment';
+import { NgbdModalOptionsComponent } from './ngbd-modal-options/ngbd-modal-options.component';
 
 const COLUMNS_SCHEMA = [
   {
@@ -139,7 +140,18 @@ export class FunctionComponent implements OnInit, AfterViewInit {
                 this.possibleTasks = value;
 
                 this.account = account;
-                this.userTasks.set(account.userFunctions.slice());
+                account.userFunctions.forEach(element => {
+                  var task : Task = {
+                    group: element.group,
+                    userFunction : element.userFunction,
+                    preferredTime : element.preferredTime,
+                    highlighted : false,
+                    isDeleting: false,
+                    id : element.id,
+                    isGroup : element.isGroup
+                  }
+                  this.userTasks().push(task);
+                });
                 this.dataSource = new MatTableDataSource(this.userTasks());
                 this.dataSource.paginator = this.paginator;
                 this.dataSource.sort = this.sort;
@@ -208,45 +220,71 @@ export class FunctionComponent implements OnInit, AfterViewInit {
 
     this.submitted = true;
 
+    this.executeAddTask();
+  }
+  private executeAddTask() {
     var currentValue = this.f['function'].value;
     var currentGroupTask = this.f['groupTask'].value;
     var preferredTime = this.f['preferredTime'].value;
 
     /* Sanity check */
     var existing: Task[] = this.userTasks().filter((f) => {
-      return (f.userFunction === currentValue && f.group === currentGroupTask && f.preferredTime === preferredTime)
+      return (f.userFunction === currentValue && f.group === currentGroupTask);
     });
-    console.assert(existing.length <= 1, "We have double " + currentValue + " task for the same user: "+ this.account.email);
-    if (existing.length > 0) {
-      this.alertService.warn(this.account.email + " is already " + currentValue + (existing[0].isGroup ? " for group agent " + existing[0].group  : ""));
-      this.selectRow(existing[0]);
-      return;
-    }
-
-    // Stop here if form is invalid
+    console.assert(existing.length <= 1, "We have double " + currentValue + " task for the same user: " + this.account.email);
     if (this.form.invalid) {
       return;
     }
 
     var task: Task = {
       id: (++this.userFunctionIndexer).toString(),
-      preferredTime : preferredTime, 
+      preferredTime: preferredTime,
       userFunction: currentValue,
       group: this.isGroupTaskSelected ? currentGroupTask : "",
       isGroup: this.isGroupTaskSelected,
       isDeleting: false,
       highlighted: false
-    }
-    this.userTasks().push(task);
-    this.addFunction4Account(task);
-  }
-  onDeleteTask(task: Task) {
-    // Reset alerts on submit
-    this.alertService.clear();
+    };
+    this.accountService.testAddFunction(this.id, task)
+      .pipe(first())
+      .subscribe({
+        next: (accounts) => {
+          if (accounts != null) {
+            var bodyStr : string[] = [];
 
-    this.deleteFunction4Account(task);
+            for (let index = 0; index < 20; index++) {
+              accounts.forEach(element => {
+                bodyStr.push("<div>" + element.firstName + " " + element.lastName + " " + element.email + "</div>");
+              });
+            }
+            
+            const modalRef = this.modalService.open(NgbdModalConfirmComponent, { scrollable: true });
+            modalRef.componentInstance.titleStr = "User Task Update";
+            modalRef.componentInstance.bodyQuestionStr = "The fllowing group agent members will also be updated:";
+            modalRef.componentInstance.bodyInfoStr = bodyStr.join("");
+            modalRef.result.then((data) => {
+              this.userTasks().push(task);
+              this.addFunction4Account(task);
+    
+            }).catch((error) => {
+            });
+          } else {
+            this.userTasks().push(task);
+            this.addFunction4Account(task);
+  
+          }
+        },
+        complete: () => {
+        },
+        error: error => {
+          this.alertService.error(error);
+        }
+      });
+
   }
+
   private addFunction4Account(task: Task) {
+
     this.accountService.addFunction(this.id, task)
       .pipe(first())
       .subscribe({
@@ -266,16 +304,25 @@ export class FunctionComponent implements OnInit, AfterViewInit {
           this.loading = false;
         }
       });
+    
   }
-  private deleteFunction4Account(userFunctionDTO: Task) {
+
+  onDeleteTask(task: Task) {
+    task.isDeleting = true;
+    // Reset alerts on submit
+    this.alertService.clear();
+
+    this.deleteFunction4Account(task);
+  }
+  private deleteFunction4Account(task: Task) {
 
     const modalRef = this.modalService.open(NgbdModalConfirmComponent);
     modalRef.componentInstance.titleStr = "Task Deletion";
     modalRef.componentInstance.bodyQuestionStr = "Are you sure you want to delete task profile?";
     modalRef.componentInstance.bodyInfoStr = "All information associated with the task profile will be permanently deleted.";
     modalRef.result.then((data) => {
-      userFunctionDTO.isDeleting = true;
-      this.accountService.deleteFunction(this.id, userFunctionDTO)
+      task.isDeleting = true;
+      this.accountService.deleteFunction(this.id, task)
         .pipe(first())
         .subscribe({
           next: (account) => {
@@ -284,11 +331,13 @@ export class FunctionComponent implements OnInit, AfterViewInit {
             //this.alertService.info("Data Saved");
           },
           error: error => {
-            userFunctionDTO.isDeleting = false;
+            task.isDeleting = false;
             this.alertService.error(error);
           }
         });
     }).catch((error) => {
+      task.isDeleting = false;
+
     });
   }
 

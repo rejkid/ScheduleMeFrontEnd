@@ -175,6 +175,10 @@ export class AccountService {
         return this.http.put<Account>(`${baseUrl}/add-function/${id}`, userTask);
     }
 
+    testAddFunction(id: any, userTask: Task) {
+        return this.http.put<Account[]>(`${baseUrl}/test-add-function/${id}`, userTask);
+    }
+
     deleteFunction(id: any, userTask: Task) {
         return this.http.post<Account>(`${baseUrl}/delete-function/${id}`, userTask);
     }
