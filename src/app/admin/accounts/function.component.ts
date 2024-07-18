@@ -249,7 +249,8 @@ export class FunctionComponent implements OnInit, AfterViewInit {
       .pipe(first())
       .subscribe({
         next: (accounts) => {
-          if (accounts != null) {
+          if (accounts != null && accounts.length > 0) {
+            // It's group agent
             var bodyStr : string[] = [];
 
             accounts.forEach(element => {
@@ -267,6 +268,7 @@ export class FunctionComponent implements OnInit, AfterViewInit {
             }).catch((error) => {
             });
           } else {
+            // It's an agent or group agent with just one member
             this.userTasks().push(task);
             this.addFunction4Account(task);
   
@@ -293,9 +295,9 @@ export class FunctionComponent implements OnInit, AfterViewInit {
         complete: () => {
           // We have just succesfuly added a new schedule
           var tasks = this.userTasks().filter(s => this.isSameTask(s, task));
-          console.assert(tasks.length == 1, "Task  just created not found");
+          console.assert(tasks.length == 1, "Task  just created not found or multiple tasks found");
           this.selectRow(tasks[0]);
-          //this.alertService.info("Data Saved");
+          this.alertService.info("Data Saved");
         },
         error: error => {
           this.alertService.error(error);
@@ -430,7 +432,7 @@ export class FunctionComponent implements OnInit, AfterViewInit {
 
   isSameTask(t1: Task, t2: Task): boolean {
     console.assert(t1 != null && t2 != null, "One of the tasks is null");
-    return t1.userFunction == t2.userFunction && t1.isGroup == t2.isGroup && t1.preferredTime == t2.preferredTime;
+    return t1.userFunction == t2.userFunction && t1.group == t2.group && t1.preferredTime == t2.preferredTime;
   }
   onChangeHour(event : any){
     console.log(event);
