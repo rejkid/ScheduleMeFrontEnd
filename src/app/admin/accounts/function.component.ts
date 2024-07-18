@@ -252,15 +252,13 @@ export class FunctionComponent implements OnInit, AfterViewInit {
           if (accounts != null) {
             var bodyStr : string[] = [];
 
-            for (let index = 0; index < 20; index++) {
-              accounts.forEach(element => {
-                bodyStr.push("<div>" + element.firstName + " " + element.lastName + " " + element.email + "</div>");
-              });
-            }
-            
+            accounts.forEach(element => {
+              bodyStr.push("<div>" + element.firstName + " " + element.lastName + " " + element.email + "</div>");
+            });
+
             const modalRef = this.modalService.open(NgbdModalConfirmComponent, { scrollable: true });
             modalRef.componentInstance.titleStr = "User Task Update";
-            modalRef.componentInstance.bodyQuestionStr = "The fllowing group agent members will also be updated:";
+            modalRef.componentInstance.bodyQuestionStr = "The following existing members of group agent '" + task.group+ "' will also be updated:";
             modalRef.componentInstance.bodyInfoStr = bodyStr.join("");
             modalRef.result.then((data) => {
               this.userTasks().push(task);
