@@ -71,7 +71,7 @@ export class AddEditComponent implements OnInit, AfterViewInit {
             confirmPassword: [''],
             phoneNumber: ["", []],
         }, {
-            validator: [MustMatch('password', 'confirmPassword')]
+            validators: [MustMatch('password', 'confirmPassword')]
         });
 
         if (!this.isAddMode) {

@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 import * as moment from 'moment';
+import { CustomValidators } from '../_helpers/custom-validators';
 import { TimeHandler } from '../_helpers/time.handler';
 import { AccountService, AlertService } from '../_services';
 import { Constants } from '../constants';
-
 
 @Component(
     {
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         this.form = this.formBuilder.group({
             email: ['', [Validators.required, Validators.email]],
-            password: ['', Validators.required],
+            password: ['', [Validators.required, CustomValidators.createPasswordStrengthValidator()]],
             dob: ['', [Validators.required , TimeHandler.dateValidator]],
         });
         this.form.get('dob').setValue(moment(new Date()).format(Constants.dateFormat));

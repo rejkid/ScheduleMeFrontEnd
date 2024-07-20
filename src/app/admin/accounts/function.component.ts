@@ -92,7 +92,7 @@ export class FunctionComponent implements OnInit, AfterViewInit {
       function: ['', [Validators.required, this.functionValidator]],
       groupTask: ['', [this.groupValidator.bind(this)]],
       preferredTime: ['9:00 am', [Validators.required]]
-    });//, { validator: this.validate});
+    });
 
   }
   ngAfterViewInit(): void {

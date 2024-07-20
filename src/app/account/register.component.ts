@@ -8,6 +8,7 @@ import { MustMatch } from '../_helpers';
 import { Account } from '../_models';
 import { AccountService, AlertService } from '../_services';
 import { Constants } from '../constants';
+import { CustomValidators } from '../_helpers/custom-validators';
 
 @Component({ templateUrl: 'register.component.html' })
 export class RegisterComponent implements OnInit {
@@ -32,11 +33,11 @@ export class RegisterComponent implements OnInit {
             lastName: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
             dob: ['', [Validators.required]],
-            password: ['', [Validators.required, Validators.minLength(6)]],
+            password: ['', [Validators.required, Validators.minLength(8), CustomValidators.createPasswordStrengthValidator()]],
             confirmPassword: ['', Validators.required],
             acceptTerms: [false, Validators.requiredTrue]
         }, {
-            validator: MustMatch('password', 'confirmPassword')
+            validators: MustMatch('password', 'confirmPassword')
         });
         this.form.get('dob').setValue(new Date());
     }

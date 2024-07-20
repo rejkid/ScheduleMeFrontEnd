@@ -85,7 +85,8 @@
                     [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
                 <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
                     <div *ngIf="f['password'].errors['required']">Password is required</div>
-                    <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+                    <div *ngIf="f['password'].errors['minlength']">Password must be at least 8 characters</div>
+                    <div *ngIf="f['password'].errors?.['passwordStrength']" >Your password must have lower case, upper case and numeric characters.</div>
                 </div>
             </div>
             <div class="col">
@@ -100,8 +101,7 @@
         </div>
     </fieldset>
     <div class="mb-3 ms-1">
-        <button type="submit" [disabled]="loading" class="btn3d btn btn-primary mr-2"
-            [ngClass]="{ 'disabled': !form.valid}">
+        <button type="submit" [disabled]="loading" class="btn3d btn btn-primary mr-2">
             <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
             Update
         </button>

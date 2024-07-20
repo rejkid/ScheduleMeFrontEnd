@@ -1,5 +1,5 @@
 ﻿import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControlOptions, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { first } from 'rxjs/operators';
 
@@ -9,6 +9,7 @@ import { Schedule } from '../_models/schedule';
 import { AccountService, AlertService } from '../_services';
 import { Constants } from '../constants';
 import { TimeHandler } from '../_helpers/time.handler';
+import { CustomValidators } from '../_helpers/custom-validators';
 
 @Component({ templateUrl: 'update.component.html',
 styleUrls: ['./update.component.less'], })
@@ -39,13 +40,13 @@ export class UpdateComponent implements OnInit {
             lastName: [this.account.lastName, Validators.required],
             email: [this.account.email, [Validators.required, Validators.email]],
             dob: [moment(this.account.dob, Constants.dateFormat).toDate(), [Validators.required]],
-            password: ['',  [Validators.minLength(6)]],
+            password: ['',  [Validators.minLength(8), CustomValidators.createPasswordStrengthValidator()]],
             confirmPassword: ['',  [Validators.minLength(6)]],
             phoneNumber: [this.account.phoneNumber ], // Phone number is optional
 
         }, {
-            validator: [MustMatch('password', 'confirmPassword')]
-        });
+            validators: [MustMatch('password', 'confirmPassword')]
+        } );
     }
 
     // convenience getter for easy access to form fields
@@ -83,7 +84,7 @@ export class UpdateComponent implements OnInit {
             .pipe(first())
             .subscribe({
                 next: () => {
-                    this.alertService.success('Update successful', { keepAfterRouteChange: true });
+                    this.alertService.success('Data Saved', { keepAfterRouteChange: true });
                     this.loading = false;
                     //this.router.navigate(['../'], { relativeTo: this.route });
                 },
